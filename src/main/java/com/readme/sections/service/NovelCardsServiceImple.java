@@ -59,4 +59,9 @@ public class NovelCardsServiceImple implements NovelCardsService {
                 .build())
             .orElseThrow(() -> new NotFoundException()));
     }
+
+    @Override
+    public void deleteCards(Long id) {
+        novelCardsRepository.deleteById(id);
+    }
 }

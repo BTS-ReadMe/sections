@@ -4,6 +4,8 @@ import com.readme.sections.service.NovelCardsServiceImple;
 import com.readme.sections.vo.RequestNovelCards;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v1/admin/cards/novels")
 public class AdminNovelCardsController {
     private final NovelCardsServiceImple novelCardsServiceImple;
+    @GetMapping("/{id}")
     @PostMapping
     public void addNovelCard(@RequestBody RequestNovelCards requestNovelCards) {
         novelCardsServiceImple.addCards(requestNovelCards);
@@ -26,4 +29,10 @@ public class AdminNovelCardsController {
         throws NotFoundException {
         novelCardsServiceImple.updateCards(id, requestNovelCards);
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteNovelCard(@PathVariable Long id) {
+        novelCardsServiceImple.deleteCards(id);
+    }
+
 }
