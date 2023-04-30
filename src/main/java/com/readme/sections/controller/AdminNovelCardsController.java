@@ -3,6 +3,8 @@ package com.readme.sections.controller;
 import com.readme.sections.service.NovelCardsServiceImple;
 import com.readme.sections.vo.RequestNovelCards;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,5 +19,11 @@ public class AdminNovelCardsController {
     @PostMapping
     public void addNovelCard(@RequestBody RequestNovelCards requestNovelCards) {
         novelCardsServiceImple.addCards(requestNovelCards);
+    }
+
+    @PatchMapping("/{id}")
+    public void updateNovelCard(@PathVariable Long id, @RequestBody RequestNovelCards requestNovelCards)
+        throws NotFoundException {
+        novelCardsServiceImple.updateCards(id, requestNovelCards);
     }
 }

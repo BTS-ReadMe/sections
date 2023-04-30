@@ -3,8 +3,10 @@ package com.readme.sections.dto;
 import com.readme.sections.model.NovelCards;
 import java.util.Date;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Getter
@@ -27,6 +29,8 @@ public class ResponseNovelCards {
     Float starRating;
     @Getter
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     @ToString
     public static class Tag {
         Long id;
