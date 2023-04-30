@@ -1,18 +1,9 @@
 spring:
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      authentication-database: admin
-      username: jin
-      password: 1234
-      database: sections
-      uri: mongodb://localhost:27017/sections
-  jpa:
-    hibernate:
-      ddl-auto: create
-    generate-ddl: true
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+  profiles:
+    active: dev
+---
+spring:
+  profiles: dev
+---
+spring:
+  profiles: prod
