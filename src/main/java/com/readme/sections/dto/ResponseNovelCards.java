@@ -22,9 +22,9 @@ public class ResponseNovelCards {
     String serializationDays;
     Long views;
     String serializationStatus;
-    List<NovelCards.Tag> tags;
+    List<Tag> tags;
     Long scheduleId;
-    Float startRating;
+    Float starRating;
     @Getter
     @Builder
     @ToString

@@ -1,21 +1,16 @@
-package com.readme.sections.model;
+package com.readme.sections.vo;
 
 import com.readme.sections.dto.ResponseNovelCards.Tag;
 import java.util.Date;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "novel_cards")
 @Getter
 @Builder
 @ToString
-public class NovelCards {
-    @Id
+public class RequestNovelCards {
     Long novelId;
     String title;
     String description;
