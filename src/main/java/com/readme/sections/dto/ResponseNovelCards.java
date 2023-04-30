@@ -21,7 +21,7 @@ public class ResponseNovelCards {
     Integer grade;
     String thumbnail;
     Date startDate;
-    String serializationDays;
+    Integer serializationDays;
     Long views;
     String serializationStatus;
     List<Tag> tags;
