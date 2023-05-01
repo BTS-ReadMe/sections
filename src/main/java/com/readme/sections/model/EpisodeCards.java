@@ -11,7 +11,7 @@ import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "EpisodeCards")
+@Document(collection = "episode_cards")
 @Getter
 @Setter
 @Builder
@@ -28,7 +28,7 @@ public class EpisodeCards {
     @NoArgsConstructor
     @AllArgsConstructor
     @ToString
-    public class Episode {
+    public static class Episode {
         Long id;
         String name;
         Boolean free;

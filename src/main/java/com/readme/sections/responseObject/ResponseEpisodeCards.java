@@ -19,18 +19,5 @@ import lombok.ToString;
 @ToString
 public class ResponseEpisodeCards {
     Long novelId;
-    List<EpisodeCards.Episode> episodes;
-    @Getter
-    @Setter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @ToString
-    public class Episode {
-        Long id;
-        String name;
-        Boolean free;
-        Date registrationDate;
-        Float starRating;
-    }
+    List<Episode> episodes;
 }
