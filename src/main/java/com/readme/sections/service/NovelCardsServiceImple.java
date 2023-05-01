@@ -8,6 +8,7 @@ import com.readme.sections.vo.RequestNovelCards;
 import com.readme.sections.vo.ResponseNovelCards;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -16,94 +17,80 @@ import org.springframework.stereotype.Service;
 public class NovelCardsServiceImple implements NovelCardsService {
 
     private final NovelCardsRepository novelCardsRepository;
+    private final ModelMapper modelMapper;
 
-    public ResponseNovelCards getCards(Long id) {
+    public NovelCardsDTO getCards(Long id) {
         NovelCards novelCards = novelCardsRepository.findById(id).get();
-        return ResponseNovelCards.builder()
-            .novelId(novelCards.getNovelId())
-            .title(novelCards.getTitle())
-            .author(novelCards.getAuthor())
-            .grade(novelCards.getGrade())
-            .genre(novelCards.getGenre())
-            .tags(novelCards.getTags().stream()
-                .map(element -> Tag.builder()
-                    .id(element.getId())
-                    .name(element.getName())
-                    .build()).collect(Collectors.toList()))
-            .serializationDays(novelCards.getSerializationDays())
-            .thumbnail(novelCards.getThumbnail())
-            .views(novelCards.getViews())
-            .serializationStatus(novelCards.getSerializationStatus())
-            .description(novelCards.getDescription())
-            .scheduleId(novelCards.getScheduleId())
-            .startDate(novelCards.getStartDate())
-            .starRating(novelCards.getStarRating())
-            .build();
+        return modelMapper.map(novelCards, NovelCardsDTO.class);
     }
 
-    public void addCards(RequestNovelCards requestNovelCards) {
+    public void addCards(NovelCardsDTO novelCardsDTO) {
         novelCardsRepository.insert(NovelCards.builder()
-            .novelId(requestNovelCards.getNovelId())
-            .title(requestNovelCards.getTitle())
-            .author(requestNovelCards.getAuthor())
-            .grade(requestNovelCards.getGrade())
-            .genre(requestNovelCards.getGenre())
-            .tags(requestNovelCards.getTags().stream()
+            .novelId(novelCardsDTO.getNovelId())
+            .title(novelCardsDTO.getTitle())
+            .author(novelCardsDTO.getAuthor())
+            .grade(novelCardsDTO.getGrade())
+            .genre(novelCardsDTO.getGenre())
+            .tags(novelCardsDTO.getTags().stream()
                 .map(element -> Tag.builder()
                     .id(element.getId())
                     .name(element.getName())
                     .build()).collect(Collectors.toList()))
-            .serializationDays(requestNovelCards.getSerializationDays())
-            .thumbnail(requestNovelCards.getThumbnail())
-            .views(requestNovelCards.getViews())
-            .serializationStatus(requestNovelCards.getSerializationStatus())
-            .description(requestNovelCards.getDescription())
-            .scheduleId(requestNovelCards.getScheduleId())
-            .startDate(requestNovelCards.getStartDate())
-            .starRating(requestNovelCards.getStarRating())
+            .serializationDays(novelCardsDTO.getSerializationDays())
+            .thumbnail(novelCardsDTO.getThumbnail())
+            .views(novelCardsDTO.getViews())
+            .serializationStatus(novelCardsDTO.getSerializationStatus())
+            .description(novelCardsDTO.getDescription())
+            .scheduleId(novelCardsDTO.getScheduleId())
+            .startDate(novelCardsDTO.getStartDate())
+            .starRating(novelCardsDTO.getStarRating())
             .build());
     }
 
     @Override
-    public void updateCards(Long id, RequestNovelCards requestNovelCards) throws NotFoundException {
-        novelCardsRepository.save(novelCardsRepository.findById(id)
-            .map(novelToUpdate -> NovelCards.builder()
-                .novelId(novelToUpdate.getNovelId())
-                .title(requestNovelCards.getTitle() != null ? requestNovelCards.getTitle()
-                    : novelToUpdate.getTitle())
-                .description(
-                    requestNovelCards.getDescription() != null ? requestNovelCards.getDescription()
-                        : novelToUpdate.getDescription())
-                .author(requestNovelCards.getAuthor() != null ? requestNovelCards.getAuthor()
-                    : novelToUpdate.getAuthor())
-                .genre(requestNovelCards.getGenre() != null ? requestNovelCards.getGenre()
-                    : novelToUpdate.getGenre())
-                .grade(requestNovelCards.getGrade() != null ? requestNovelCards.getGrade()
-                    : novelToUpdate.getGrade())
-                .thumbnail(
-                    requestNovelCards.getThumbnail() != null ? requestNovelCards.getThumbnail()
-                        : novelToUpdate.getThumbnail())
-                .startDate(
-                    requestNovelCards.getStartDate() != null ? requestNovelCards.getStartDate()
-                        : novelToUpdate.getStartDate())
-                .serializationDays(requestNovelCards.getSerializationDays() != null
-                    ? requestNovelCards.getSerializationDays()
-                    : novelToUpdate.getSerializationDays())
-                .views(requestNovelCards.getViews() != null ? requestNovelCards.getViews()
-                    : novelToUpdate.getViews())
-                .serializationStatus(requestNovelCards.getSerializationStatus() != null
-                    ? requestNovelCards.getSerializationStatus()
-                    : novelToUpdate.getSerializationStatus())
-                .tags(requestNovelCards.getTags() != null ? requestNovelCards.getTags()
-                    : novelToUpdate.getTags())
-                .scheduleId(
-                    requestNovelCards.getScheduleId() != null ? requestNovelCards.getScheduleId()
-                        : novelToUpdate.getScheduleId())
-                .starRating(
-                    requestNovelCards.getStarRating() != null ? requestNovelCards.getStarRating()
-                        : novelToUpdate.getStarRating())
-                .build())
-            .orElseThrow(() -> new NotFoundException()));
+    public NovelCardsDTO existUpdateData(Long id, NovelCardsDTO novelCardsDTO) {
+        NovelCards novelCards = novelCardsRepository.findById(id).get();
+        return NovelCardsDTO.builder()
+            .novelId(novelCards.getNovelId())
+            .title(novelCardsDTO.getTitle() != null ? novelCardsDTO.getTitle()
+                : novelCards.getTitle())
+            .description(
+                novelCardsDTO.getDescription() != null ? novelCardsDTO.getDescription()
+                    : novelCards.getDescription())
+            .author(novelCardsDTO.getAuthor() != null ? novelCardsDTO.getAuthor()
+                : novelCards.getAuthor())
+            .genre(novelCardsDTO.getGenre() != null ? novelCardsDTO.getGenre()
+                : novelCards.getGenre())
+            .grade(novelCardsDTO.getGrade() != null ? novelCardsDTO.getGrade()
+                : novelCards.getGrade())
+            .thumbnail(
+                novelCardsDTO.getThumbnail() != null ? novelCardsDTO.getThumbnail()
+                    : novelCards.getThumbnail())
+            .startDate(
+                novelCardsDTO.getStartDate() != null ? novelCardsDTO.getStartDate()
+                    : novelCards.getStartDate())
+            .serializationDays(novelCardsDTO.getSerializationDays() != null
+                ? novelCardsDTO.getSerializationDays()
+                : novelCards.getSerializationDays())
+            .views(novelCardsDTO.getViews() != null ? novelCardsDTO.getViews()
+                : novelCards.getViews())
+            .serializationStatus(novelCardsDTO.getSerializationStatus() != null
+                ? novelCardsDTO.getSerializationStatus()
+                : novelCards.getSerializationStatus())
+            .tags(novelCardsDTO.getTags() != null ? novelCardsDTO.getTags()
+                : novelCards.getTags())
+            .scheduleId(
+                novelCardsDTO.getScheduleId() != null ? novelCardsDTO.getScheduleId()
+                    : novelCards.getScheduleId())
+            .starRating(
+                novelCardsDTO.getStarRating() != null ? novelCardsDTO.getStarRating()
+                    : novelCards.getStarRating())
+            .build();
+    }
+
+    @Override
+    public void updateCards(NovelCardsDTO novelCardsDTO){
+        novelCardsRepository.save(modelMapper.map(novelCardsDTO, NovelCards.class));
     }
 
     @Override
