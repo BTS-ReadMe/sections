@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class NovelCardsServiceImple implements NovelCardsService {
+public class NovelCardsServiceImpl implements NovelCardsService {
 
     private final NovelCardsRepository novelCardsRepository;
     private final ModelMapper modelMapper;
