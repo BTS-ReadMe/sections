@@ -7,4 +7,5 @@ public interface EpisodeCardsService {
     public void addCards(EpisodeCardsDTO episodeCardsDTO);
     public void updateCards(EpisodeCardsDTO episodeCardsDTO);
     public EpisodeCardsDTO existUpdateData(Long id, EpisodeCardsDTO episodeCardsDTO);
+    public void deleteCards(Long id);
 }

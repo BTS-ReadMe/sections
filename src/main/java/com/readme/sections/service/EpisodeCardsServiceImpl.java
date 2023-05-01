@@ -45,4 +45,9 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService{
                 : episodeCards.getEpisodes())
             .build();
     }
+
+    @Override
+    public void deleteCards(Long id) {
+        episodeCardsRepository.deleteById(id);
+    }
 }

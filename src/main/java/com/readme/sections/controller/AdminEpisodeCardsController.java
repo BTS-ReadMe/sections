@@ -1,12 +1,11 @@
 package com.readme.sections.controller;
 
 import com.readme.sections.dto.EpisodeCardsDTO;
-import com.readme.sections.dto.NovelCardsDTO;
 import com.readme.sections.requestObject.RequestEpisodeCards;
-import com.readme.sections.requestObject.RequestNovelCards;
 import com.readme.sections.service.EpisodeCardsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +32,11 @@ public class AdminEpisodeCardsController {
     public void updateEpisodeCard(@PathVariable Long id, @RequestBody RequestEpisodeCards requestEpisodeCards) {
         EpisodeCardsDTO episodeCardsDTO = modelMapper.map(requestEpisodeCards, EpisodeCardsDTO.class);
         episodeCardsServiceImpl.updateCards(episodeCardsServiceImpl.existUpdateData(id, episodeCardsDTO));
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteEpisodeCard(@PathVariable Long id) {
+        episodeCardsServiceImpl.deleteCards(id);
     }
 
 
