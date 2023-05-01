@@ -4,12 +4,9 @@ import com.readme.sections.dto.NovelCardsDTO;
 import com.readme.sections.dto.NovelCardsDTO.Tag;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.repository.NovelCardsRepository;
-import com.readme.sections.vo.RequestNovelCards;
-import com.readme.sections.vo.ResponseNovelCards;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service

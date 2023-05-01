@@ -2,12 +2,11 @@ package com.readme.sections.controller;
 
 import com.readme.sections.dto.NovelCardsDTO;
 import com.readme.sections.service.NovelCardsServiceImple;
-import com.readme.sections.vo.RequestNovelCards;
-import com.readme.sections.vo.ResponseNovelCards;
+import com.readme.sections.requestObject.RequestNovelCards;
+import com.readme.sections.responseObject.ResponseNovelCards;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

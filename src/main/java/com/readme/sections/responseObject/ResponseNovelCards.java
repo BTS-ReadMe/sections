@@ -1,4 +1,4 @@
-package com.readme.sections.vo;
+package com.readme.sections.responseObject;
 
 import com.readme.sections.dto.NovelCardsDTO.Tag;
 import java.util.Date;
@@ -7,14 +7,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class RequestNovelCards {
+public class ResponseNovelCards {
     Long novelId;
     String title;
     String description;
