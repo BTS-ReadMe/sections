@@ -1,16 +1,21 @@
 package com.readme.sections.dto;
 
-import com.readme.sections.model.NovelCards;
 import java.util.Date;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Getter
+@Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
-public class ResponseNovelCards {
+public class NovelCardsDTO {
     Long novelId;
     String title;
     String description;
@@ -19,14 +24,16 @@ public class ResponseNovelCards {
     Integer grade;
     String thumbnail;
     Date startDate;
-    String serializationDays;
+    Integer serializationDays;
     Long views;
     String serializationStatus;
-    List<NovelCards.Tag> tags;
+    List<Tag> tags;
     Long scheduleId;
-    Float startRating;
+    Float starRating;
     @Getter
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     @ToString
     public static class Tag {
         Long id;
