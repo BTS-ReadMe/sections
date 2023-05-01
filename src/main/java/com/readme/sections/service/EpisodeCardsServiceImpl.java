@@ -21,8 +21,28 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService{
                     .name(episode.getName())
                     .free(episode.getFree())
                     .registrationDate(episode.getRegistrationDate())
+                    .starRating(episode.getStarRating())
                     .build())
                 .collect(Collectors.toList()))
             .build());
+    }
+
+    @Override
+    public void updateCards(EpisodeCardsDTO episodeCardsDTO) {
+        episodeCardsRepository.save(EpisodeCards.builder()
+            .novelId(episodeCardsDTO.getNovelId())
+            .episodes(episodeCardsDTO.getEpisodes())
+            .build());
+    }
+
+    @Override
+    public EpisodeCardsDTO existUpdateData(Long id, EpisodeCardsDTO episodeCardsDTO) {
+        EpisodeCards episodeCards = episodeCardsRepository.findById(id).get();
+        return EpisodeCardsDTO.builder()
+            .novelId(episodeCardsDTO.getNovelId() != null ? episodeCardsDTO.getNovelId()
+                : episodeCards.getNovelId())
+            .episodes(episodeCardsDTO.getEpisodes() != null ? episodeCardsDTO.getEpisodes()
+                : episodeCards.getEpisodes())
+            .build();
     }
 }
