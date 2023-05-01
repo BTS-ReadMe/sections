@@ -1,10 +1,11 @@
 package com.readme.sections.service;
 
-import com.readme.sections.dto.ResponseNovelCards;
-import com.readme.sections.dto.ResponseNovelCards.Tag;
+import com.readme.sections.dto.NovelCardsDTO;
+import com.readme.sections.dto.NovelCardsDTO.Tag;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.repository.NovelCardsRepository;
 import com.readme.sections.vo.RequestNovelCards;
+import com.readme.sections.vo.ResponseNovelCards;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;

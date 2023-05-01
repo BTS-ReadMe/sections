@@ -14,7 +14,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class RequestNovelCards {
+public class ResponseNovelCards {
     Long novelId;
     String title;
     String description;

@@ -1,6 +1,5 @@
 package com.readme.sections.dto;
 
-import com.readme.sections.model.NovelCards;
 import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -11,8 +10,10 @@ import lombok.ToString;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
-public class ResponseNovelCards {
+public class NovelCardsDTO {
     Long novelId;
     String title;
     String description;

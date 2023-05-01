@@ -1,6 +1,6 @@
 package com.readme.sections.model;
 
-import com.readme.sections.dto.ResponseNovelCards.Tag;
+import com.readme.sections.dto.NovelCardsDTO.Tag;
 import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;

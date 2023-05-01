@@ -1,8 +1,9 @@
 package com.readme.sections.controller;
 
-import com.readme.sections.dto.ResponseNovelCards;
+import com.readme.sections.dto.NovelCardsDTO;
 import com.readme.sections.service.NovelCardsServiceImple;
 import com.readme.sections.vo.RequestNovelCards;
+import com.readme.sections.vo.ResponseNovelCards;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.ResponseEntity;
