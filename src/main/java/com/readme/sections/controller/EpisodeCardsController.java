@@ -2,6 +2,7 @@ package com.readme.sections.controller;
 
 import com.readme.sections.model.EpisodeCards;
 import com.readme.sections.responseObject.ResponseEpisodeCards;
+import com.readme.sections.service.EpisodeCardsService;
 import com.readme.sections.service.EpisodeCardsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v1/cards/episodes")
 @RequiredArgsConstructor
 public class EpisodeCardsController {
-    private final EpisodeCardsServiceImpl episodeCardsServiceImpl;
+    private final EpisodeCardsService episodeCardsService;
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseEpisodeCards> getEpisodeCard(@PathVariable Long id) {
-        EpisodeCards episodeCards = episodeCardsServiceImpl.getCards(id);
+        EpisodeCards episodeCards = episodeCardsService.getCards(id);
         return ResponseEntity.ok(ResponseEpisodeCards.builder()
             .novelId(episodeCards.getNovelId())
             .episodes(episodeCards.getEpisodes())

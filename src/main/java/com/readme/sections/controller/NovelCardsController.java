@@ -2,7 +2,7 @@ package com.readme.sections.controller;
 
 import com.readme.sections.dto.NovelCardsDTO;
 import com.readme.sections.responseObject.ResponseNovelCards;
-import com.readme.sections.service.NovelCardsServiceImpl;
+import com.readme.sections.service.NovelCardsService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/v1/cards/novels")
 public class NovelCardsController {
-    private final NovelCardsServiceImpl novelCardsServiceImpl;
+    private final NovelCardsService novelCardsService;
     private final ModelMapper modelMapper;
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseNovelCards> getNovelCard(@PathVariable Long id) {
-        NovelCardsDTO novelCardsDTO = novelCardsServiceImpl.getCards(id);
+        NovelCardsDTO novelCardsDTO = novelCardsService.getCards(id);
         return ResponseEntity.ok(modelMapper.map(novelCardsDTO, ResponseNovelCards.class));
     }
 }
