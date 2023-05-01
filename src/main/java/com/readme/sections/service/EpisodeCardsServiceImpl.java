@@ -11,6 +11,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EpisodeCardsServiceImpl implements EpisodeCardsService{
     private final EpisodeCardsRepository episodeCardsRepository;
+
+    @Override
+    public EpisodeCards getCards(Long id) {
+        return episodeCardsRepository.findById(id).get();
+    }
+
     @Override
     public void addCards(EpisodeCardsDTO episodeCardsDTO) {
         episodeCardsRepository.insert(EpisodeCards.builder()

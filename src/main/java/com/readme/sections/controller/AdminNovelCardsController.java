@@ -25,12 +25,6 @@ public class AdminNovelCardsController {
     private final NovelCardsServiceImpl novelCardsServiceImpl;
     private final ModelMapper modelMapper;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ResponseNovelCards> getNovelCard(@PathVariable Long id) {
-        NovelCardsDTO novelCardsDTO = novelCardsServiceImpl.getCards(id);
-        return ResponseEntity.ok(modelMapper.map(novelCardsDTO, ResponseNovelCards.class));
-    }
-
     @PostMapping
     public void addNovelCard(@RequestBody RequestNovelCards requestNovelCards) {
         NovelCardsDTO novelCardsDTO = modelMapper.map(requestNovelCards, NovelCardsDTO.class);
