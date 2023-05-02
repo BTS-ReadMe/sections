@@ -5,6 +5,7 @@ import com.readme.sections.requestObject.RequestSchedule;
 import com.readme.sections.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,5 +40,10 @@ public class AdminScheduleController {
             .endDate(requestSchedule.getEndDate())
             .build());
         scheduleService.updateSchedule(scheduleDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteSchedule(@PathVariable Long id) {
+        scheduleService.deleteSchedule(id);
     }
 }

@@ -43,4 +43,9 @@ public class ScheduleServiceImpl implements ScheduleService{
             .endDate(scheduleDTO.getEndDate())
             .build());
     }
+
+    @Override
+    public void deleteSchedule(Long id) {
+        scheduleRepository.deleteById(id);
+    }
 }
