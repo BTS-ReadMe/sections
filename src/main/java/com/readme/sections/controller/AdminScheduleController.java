@@ -2,10 +2,13 @@ package com.readme.sections.controller;
 
 import com.readme.sections.dto.ScheduleDTO;
 import com.readme.sections.requestObject.RequestSchedule;
+import com.readme.sections.responseObject.ResponseSchedule;
 import com.readme.sections.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +23,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminScheduleController {
 
     private final ScheduleService scheduleService;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseSchedule> getSchedule(@PathVariable Long id) {
+        ScheduleDTO scheduleDTO = scheduleService.getSchedule(id);
+        return ResponseEntity.ok(ResponseSchedule.builder()
+            .id(scheduleDTO.getId())
+            .name(scheduleDTO.getName())
+            .startDate(scheduleDTO.getStartDate())
+            .endDate(scheduleDTO.getEndDate())
+            .build());
+    }
 
     @PostMapping
     public void addSchedule(@RequestBody RequestSchedule requestSchedule) {

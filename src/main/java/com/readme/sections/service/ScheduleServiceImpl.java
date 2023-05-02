@@ -12,6 +12,17 @@ public class ScheduleServiceImpl implements ScheduleService{
     private final ScheduleRepository scheduleRepository;
 
     @Override
+    public ScheduleDTO getSchedule(Long id) {
+        Schedule schedule = scheduleRepository.findById(id).get();
+        return ScheduleDTO.builder()
+            .id(schedule.getId())
+            .name(schedule.getName())
+            .startDate(schedule.getStartDate())
+            .endDate(schedule.getEndDate())
+            .build();
+    }
+
+    @Override
     public void addSchedule(ScheduleDTO scheduleDTO) {
         scheduleRepository.save(Schedule.builder()
             .name(scheduleDTO.getName())
