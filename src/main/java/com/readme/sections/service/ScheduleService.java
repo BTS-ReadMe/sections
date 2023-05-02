@@ -1,2 +1,5 @@
-package com.readme.sections.service;public interface ScheduleService {
+package com.readme.sections.service;
+
+public interface ScheduleService {
+
 }

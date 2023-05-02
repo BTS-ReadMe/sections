@@ -1,2 +1,5 @@
-package com.readme.sections.dto;public class ScheduleDTO {
+package com.readme.sections.dto;
+
+public class ScheduleDTO {
+
 }

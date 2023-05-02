@@ -1,2 +1,5 @@
-package com.readme.sections.controller;public class AdminScheduleController {
+package com.readme.sections.controller;
+
+public class AdminScheduleController {
+
 }

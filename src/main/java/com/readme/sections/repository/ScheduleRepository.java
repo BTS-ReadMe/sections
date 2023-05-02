@@ -1,2 +1,5 @@
-package com.readme.sections.repository;public interface ScheduleRepository {
+package com.readme.sections.repository;
+
+public interface ScheduleRepository {
+
 }
