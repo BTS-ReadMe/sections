@@ -1,5 +1,7 @@
 package com.readme.sections.service;
 
-public interface ScheduleService {
+import com.readme.sections.dto.ScheduleDTO;
 
+public interface ScheduleService {
+    public void addSchedule(ScheduleDTO scheduleDTO);
 }
