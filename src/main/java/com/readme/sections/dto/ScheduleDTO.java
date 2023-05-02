@@ -15,6 +15,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class ScheduleDTO {
+    Long id;
     String name;
     LocalDateTime startDate;
     LocalDateTime endDate;

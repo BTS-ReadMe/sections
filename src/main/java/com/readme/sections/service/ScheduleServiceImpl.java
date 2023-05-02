@@ -19,4 +19,28 @@ public class ScheduleServiceImpl implements ScheduleService{
             .endDate(scheduleDTO.getEndDate())
             .build());
     }
+
+    @Override
+    public ScheduleDTO existUpdateData(Long id, ScheduleDTO scheduleDTO) {
+        Schedule schedule = scheduleRepository.findById(id).get();
+        return ScheduleDTO.builder()
+            .id(schedule.getId())
+            .name(scheduleDTO.getName() != null ? scheduleDTO.getName()
+                : schedule.getName())
+            .startDate(scheduleDTO.getStartDate() != null ? scheduleDTO.getStartDate()
+                : schedule.getStartDate())
+            .endDate(scheduleDTO.getEndDate() != null ? scheduleDTO.getEndDate()
+                : schedule.getEndDate())
+            .build();
+    }
+
+    @Override
+    public void updateSchedule(ScheduleDTO scheduleDTO) {
+        scheduleRepository.save(Schedule.builder()
+            .id(scheduleDTO.getId())
+            .name(scheduleDTO.getName())
+            .startDate(scheduleDTO.getStartDate())
+            .endDate(scheduleDTO.getEndDate())
+            .build());
+    }
 }
