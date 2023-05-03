@@ -36,7 +36,6 @@ public class NovelCardsServiceImpl implements NovelCardsService {
                     .id(element.getId())
                     .name(element.getName())
                     .build()).collect(Collectors.toList()))
-            .serializationDays(novelCardsDTO.getSerializationDays())
             .thumbnail(novelCardsDTO.getThumbnail())
             .views(novelCardsDTO.getViews())
             .serializationStatus(novelCardsDTO.getSerializationStatus())
@@ -44,6 +43,13 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             .scheduleId(novelCardsDTO.getScheduleId())
             .startDate(novelCardsDTO.getStartDate())
             .starRating(novelCardsDTO.getStarRating())
+            .monday(novelCardsDTO.getMonday())
+            .tuesday(novelCardsDTO.getTuesday())
+            .wednesday(novelCardsDTO.getWednesday())
+            .thursday(novelCardsDTO.getThursday())
+            .friday(novelCardsDTO.getFriday())
+            .saturday(novelCardsDTO.getSaturday())
+            .sunday(novelCardsDTO.getSunday())
             .build());
     }
 
@@ -69,9 +75,6 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             .startDate(
                 novelCardsDTO.getStartDate() != null ? novelCardsDTO.getStartDate()
                     : novelCards.getStartDate())
-            .serializationDays(novelCardsDTO.getSerializationDays() != null
-                ? novelCardsDTO.getSerializationDays()
-                : novelCards.getSerializationDays())
             .views(novelCardsDTO.getViews() != null ? novelCardsDTO.getViews()
                 : novelCards.getViews())
             .serializationStatus(novelCardsDTO.getSerializationStatus() != null
@@ -85,11 +88,32 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             .starRating(
                 novelCardsDTO.getStarRating() != null ? novelCardsDTO.getStarRating()
                     : novelCards.getStarRating())
+            .monday(
+                novelCardsDTO.getMonday() != null ? novelCardsDTO.getMonday()
+                    : novelCards.getMonday())
+            .tuesday(
+                novelCardsDTO.getTuesday() != null ? novelCardsDTO.getTuesday()
+                    : novelCards.getTuesday())
+            .wednesday(
+                novelCardsDTO.getWednesday() != null ? novelCardsDTO.getWednesday()
+                    : novelCards.getWednesday())
+            .thursday(
+                novelCardsDTO.getThursday() != null ? novelCardsDTO.getThursday()
+                    : novelCards.getThursday())
+            .friday(
+                novelCardsDTO.getFriday() != null ? novelCardsDTO.getFriday()
+                    : novelCards.getFriday())
+            .saturday(
+                novelCardsDTO.getSaturday() != null ? novelCardsDTO.getSaturday()
+                    : novelCards.getSaturday())
+            .sunday(
+                novelCardsDTO.getSunday() != null ? novelCardsDTO.getSunday()
+                    : novelCards.getSunday())
             .build();
     }
 
     @Override
-    public void updateCards(NovelCardsDTO novelCardsDTO){
+    public void updateCards(NovelCardsDTO novelCardsDTO) {
         novelCardsRepository.save(modelMapper.map(novelCardsDTO, NovelCards.class));
     }
 
@@ -113,7 +137,6 @@ public class NovelCardsServiceImpl implements NovelCardsService {
                         .id(element.getId())
                         .name(element.getName())
                         .build()).collect(Collectors.toList()))
-                .serializationDays(novelCards.getSerializationDays())
                 .thumbnail(novelCards.getThumbnail())
                 .views(novelCards.getViews())
                 .serializationStatus(novelCards.getSerializationStatus())
@@ -121,6 +144,13 @@ public class NovelCardsServiceImpl implements NovelCardsService {
                 .scheduleId(novelCards.getScheduleId())
                 .startDate(novelCards.getStartDate())
                 .starRating(novelCards.getStarRating())
+                .monday(novelCards.getMonday())
+                .tuesday(novelCards.getTuesday())
+                .wednesday(novelCards.getWednesday())
+                .thursday(novelCards.getThursday())
+                .friday(novelCards.getFriday())
+                .saturday(novelCards.getSaturday())
+                .sunday(novelCards.getSunday())
                 .build())
             .collect(Collectors.toList());
     }

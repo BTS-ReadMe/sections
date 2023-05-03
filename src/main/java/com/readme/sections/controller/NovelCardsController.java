@@ -43,7 +43,6 @@ public class NovelCardsController {
                         .id(element.getId())
                         .name(element.getName())
                         .build()).collect(Collectors.toList()))
-                .serializationDays(novelCardsDTO.getSerializationDays())
                 .thumbnail(novelCardsDTO.getThumbnail())
                 .views(novelCardsDTO.getViews())
                 .serializationStatus(novelCardsDTO.getSerializationStatus())
@@ -51,6 +50,13 @@ public class NovelCardsController {
                 .scheduleId(novelCardsDTO.getScheduleId())
                 .startDate(novelCardsDTO.getStartDate())
                 .starRating(novelCardsDTO.getStarRating())
+                .monday(novelCardsDTO.getMonday())
+                .tuesday(novelCardsDTO.getTuesday())
+                .wednesday(novelCardsDTO.getWednesday())
+                .thursday(novelCardsDTO.getThursday())
+                .friday(novelCardsDTO.getFriday())
+                .saturday(novelCardsDTO.getSaturday())
+                .sunday(novelCardsDTO.getSunday())
                 .build())
             .collect(Collectors.toList()));
     }
