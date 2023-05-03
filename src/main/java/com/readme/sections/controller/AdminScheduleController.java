@@ -3,6 +3,7 @@ package com.readme.sections.controller;
 import com.readme.sections.dto.ScheduleDTO;
 import com.readme.sections.requestObject.RequestSchedule;
 import com.readme.sections.responseObject.ResponseSchedule;
+import com.readme.sections.responseObject.ResponseSchedule.Schedules;
 import com.readme.sections.service.ScheduleService;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,9 +39,9 @@ public class AdminScheduleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ResponseSchedule.AdminSchedules>> getSchedules() {
+    public ResponseEntity<List<Schedules>> getSchedules() {
         return ResponseEntity.ok(scheduleService.getSchedules().stream()
-            .map(schedule -> ResponseSchedule.AdminSchedules.builder()
+            .map(schedule -> Schedules.builder()
                 .id(schedule.getId())
                 .name(schedule.getName())
                 .build())

@@ -23,7 +23,7 @@ public class ResponseSchedule {
     @NoArgsConstructor
     @AllArgsConstructor
     @ToString
-    public static class AdminSchedules {
+    public static class Schedules {
         Long id;
         String name;
     }
