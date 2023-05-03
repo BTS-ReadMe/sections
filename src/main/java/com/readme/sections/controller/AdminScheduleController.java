@@ -4,6 +4,8 @@ import com.readme.sections.dto.ScheduleDTO;
 import com.readme.sections.requestObject.RequestSchedule;
 import com.readme.sections.responseObject.ResponseSchedule;
 import com.readme.sections.service.ScheduleService;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +35,16 @@ public class AdminScheduleController {
             .startDate(scheduleDTO.getStartDate())
             .endDate(scheduleDTO.getEndDate())
             .build());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ResponseSchedule.AdminSchedules>> getSchedules() {
+        return ResponseEntity.ok(scheduleService.getSchedules().stream()
+            .map(schedule -> ResponseSchedule.AdminSchedules.builder()
+                .id(schedule.getId())
+                .name(schedule.getName())
+                .build())
+            .collect(Collectors.toList()));
     }
 
     @PostMapping

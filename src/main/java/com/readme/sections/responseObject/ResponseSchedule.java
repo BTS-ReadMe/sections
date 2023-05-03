@@ -17,4 +17,14 @@ public class ResponseSchedule {
     String name;
     LocalDateTime startDate;
     LocalDateTime endDate;
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString
+    public static class AdminSchedules {
+        Long id;
+        String name;
+    }
 }

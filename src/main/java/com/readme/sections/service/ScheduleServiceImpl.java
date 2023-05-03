@@ -3,6 +3,8 @@ package com.readme.sections.service;
 import com.readme.sections.dto.ScheduleDTO;
 import com.readme.sections.model.Schedule;
 import com.readme.sections.repository.ScheduleRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,18 @@ public class ScheduleServiceImpl implements ScheduleService{
             .startDate(schedule.getStartDate())
             .endDate(schedule.getEndDate())
             .build();
+    }
+
+    @Override
+    public List<ScheduleDTO> getSchedules() {
+        return scheduleRepository.getCurrentSchedules().stream()
+            .map(schedule -> ScheduleDTO.builder()
+                .id(schedule.getId())
+                .name(schedule.getName())
+                .startDate(schedule.getStartDate())
+                .endDate(schedule.getEndDate())
+                .build())
+            .collect(Collectors.toList());
     }
 
     @Override
