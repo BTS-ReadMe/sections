@@ -4,6 +4,9 @@ import com.readme.sections.dto.NovelCardsDTO;
 import com.readme.sections.dto.NovelCardsDTO.Tag;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.repository.NovelCardsRepository;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -93,5 +96,32 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     @Override
     public void deleteCards(Long id) {
         novelCardsRepository.deleteById(id);
+    }
+
+    @Override
+    public List<NovelCardsDTO> getNovelCardsForSchedule(Long scheduleId) {
+        List<NovelCardsDTO> scheduleList = new ArrayList<>();
+        return novelCardsRepository.findAllByScheduleId(scheduleId).stream()
+            .map(novelCards -> NovelCardsDTO.builder()
+                .novelId(novelCards.getNovelId())
+                .title(novelCards.getTitle())
+                .author(novelCards.getAuthor())
+                .grade(novelCards.getGrade())
+                .genre(novelCards.getGenre())
+                .tags(novelCards.getTags().stream()
+                    .map(element -> Tag.builder()
+                        .id(element.getId())
+                        .name(element.getName())
+                        .build()).collect(Collectors.toList()))
+                .serializationDays(novelCards.getSerializationDays())
+                .thumbnail(novelCards.getThumbnail())
+                .views(novelCards.getViews())
+                .serializationStatus(novelCards.getSerializationStatus())
+                .description(novelCards.getDescription())
+                .scheduleId(novelCards.getScheduleId())
+                .startDate(novelCards.getStartDate())
+                .starRating(novelCards.getStarRating())
+                .build())
+            .collect(Collectors.toList());
     }
 }
