@@ -2,14 +2,17 @@ package com.readme.sections.service;
 
 import com.readme.sections.dto.NovelCardsDTO;
 import com.readme.sections.dto.NovelCardsDTO.Tag;
+import com.readme.sections.dto.NovelCardsPaginationDTO;
+import com.readme.sections.dto.NovelCardsPaginationDTO.NovelCardsData;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.repository.NovelCardsRepository;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,6 +25,21 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     public NovelCardsDTO getCards(Long id) {
         NovelCards novelCards = novelCardsRepository.findById(id).get();
         return modelMapper.map(novelCards, NovelCardsDTO.class);
+    }
+
+    @Override
+    public NovelCardsPaginationDTO getAllCards(Pageable pageable) {
+        Page<NovelCards> novelCardsList = novelCardsRepository.findAll(pageable);
+        List<NovelCardsData> novelCardsData = novelCardsList.stream()
+            .map(novel -> modelMapper.map(novel, NovelCardsData.class))
+            .collect(Collectors.toList());
+        return NovelCardsPaginationDTO.builder()
+            .novelCardsData(novelCardsData)
+            .size(novelCardsList.getSize())
+            .page(novelCardsList.getNumber())
+            .totalElements(novelCardsList.getTotalElements())
+            .totalPages(novelCardsList.getTotalPages())
+            .build();
     }
 
     public void addCards(NovelCardsDTO novelCardsDTO) {
