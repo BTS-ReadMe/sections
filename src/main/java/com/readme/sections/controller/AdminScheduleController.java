@@ -2,10 +2,10 @@ package com.readme.sections.controller;
 
 import com.readme.sections.dto.ScheduleDTO;
 import com.readme.sections.requestObject.RequestSchedule;
+import com.readme.sections.responseObject.Response;
 import com.readme.sections.responseObject.ResponseSchedule;
 import com.readme.sections.responseObject.ResponseSchedule.Schedules;
 import com.readme.sections.service.ScheduleService;
-import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,24 +28,28 @@ public class AdminScheduleController {
     private final ScheduleService scheduleService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseSchedule> getSchedule(@PathVariable Long id) {
+    public ResponseEntity<Response> getSchedule(@PathVariable Long id) {
         ScheduleDTO scheduleDTO = scheduleService.getSchedule(id);
-        return ResponseEntity.ok(ResponseSchedule.builder()
+        return ResponseEntity.ok(Response.builder()
+            .data(ResponseSchedule.builder()
             .id(scheduleDTO.getId())
             .name(scheduleDTO.getName())
             .startDate(scheduleDTO.getStartDate())
             .endDate(scheduleDTO.getEndDate())
+            .build())
             .build());
     }
 
     @GetMapping
-    public ResponseEntity<List<Schedules>> getSchedules() {
-        return ResponseEntity.ok(scheduleService.getSchedules().stream()
+    public ResponseEntity<Response> getSchedules() {
+        return ResponseEntity.ok(Response.builder()
+            .data(scheduleService.getSchedules().stream()
             .map(schedule -> Schedules.builder()
                 .id(schedule.getId())
                 .name(schedule.getName())
                 .build())
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList()))
+            .build());
     }
 
     @PostMapping

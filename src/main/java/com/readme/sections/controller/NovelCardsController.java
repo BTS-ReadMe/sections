@@ -3,6 +3,7 @@ package com.readme.sections.controller;
 import com.readme.sections.dto.NovelCardsDTO;
 import com.readme.sections.dto.NovelCardsDTO.Tag;
 import com.readme.sections.dto.NovelCardsPaginationDTO;
+import com.readme.sections.responseObject.Response;
 import com.readme.sections.responseObject.ResponseNovelCards;
 import com.readme.sections.responseObject.ResponseNovelCardsPagination;
 import com.readme.sections.service.NovelCardsService;
@@ -31,57 +32,63 @@ public class NovelCardsController {
     private final ModelMapper modelMapper;
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseNovelCards> getNovelCard(@PathVariable Long id) {
+    public ResponseEntity<Response> getNovelCard(@PathVariable Long id) {
         NovelCardsDTO novelCardsDTO = novelCardsService.getCards(id);
-        return ResponseEntity.ok(modelMapper.map(novelCardsDTO, ResponseNovelCards.class));
+        return ResponseEntity.ok(Response.builder()
+            .data(modelMapper.map(novelCardsDTO, ResponseNovelCards.class))
+            .build());
     }
 
     @GetMapping
-    public ResponseEntity<ResponseNovelCardsPagination> getAllNovelCards(
+    public ResponseEntity<Response> getAllNovelCards(
         @Param("pagination") Integer pagination, Pageable pageable) {
         pageable = PageRequest.of(pagination, PAGE_SIZE);
         NovelCardsPaginationDTO novelCardsPaginationDTO = novelCardsService.getAllCards(pageable);
-        return ResponseEntity.ok(ResponseNovelCardsPagination.builder()
-            .novelCardsData(novelCardsPaginationDTO.getNovelCardsData())
+        return ResponseEntity.ok(Response.builder()
+            .data(ResponseNovelCardsPagination.builder()
+                .novelCardsData(novelCardsPaginationDTO.getNovelCardsData())
                 .size(novelCardsPaginationDTO.getSize())
                 .page(novelCardsPaginationDTO.getPage())
                 .totalElements(novelCardsPaginationDTO.getTotalElements())
                 .totalPages(novelCardsPaginationDTO.getTotalPages())
-                .build());
+                .build())
+            .build());
     }
 
     @GetMapping("/schedules")
-    public ResponseEntity<List<ResponseNovelCards>> getNovelCardsForSchedule(
+    public ResponseEntity<Response> getNovelCardsForSchedule(
         @Param("scheduleId") Long scheduleId) {
         List<NovelCardsDTO> novelCardsDTOList = novelCardsService.getNovelCardsForSchedule(
             scheduleId);
-        return ResponseEntity.ok(novelCardsDTOList.stream()
-            .map(novelCardsDTO -> ResponseNovelCards.builder()
-                .novelId(novelCardsDTO.getNovelId())
-                .title(novelCardsDTO.getTitle())
-                .author(novelCardsDTO.getAuthor())
-                .grade(novelCardsDTO.getGrade())
-                .genre(novelCardsDTO.getGenre())
-                .tags(novelCardsDTO.getTags().stream()
-                    .map(element -> Tag.builder()
-                        .id(element.getId())
-                        .name(element.getName())
-                        .build()).collect(Collectors.toList()))
-                .thumbnail(novelCardsDTO.getThumbnail())
-                .views(novelCardsDTO.getViews())
-                .serializationStatus(novelCardsDTO.getSerializationStatus())
-                .description(novelCardsDTO.getDescription())
-                .scheduleId(novelCardsDTO.getScheduleId())
-                .startDate(novelCardsDTO.getStartDate())
-                .starRating(novelCardsDTO.getStarRating())
-                .monday(novelCardsDTO.getMonday())
-                .tuesday(novelCardsDTO.getTuesday())
-                .wednesday(novelCardsDTO.getWednesday())
-                .thursday(novelCardsDTO.getThursday())
-                .friday(novelCardsDTO.getFriday())
-                .saturday(novelCardsDTO.getSaturday())
-                .sunday(novelCardsDTO.getSunday())
-                .build())
-            .collect(Collectors.toList()));
+        return ResponseEntity.ok(Response.builder()
+            .data(novelCardsDTOList.stream()
+                .map(novelCardsDTO -> ResponseNovelCards.builder()
+                    .novelId(novelCardsDTO.getNovelId())
+                    .title(novelCardsDTO.getTitle())
+                    .author(novelCardsDTO.getAuthor())
+                    .grade(novelCardsDTO.getGrade())
+                    .genre(novelCardsDTO.getGenre())
+                    .tags(novelCardsDTO.getTags().stream()
+                        .map(element -> Tag.builder()
+                            .id(element.getId())
+                            .name(element.getName())
+                            .build()).collect(Collectors.toList()))
+                    .thumbnail(novelCardsDTO.getThumbnail())
+                    .views(novelCardsDTO.getViews())
+                    .serializationStatus(novelCardsDTO.getSerializationStatus())
+                    .description(novelCardsDTO.getDescription())
+                    .scheduleId(novelCardsDTO.getScheduleId())
+                    .startDate(novelCardsDTO.getStartDate())
+                    .starRating(novelCardsDTO.getStarRating())
+                    .monday(novelCardsDTO.getMonday())
+                    .tuesday(novelCardsDTO.getTuesday())
+                    .wednesday(novelCardsDTO.getWednesday())
+                    .thursday(novelCardsDTO.getThursday())
+                    .friday(novelCardsDTO.getFriday())
+                    .saturday(novelCardsDTO.getSaturday())
+                    .sunday(novelCardsDTO.getSunday())
+                    .build())
+                .collect(Collectors.toList()))
+            .build());
     }
 }

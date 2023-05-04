@@ -1,8 +1,8 @@
 package com.readme.sections.controller;
 
+import com.readme.sections.responseObject.Response;
 import com.readme.sections.responseObject.ResponseSchedule.Schedules;
 import com.readme.sections.service.ScheduleService;
-import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class ScheduleController {
     private final ScheduleService scheduleService;
     @GetMapping
-    public ResponseEntity<List<Schedules>> getSchedules() {
-        return ResponseEntity.ok(scheduleService.getSchedules().stream()
+    public ResponseEntity<Response> getSchedules() {
+        return ResponseEntity.ok(Response.builder()
+            .data(scheduleService.getSchedules().stream()
             .map(schedule -> Schedules.builder()
                 .id(schedule.getId())
                 .name(schedule.getName())
                 .build())
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList()))
+            .build());
     }
 }
