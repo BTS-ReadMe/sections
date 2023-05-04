@@ -7,6 +7,9 @@ import com.readme.sections.responseObject.Response;
 import com.readme.sections.responseObject.ResponseNovelCards;
 import com.readme.sections.responseObject.ResponseNovelCardsPagination;
 import com.readme.sections.service.NovelCardsService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +34,13 @@ public class NovelCardsController {
     private final NovelCardsService novelCardsService;
     private final ModelMapper modelMapper;
 
+    @Operation(summary = "소설 카드 조회", description = "id에 해당하는 에피소드 카드 조회", tags = {"소설 카드"})
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
+        @ApiResponse(responseCode = "404", description = "NOT FOUND"),
+        @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<Response> getNovelCard(@PathVariable Long id) {
         NovelCardsDTO novelCardsDTO = novelCardsService.getCards(id);
@@ -39,6 +49,13 @@ public class NovelCardsController {
             .build());
     }
 
+    @Operation(summary = "소설 카드 전체 조회", description = "소설 카드 전체 조회", tags = {"소설 카드"})
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
+        @ApiResponse(responseCode = "404", description = "NOT FOUND"),
+        @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
+    })
     @GetMapping
     public ResponseEntity<Response> getAllNovelCards(
         @Param("pagination") Integer pagination, Pageable pageable) {
@@ -55,6 +72,13 @@ public class NovelCardsController {
             .build());
     }
 
+    @Operation(summary = "스케줄에 해당하는 소설 카드 목록 조회", description = "scheduleId에 해당하는 소설 카드 목록 조회", tags = {"소설 카드"})
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
+        @ApiResponse(responseCode = "404", description = "NOT FOUND"),
+        @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
+    })
     @GetMapping("/schedules")
     public ResponseEntity<Response> getNovelCardsForSchedule(
         @Param("scheduleId") Long scheduleId) {
