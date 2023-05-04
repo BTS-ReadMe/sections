@@ -42,6 +42,21 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             .build();
     }
 
+    @Override
+    public NovelCardsPaginationDTO getAllCardsByGenre(String genre, Pageable pageable) {
+        Page<NovelCards> novelCardsList = novelCardsRepository.findAllByGenre(genre, pageable);
+        List<NovelCardsData> novelCardsData = novelCardsList.stream()
+            .map(novel -> modelMapper.map(novel, NovelCardsData.class))
+            .collect(Collectors.toList());
+        return NovelCardsPaginationDTO.builder()
+            .novelCardsData(novelCardsData)
+            .size(novelCardsList.getSize())
+            .page(novelCardsList.getNumber())
+            .totalElements(novelCardsList.getTotalElements())
+            .totalPages(novelCardsList.getTotalPages())
+            .build();
+    }
+
     public void addCards(NovelCardsDTO novelCardsDTO) {
         novelCardsRepository.insert(NovelCards.builder()
             .novelId(novelCardsDTO.getNovelId())

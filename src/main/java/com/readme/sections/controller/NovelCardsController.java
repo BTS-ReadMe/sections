@@ -17,6 +17,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,10 +58,17 @@ public class NovelCardsController {
         @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
     })
     @GetMapping
-    public ResponseEntity<Response> getAllNovelCards(
-        @Param("pagination") Integer pagination, Pageable pageable) {
+    public ResponseEntity<Response> getAllNovelCardsByGere(
+        @Param("pagination") Integer pagination,
+        @Param("genre") String genre,
+        Pageable pageable) {
         pageable = PageRequest.of(pagination, PAGE_SIZE);
-        NovelCardsPaginationDTO novelCardsPaginationDTO = novelCardsService.getAllCards(pageable);
+        NovelCardsPaginationDTO novelCardsPaginationDTO = new NovelCardsPaginationDTO();
+        if (genre.equals("all")) {
+            novelCardsPaginationDTO = novelCardsService.getAllCards(pageable);
+        } else {
+            novelCardsPaginationDTO = novelCardsService.getAllCardsByGenre(genre, pageable);
+        }
         return ResponseEntity.ok(Response.builder()
             .data(ResponseNovelCardsPagination.builder()
                 .novelCardsData(novelCardsPaginationDTO.getNovelCardsData())
