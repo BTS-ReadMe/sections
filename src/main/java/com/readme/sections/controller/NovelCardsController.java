@@ -119,6 +119,7 @@ public class NovelCardsController {
                     .friday(novelCardsDTO.getFriday())
                     .saturday(novelCardsDTO.getSaturday())
                     .sunday(novelCardsDTO.getSunday())
+                    .isNew(novelCardsDTO.getIsNew())
                     .build())
                 .collect(Collectors.toList()))
             .build());

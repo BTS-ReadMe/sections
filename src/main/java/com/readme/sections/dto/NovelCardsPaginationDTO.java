@@ -49,6 +49,7 @@ public class NovelCardsPaginationDTO {
         Boolean friday;
         Boolean saturday;
         Boolean sunday;
+        Boolean isNew;
         Integer totalPages;
         Long totalElements;
         Integer nowPage;

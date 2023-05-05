@@ -21,7 +21,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @ToString
 public class NovelCards {
     @Id
-    Long novelId;
+    Long id;
     String title;
     String description;
     String author;
@@ -41,4 +41,5 @@ public class NovelCards {
     Boolean friday;
     Boolean saturday;
     Boolean sunday;
+    Boolean isNew;
 }

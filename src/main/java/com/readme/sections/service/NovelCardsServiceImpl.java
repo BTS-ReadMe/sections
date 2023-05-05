@@ -7,9 +7,12 @@ import com.readme.sections.dto.NovelCardsPaginationDTO.NovelCardsData;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.repository.NovelCardsRepository;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NovelCardsServiceImpl implements NovelCardsService {
 
     private final NovelCardsRepository novelCardsRepository;
@@ -59,7 +63,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
 
     public void addCards(NovelCardsDTO novelCardsDTO) {
         novelCardsRepository.insert(NovelCards.builder()
-            .novelId(novelCardsDTO.getNovelId())
+            .id(novelCardsDTO.getNovelId())
             .title(novelCardsDTO.getTitle())
             .author(novelCardsDTO.getAuthor())
             .grade(novelCardsDTO.getGrade())
@@ -90,7 +94,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     public NovelCardsDTO existUpdateData(Long id, NovelCardsDTO novelCardsDTO) {
         NovelCards novelCards = novelCardsRepository.findById(id).get();
         return NovelCardsDTO.builder()
-            .novelId(novelCards.getNovelId())
+            .novelId(novelCards.getId())
             .title(novelCardsDTO.getTitle() != null ? novelCardsDTO.getTitle()
                 : novelCards.getTitle())
             .description(
@@ -158,9 +162,14 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     @Override
     public List<NovelCardsDTO> getNovelCardsForSchedule(Long scheduleId) {
         List<NovelCardsDTO> scheduleList = new ArrayList<>();
-        return novelCardsRepository.findAllByScheduleId(scheduleId).stream()
+        Date now = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        Date oneDayAgo = calendar.getTime();
+        return novelCardsRepository.findAllByScheduleId(scheduleId, oneDayAgo, now).stream()
             .map(novelCards -> NovelCardsDTO.builder()
-                .novelId(novelCards.getNovelId())
+                .novelId(novelCards.getId())
                 .title(novelCards.getTitle())
                 .author(novelCards.getAuthor())
                 .grade(novelCards.getGrade())
@@ -184,6 +193,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
                 .friday(novelCards.getFriday())
                 .saturday(novelCards.getSaturday())
                 .sunday(novelCards.getSunday())
+                .isNew(novelCards.getIsNew())
                 .build())
             .collect(Collectors.toList());
     }
