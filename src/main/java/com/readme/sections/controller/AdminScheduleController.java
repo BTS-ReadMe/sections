@@ -2,10 +2,13 @@ package com.readme.sections.controller;
 
 import com.readme.sections.dto.ScheduleDTO;
 import com.readme.sections.requestObject.RequestSchedule;
+import com.readme.sections.responseObject.Response;
 import com.readme.sections.responseObject.ResponseSchedule;
 import com.readme.sections.responseObject.ResponseSchedule.Schedules;
 import com.readme.sections.service.ScheduleService;
-import java.util.List;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,27 +30,52 @@ public class AdminScheduleController {
 
     private final ScheduleService scheduleService;
 
+    @Operation(summary = "스케줄 조회", description = "id에 해당하는 스케줄 조회", tags = {"Admin 스케줄"})
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
+        @ApiResponse(responseCode = "404", description = "NOT FOUND"),
+        @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseSchedule> getSchedule(@PathVariable Long id) {
+    public ResponseEntity<Response> getSchedule(@PathVariable Long id) {
         ScheduleDTO scheduleDTO = scheduleService.getSchedule(id);
-        return ResponseEntity.ok(ResponseSchedule.builder()
+        return ResponseEntity.ok(Response.builder()
+            .data(ResponseSchedule.builder()
             .id(scheduleDTO.getId())
             .name(scheduleDTO.getName())
             .startDate(scheduleDTO.getStartDate())
             .endDate(scheduleDTO.getEndDate())
+            .build())
             .build());
     }
 
+    @Operation(summary = "스케줄 전체 조회", description = "현재 진행 중인 스케줄 조회", tags = {"Admin 스케줄"})
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
+        @ApiResponse(responseCode = "404", description = "NOT FOUND"),
+        @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
+    })
     @GetMapping
-    public ResponseEntity<List<Schedules>> getSchedules() {
-        return ResponseEntity.ok(scheduleService.getSchedules().stream()
+    public ResponseEntity<Response> getSchedules() {
+        return ResponseEntity.ok(Response.builder()
+            .data(scheduleService.getSchedules().stream()
             .map(schedule -> Schedules.builder()
                 .id(schedule.getId())
                 .name(schedule.getName())
                 .build())
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList()))
+            .build());
     }
 
+    @Operation(summary = "진행 중인 스케줄 목록 조회", description = "현재 진행 중인 스케줄 조회", tags = {"Admin 스케줄"})
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
+        @ApiResponse(responseCode = "404", description = "NOT FOUND"),
+        @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
+    })
     @PostMapping
     public void addSchedule(@RequestBody RequestSchedule requestSchedule) {
         log.info(requestSchedule.getStartDate().toString());
@@ -58,6 +86,13 @@ public class AdminScheduleController {
             .build());
     }
 
+    @Operation(summary = "스케줄 수정", description = "RequestSchedule 필드 값 중 넘어온 값들을 확인하고 id에 해당하는 스케줄 수정", tags = {"Admin 스케줄"})
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
+        @ApiResponse(responseCode = "404", description = "NOT FOUND"),
+        @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
+    })
     @PatchMapping("/{id}")
     public void updateSchedule(@PathVariable Long id,
         @RequestBody RequestSchedule requestSchedule) {
@@ -69,6 +104,13 @@ public class AdminScheduleController {
         scheduleService.updateSchedule(scheduleDTO);
     }
 
+    @Operation(summary = "스케줄 삭제", description = "id에 해당하는 스케줄 삭제", tags = {"Admin 스케줄"})
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
+        @ApiResponse(responseCode = "404", description = "NOT FOUND"),
+        @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
+    })
     @DeleteMapping("/{id}")
     public void deleteSchedule(@PathVariable Long id) {
         scheduleService.deleteSchedule(id);

@@ -29,10 +29,16 @@ public class NovelCards {
     Integer grade;
     String thumbnail;
     Date startDate;
-    Integer serializationDays;
     Long views;
     String serializationStatus;
     List<Tag> tags;
     Long scheduleId;
     Float starRating;
+    Boolean monday;
+    Boolean tuesday;
+    Boolean wednesday;
+    Boolean thursday;
+    Boolean friday;
+    Boolean saturday;
+    Boolean sunday;
 }
