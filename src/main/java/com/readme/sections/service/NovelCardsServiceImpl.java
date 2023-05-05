@@ -63,7 +63,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
 
     public void addCards(NovelCardsDTO novelCardsDTO) {
         novelCardsRepository.insert(NovelCards.builder()
-            .id(novelCardsDTO.getNovelId())
+            .novelId(novelCardsDTO.getNovelId())
             .title(novelCardsDTO.getTitle())
             .author(novelCardsDTO.getAuthor())
             .grade(novelCardsDTO.getGrade())
@@ -94,7 +94,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     public NovelCardsDTO existUpdateData(Long id, NovelCardsDTO novelCardsDTO) {
         NovelCards novelCards = novelCardsRepository.findById(id).get();
         return NovelCardsDTO.builder()
-            .novelId(novelCards.getId())
+            .novelId(novelCards.getNovelId())
             .title(novelCardsDTO.getTitle() != null ? novelCardsDTO.getTitle()
                 : novelCards.getTitle())
             .description(
@@ -165,11 +165,14 @@ public class NovelCardsServiceImpl implements NovelCardsService {
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);
-        calendar.add(Calendar.DAY_OF_MONTH, -1);
-        Date oneDayAgo = calendar.getTime();
-        return novelCardsRepository.findAllByScheduleId(scheduleId, oneDayAgo, now).stream()
+        now = calendar.getTime();
+        calendar.add(Calendar.DAY_OF_MONTH, -7);
+        Date oneWeekAgo = calendar.getTime();
+        List<NovelCards> novelCardsList = novelCardsRepository.findAllByScheduleId(scheduleId, oneWeekAgo, now);
+        log.info(novelCardsList.get(0).toString());
+        return novelCardsList.stream()
             .map(novelCards -> NovelCardsDTO.builder()
-                .novelId(novelCards.getId())
+                .novelId(novelCards.getNovelId())
                 .title(novelCards.getTitle())
                 .author(novelCards.getAuthor())
                 .grade(novelCards.getGrade())

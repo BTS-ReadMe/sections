@@ -14,13 +14,13 @@ public interface NovelCardsRepository extends MongoRepository<NovelCards, Long> 
 
     @Aggregation({
         "{$match: {scheduleId: ?0}}",
-        "{$project: {_id: 0, title: 1, description: 1, author: 1, genre: 1, grade: 1, thumbnail: 1,"
+        "{$project: {_id: 1, title: 1, description: 1, author: 1, genre: 1, grade: 1, thumbnail: 1,"
             + "startDate: 1, views: 1, serializationStatus: 1, tags: 1, scheduleId: 1, starRating: 1,"
             + "monday: 1, tuesday: 1, wednesday: 1, thursday: 1, friday: 1, saturday: 1, sunday: 1}}",
         "{$addFields: {isNew: {$cond: [{$and: [{$gt: ['$startDate', ?1]}, "
             + "{$lt: ['$startDate', ?2]}]}, true, false]}}}"
     })
-    List<NovelCards> findAllByScheduleId(Long ScheduleId, Date oneDayAgo, Date now);
+    List<NovelCards> findAllByScheduleId(Long ScheduleId, Date oneWeekAgo, Date now);
 
     Page<NovelCards> findAll(Pageable pageable);
 

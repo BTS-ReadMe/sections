@@ -21,7 +21,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @ToString
 public class NovelCards {
     @Id
-    Long id;
+    Long novelId;
     String title;
     String description;
     String author;
