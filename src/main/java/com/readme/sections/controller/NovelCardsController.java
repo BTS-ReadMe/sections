@@ -2,10 +2,10 @@ package com.readme.sections.controller;
 
 import com.readme.sections.dto.NovelCardsDTO;
 import com.readme.sections.dto.NovelCardsDTO.Tag;
-import com.readme.sections.dto.NovelCardsPaginationDTO;
+import com.readme.sections.dto.NovelCardsSliceDTO;
 import com.readme.sections.responseObject.Response;
 import com.readme.sections.responseObject.ResponseNovelCards;
-import com.readme.sections.responseObject.ResponseNovelCardsPagination;
+import com.readme.sections.responseObject.ResponseNovelCardsSlice;
 import com.readme.sections.service.NovelCardsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,7 +17,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -63,19 +62,18 @@ public class NovelCardsController {
         @Param("genre") String genre,
         Pageable pageable) {
         pageable = PageRequest.of(pagination, PAGE_SIZE);
-        NovelCardsPaginationDTO novelCardsPaginationDTO = new NovelCardsPaginationDTO();
+        NovelCardsSliceDTO novelCardsSliceDTO = new NovelCardsSliceDTO();
         if (genre.equals("all")) {
-            novelCardsPaginationDTO = novelCardsService.getAllCards(pageable);
+            novelCardsSliceDTO = novelCardsService.getAllCards(pageable);
         } else {
-            novelCardsPaginationDTO = novelCardsService.getAllCardsByGenre(genre, pageable);
+            novelCardsSliceDTO = novelCardsService.getAllCardsByGenre(genre, pageable);
         }
         return ResponseEntity.ok(Response.builder()
-            .data(ResponseNovelCardsPagination.builder()
-                .novelCardsData(novelCardsPaginationDTO.getNovelCardsData())
-                .size(novelCardsPaginationDTO.getSize())
-                .page(novelCardsPaginationDTO.getPage())
-                .totalElements(novelCardsPaginationDTO.getTotalElements())
-                .totalPages(novelCardsPaginationDTO.getTotalPages())
+            .data(ResponseNovelCardsSlice.builder()
+                .novelCardsData(novelCardsSliceDTO.getNovelCardsData())
+                .size(novelCardsSliceDTO.getSize())
+                .page(novelCardsSliceDTO.getPage())
+                .next(novelCardsSliceDTO.isNext())
                 .build())
             .build());
     }
