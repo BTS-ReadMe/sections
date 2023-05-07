@@ -32,34 +32,13 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     }
 
     @Override
-    public NovelCardsSliceDTO getAllCards(Pageable pageable) {
-        Date now = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(now);
-        now = calendar.getTime();
-        calendar.add(Calendar.DAY_OF_MONTH, -7);
-        Date oneWeekAgo = calendar.getTime();
-        Slice<NovelCards> novelCardsList = novelCardsRepository.findAllNovelCards(oneWeekAgo, now, pageable);
-        List<NovelCardsData> novelCardsData = novelCardsList.stream()
-            .map(novel -> modelMapper.map(novel, NovelCardsData.class))
-            .collect(Collectors.toList());
-        return NovelCardsSliceDTO.builder()
-            .novelCardsData(novelCardsData)
-            .size(novelCardsList.getSize())
-            .page(novelCardsList.getNumber())
-            .next(novelCardsList.hasNext())
-            .build();
-    }
-
-    @Override
     public NovelCardsSliceDTO getAllCardsByGenre(String genre, Pageable pageable) {
-        Date now = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(now);
-        now = calendar.getTime();
-        calendar.add(Calendar.DAY_OF_MONTH, -7);
-        Date oneWeekAgo = calendar.getTime();
-        Slice<NovelCards> novelCardsList = novelCardsRepository.findAllByGenre(genre, oneWeekAgo, now, pageable);
+        Slice<NovelCards> novelCardsList = null;
+        if (genre.equals("all")) {
+            novelCardsList = novelCardsRepository.findAllNovelCards(getOneWeekAgo(), getNow(), pageable);
+        } else {
+            novelCardsList = novelCardsRepository.findAllByGenre(genre, getOneWeekAgo(), getNow(), pageable);
+        }
         List<NovelCardsData> novelCardsData = novelCardsList.stream()
             .map(novel -> modelMapper.map(novel, NovelCardsData.class))
             .collect(Collectors.toList());
@@ -172,13 +151,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     @Override
     public List<NovelCardsDTO> getNovelCardsForSchedule(Long scheduleId) {
         List<NovelCardsDTO> scheduleList = new ArrayList<>();
-        Date now = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(now);
-        now = calendar.getTime();
-        calendar.add(Calendar.DAY_OF_MONTH, -7);
-        Date oneWeekAgo = calendar.getTime();
-        List<NovelCards> novelCardsList = novelCardsRepository.findAllByScheduleId(scheduleId, oneWeekAgo, now);
+        List<NovelCards> novelCardsList = novelCardsRepository.findAllByScheduleId(scheduleId, getOneWeekAgo(), getNow());
         return novelCardsList.stream()
             .map(novelCards -> NovelCardsDTO.builder()
                 .novelId(novelCards.getNovelId())
@@ -208,5 +181,18 @@ public class NovelCardsServiceImpl implements NovelCardsService {
                 .isNew(novelCards.getIsNew())
                 .build())
             .collect(Collectors.toList());
+    }
+
+    private static Date getNow() {
+        return new Date();
+    }
+
+    private static Date getOneWeekAgo() {
+        Date now = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        now = calendar.getTime();
+        calendar.add(Calendar.DAY_OF_MONTH, -7);
+        return calendar.getTime();
     }
 }

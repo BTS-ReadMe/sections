@@ -63,11 +63,7 @@ public class NovelCardsController {
         Pageable pageable) {
         pageable = PageRequest.of(pagination, PAGE_SIZE);
         NovelCardsSliceDTO novelCardsSliceDTO = new NovelCardsSliceDTO();
-        if (genre.equals("all")) {
-            novelCardsSliceDTO = novelCardsService.getAllCards(pageable);
-        } else {
-            novelCardsSliceDTO = novelCardsService.getAllCardsByGenre(genre, pageable);
-        }
+        novelCardsSliceDTO = novelCardsService.getAllCardsByGenre(genre, pageable);
         return ResponseEntity.ok(Response.builder()
             .data(ResponseNovelCardsSlice.builder()
                 .novelCardsData(novelCardsSliceDTO.getNovelCardsData())
