@@ -50,6 +50,7 @@ public class NovelCardsPaginationDTO {
         Boolean saturday;
         Boolean sunday;
         Boolean isNew;
+        Long episodeCount;
     }
 
 }
