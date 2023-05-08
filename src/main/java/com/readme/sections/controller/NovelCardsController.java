@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -58,10 +59,12 @@ public class NovelCardsController {
     })
     @GetMapping
     public ResponseEntity<Response> getAllNovelCardsByGere(
-        @Param("pagination") Integer pagination,
+        @RequestParam(required=false) Integer pagination,
         @Param("genre") String genre,
         Pageable pageable) {
-        pageable = PageRequest.of(pagination, PAGE_SIZE);
+        if (pagination != null) {
+            pageable = PageRequest.of(pagination, PAGE_SIZE);
+        }
         NovelCardsSliceDTO novelCardsSliceDTO = new NovelCardsSliceDTO();
         novelCardsSliceDTO = novelCardsService.getAllCardsByGenre(genre, pageable);
         return ResponseEntity.ok(Response.builder()
