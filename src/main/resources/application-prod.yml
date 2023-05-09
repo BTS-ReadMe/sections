@@ -1,0 +1,44 @@
+server:
+  port: 8091
+
+spring:
+  application:
+    name: sections-service
+  data:
+    web:
+      pageable:
+        default-page-size: 3
+        default-page: 1
+    mongodb:
+      host: 172.17.0.4
+      port: 27017
+      authentication-database: null
+      username:
+      password:
+      database: sections
+      uri: mongodb://172.17.0.4:27017/sections
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 1234
+    url: jdbc:mysql://ec2-43-200-189-164.ap-northeast-2.compute.amazonaws.com/sections
+  jpa:
+    hibernate:
+      ddl-auto: update
+    generate-ddl: true
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+        format_sql: true
+
+eureka:
+  instance:
+    hostname: 43.200.189.164
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://172.17.0.2:8761/eureka
