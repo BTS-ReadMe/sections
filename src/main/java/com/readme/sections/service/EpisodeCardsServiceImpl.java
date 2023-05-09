@@ -1,20 +1,71 @@
 package com.readme.sections.service;
 
+import static com.mongodb.client.model.Aggregates.project;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+
 import com.readme.sections.dto.EpisodeCardsDTO;
 import com.readme.sections.model.EpisodeCards;
 import com.readme.sections.repository.EpisodeCardsRepository;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.ArrayOperators.Size;
+import org.springframework.data.mongodb.core.aggregation.ArrayOperators.Slice;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class EpisodeCardsServiceImpl implements EpisodeCardsService{
+@Slf4j
+public class EpisodeCardsServiceImpl implements EpisodeCardsService {
+
+    @Value("${spring.data.web.pageable.default-page-size}")
+    private int PAGE_SIZE;
     private final EpisodeCardsRepository episodeCardsRepository;
+    private final MongoTemplate mongoTemplate;
 
     @Override
-    public EpisodeCards getCards(Long id) {
-        return episodeCardsRepository.findById(id).get();
+    public EpisodeCardsDTO getCards(Long novelId, Integer pagination) {
+        EpisodeCards episodeCards = new EpisodeCards();
+        if (pagination == null) {
+            episodeCards = findEpisodesByEpisodeCardId(novelId, 0, PAGE_SIZE);
+            pagination = 0;
+        } else {
+            episodeCards = findEpisodesByEpisodeCardId(novelId, pagination * PAGE_SIZE, PAGE_SIZE);
+        }
+        return EpisodeCardsDTO.builder()
+            .novelId(episodeCards.getNovelId())
+            .episodes(episodeCards.getEpisodes())
+            .page(pagination)
+            .size(PAGE_SIZE)
+            .totalElements(episodeCards.getEpisodeCount())
+            .totalPages(
+                (int) Math.ceil((double) episodeCards.getEpisodeCount() / (double) PAGE_SIZE))
+            .build();
+    }
+
+    public EpisodeCards findEpisodesByEpisodeCardId(Long novelId, Integer skipValue,
+        Integer limitValue) {
+
+        MatchOperation match = match(where("_id").is(novelId));
+        ProjectionOperation project = Aggregation.project()
+            .and(Slice.sliceArrayOf("$episodes").offset(skipValue).itemCount(limitValue))
+            .as("episodes")
+            .and(Size.lengthOfArray("$episodes")).as("episodeCount");
+
+        Aggregation aggregation = newAggregation(match, project);
+
+        AggregationResults<EpisodeCards> results = mongoTemplate.aggregate(aggregation,
+            "episode_cards", EpisodeCards.class);
+
+        return results.getUniqueMappedResult();
     }
 
     @Override

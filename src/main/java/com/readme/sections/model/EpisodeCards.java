@@ -22,6 +22,7 @@ public class EpisodeCards {
     @Id
     Long novelId;
     List<Episode> episodes;
+    Long episodeCount;
     @Getter
     @Setter
     @Builder
