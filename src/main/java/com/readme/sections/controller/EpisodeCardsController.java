@@ -1,7 +1,7 @@
 package com.readme.sections.controller;
 
 import com.readme.sections.dto.EpisodeCardsDTO;
-import com.readme.sections.responseObject.Response;
+import com.readme.sections.commonResponseObject.CommonDataResponse;
 import com.readme.sections.responseObject.ResponseEpisodeCards;
 import com.readme.sections.service.EpisodeCardsService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,18 +31,19 @@ public class EpisodeCardsController {
         @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Response> getEpisodeCard(@PathVariable Long id,
+    public ResponseEntity<CommonDataResponse<ResponseEpisodeCards>> getEpisodeCard(
+        @PathVariable Long id,
         @RequestParam(required = false) Integer pagination) {
         EpisodeCardsDTO episodeCardsDTO = episodeCardsService.getCards(id, pagination);
-        return ResponseEntity.ok(Response.builder()
-            .data(ResponseEpisodeCards.builder()
+        return ResponseEntity.ok(new CommonDataResponse(ResponseEpisodeCards.builder()
                 .novelId(episodeCardsDTO.getNovelId())
                 .episodes(episodeCardsDTO.getEpisodes())
                 .page(episodeCardsDTO.getPage())
                 .size(episodeCardsDTO.getSize())
                 .totalElements(episodeCardsDTO.getTotalElements())
                 .totalPages(episodeCardsDTO.getTotalPages())
-                .build())
-            .build());
+                .build()
+            )
+        );
     }
 }

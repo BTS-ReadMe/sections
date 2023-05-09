@@ -2,13 +2,14 @@ package com.readme.sections.controller;
 
 import com.readme.sections.dto.ScheduleDTO;
 import com.readme.sections.requestObject.RequestSchedule;
-import com.readme.sections.responseObject.Response;
+import com.readme.sections.commonResponseObject.CommonDataResponse;
 import com.readme.sections.responseObject.ResponseSchedule;
 import com.readme.sections.responseObject.ResponseSchedule.Schedules;
 import com.readme.sections.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,16 +39,17 @@ public class AdminScheduleController {
         @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Response> getSchedule(@PathVariable Long id) {
+    public ResponseEntity<CommonDataResponse<ResponseSchedule>> getSchedule(@PathVariable Long id) {
         ScheduleDTO scheduleDTO = scheduleService.getSchedule(id);
-        return ResponseEntity.ok(Response.builder()
-            .data(ResponseSchedule.builder()
-            .id(scheduleDTO.getId())
-            .name(scheduleDTO.getName())
-            .startDate(scheduleDTO.getStartDate())
-            .endDate(scheduleDTO.getEndDate())
-            .build())
-            .build());
+        return ResponseEntity.ok(new CommonDataResponse(
+                ResponseSchedule.builder()
+                    .id(scheduleDTO.getId())
+                    .name(scheduleDTO.getName())
+                    .startDate(scheduleDTO.getStartDate())
+                    .endDate(scheduleDTO.getEndDate())
+                    .build()
+            )
+        );
     }
 
     @Operation(summary = "스케줄 전체 조회", description = "현재 진행 중인 스케줄 조회", tags = {"Admin 스케줄"})
@@ -58,15 +60,15 @@ public class AdminScheduleController {
         @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
     })
     @GetMapping
-    public ResponseEntity<Response> getSchedules() {
-        return ResponseEntity.ok(Response.builder()
-            .data(scheduleService.getSchedules().stream()
-            .map(schedule -> Schedules.builder()
-                .id(schedule.getId())
-                .name(schedule.getName())
-                .build())
-            .collect(Collectors.toList()))
-            .build());
+    public ResponseEntity<CommonDataResponse<List<ResponseSchedule>>> getSchedules() {
+        return ResponseEntity.ok(new CommonDataResponse(scheduleService.getSchedules().stream()
+                .map(schedule -> Schedules.builder()
+                    .id(schedule.getId())
+                    .name(schedule.getName())
+                    .build())
+                .collect(Collectors.toList())
+            )
+        );
     }
 
     @Operation(summary = "진행 중인 스케줄 목록 조회", description = "현재 진행 중인 스케줄 조회", tags = {"Admin 스케줄"})
@@ -86,7 +88,8 @@ public class AdminScheduleController {
             .build());
     }
 
-    @Operation(summary = "스케줄 수정", description = "RequestSchedule 필드 값 중 넘어온 값들을 확인하고 id에 해당하는 스케줄 수정", tags = {"Admin 스케줄"})
+    @Operation(summary = "스케줄 수정", description = "RequestSchedule 필드 값 중 넘어온 값들을 확인하고 id에 해당하는 스케줄 수정", tags = {
+        "Admin 스케줄"})
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
         @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
