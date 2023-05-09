@@ -35,5 +35,6 @@ public class EpisodeCards {
         Boolean free;
         Date registrationDate;
         Float starRating;
+        Boolean isNew;
     }
 }

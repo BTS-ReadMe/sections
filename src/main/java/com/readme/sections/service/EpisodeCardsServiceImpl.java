@@ -7,7 +7,10 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 import com.readme.sections.dto.EpisodeCardsDTO;
 import com.readme.sections.model.EpisodeCards;
+import com.readme.sections.model.EpisodeCards.Episode;
 import com.readme.sections.repository.EpisodeCardsRepository;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +45,16 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
         }
         return EpisodeCardsDTO.builder()
             .novelId(episodeCards.getNovelId())
-            .episodes(episodeCards.getEpisodes())
+            .episodes(episodeCards.getEpisodes().stream()
+                .map(episode -> Episode.builder()
+                    .id(episode.getId())
+                    .name(episode.getName())
+                    .free(episode.getFree())
+                    .registrationDate(episode.getRegistrationDate())
+                    .starRating(episode.getStarRating())
+                    .isNew(true == checkIsNew(episode.getRegistrationDate()) ? true : false)
+                    .build())
+                .collect(Collectors.toList()))
             .page(pagination)
             .size(PAGE_SIZE)
             .totalElements(episodeCards.getEpisodeCount())
@@ -106,5 +118,14 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
     @Override
     public void deleteCards(Long id) {
         episodeCardsRepository.deleteById(id);
+    }
+
+    private boolean checkIsNew(Date registrationDate) {
+        Date now = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        now = calendar.getTime();
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        return registrationDate.after(calendar.getTime()) &&registrationDate.before(now);
     }
 }
