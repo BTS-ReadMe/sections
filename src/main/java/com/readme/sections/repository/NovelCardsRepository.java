@@ -54,7 +54,14 @@ public interface NovelCardsRepository extends MongoRepository<NovelCards, Long> 
             "        sunday: 1,\n" +
             "        isNew: {$cond: [{$and: [{$gt: ['$startDate', ?0]}, {$lt: ['$startDate', ?1]}]}, true, false]},\n"
             +
-            "        episodeCount: {$size: {$arrayElemAt: [\"$episodes.episodes\", 0]}}\n" +
+            "        episodeCount: {\n" +
+            "            $cond: [\n" +
+            "                {$eq: [{$ifNull: [{$arrayElemAt: [\"$episodes.episodes\", 0]}, null]}, null]},\n"
+            +
+            "                0,\n" +
+            "                {$size: {$arrayElemAt: [\"$episodes.episodes\", 0]}}\n" +
+            "            ]\n" +
+            "        }\n" +
             "    }}"
     })
     Slice<NovelCards> findAllNovelCards(Date oneWeekAgo, Date now, Pageable pageable);
@@ -68,8 +75,7 @@ public interface NovelCardsRepository extends MongoRepository<NovelCards, Long> 
             "        as: 'episodes'\n" +
             "    }}",
         "{$project: {\n" +
-            "        _id: 0,\n" +
-            "        novelId: '$_id',\n" +
+            "        _id: 1,\n" +
             "        title: 1,\n" +
             "        description: 1,\n" +
             "        author: 1,\n" +
@@ -89,8 +95,16 @@ public interface NovelCardsRepository extends MongoRepository<NovelCards, Long> 
             "        friday: 1,\n" +
             "        saturday: 1,\n" +
             "        sunday: 1,\n" +
-            "        isNew: {$cond: [{$and: [{$gt: ['$startDate', ?1]}, {$lt: ['$startDate', ?2]}]}, true, false]},\n" +
-            "        episodeCount: {$size: {$arrayElemAt: [\"$episodes.episodes\", 0]}}\n" +
+            "        isNew: {$cond: [{$and: [{$gt: ['$startDate', ?1]}, {$lt: ['$startDate', ?2]}]}, true, false]},\n"
+            +
+            "        episodeCount: {\n" +
+            "            $cond: [\n" +
+            "                {$eq: [{$ifNull: [{$arrayElemAt: [\"$episodes.episodes\", 0]}, null]}, null]},\n"
+            +
+            "                0,\n" +
+            "                {$size: {$arrayElemAt: [\"$episodes.episodes\", 0]}}\n" +
+            "            ]\n" +
+            "        }\n" +
             "    }}"
     })
     Slice<NovelCards> findAllByGenre(String genre, Date oneWeekAgo, Date now, Pageable pageable);
