@@ -37,4 +37,6 @@ public class ResponseNovelCards {
     Boolean friday;
     Boolean saturday;
     Boolean sunday;
+    Boolean isNew;
+    Long episodeCount;
 }

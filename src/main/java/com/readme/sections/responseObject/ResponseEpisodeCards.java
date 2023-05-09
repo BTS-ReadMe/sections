@@ -20,4 +20,8 @@ import lombok.ToString;
 public class ResponseEpisodeCards {
     Long novelId;
     List<Episode> episodes;
+    private int page;
+    private int size;
+    private long totalElements;
+    private int totalPages;
 }

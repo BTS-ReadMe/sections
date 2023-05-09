@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface NovelCardsService {
     public NovelCardsDTO getCards(Long id);
-    public NovelCardsPaginationDTO getAllCards(Pageable pageable);
     public NovelCardsPaginationDTO getAllCardsByGenre(String genre, Pageable pageable);
     public void addCards(NovelCardsDTO novelCardsDTO);
     public void updateCards(NovelCardsDTO novelCardsDTO);
