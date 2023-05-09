@@ -41,4 +41,6 @@ public class NovelCards {
     Boolean friday;
     Boolean saturday;
     Boolean sunday;
+    Boolean isNew;
+    Long episodeCount;
 }

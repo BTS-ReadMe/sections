@@ -36,6 +36,9 @@ public class NovelCardsDTO {
     Boolean friday;
     Boolean saturday;
     Boolean sunday;
+    Boolean isNew;
+    Long episodeCount;
+    Long count;
     @Getter
     @Builder
     @NoArgsConstructor
