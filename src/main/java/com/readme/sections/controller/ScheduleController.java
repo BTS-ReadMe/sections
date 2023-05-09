@@ -1,11 +1,12 @@
 package com.readme.sections.controller;
 
-import com.readme.sections.responseObject.Response;
+import com.readme.sections.commonResponseObject.CommonDataResponse;
 import com.readme.sections.responseObject.ResponseSchedule.Schedules;
 import com.readme.sections.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Slf4j
 public class ScheduleController {
+
     private final ScheduleService scheduleService;
 
     @Operation(summary = "진행 중인 스케줄 목록 조회", description = "진행 중인 스케줄 목록 조회", tags = {"스케줄"})
@@ -29,14 +31,15 @@ public class ScheduleController {
         @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
     })
     @GetMapping
-    public ResponseEntity<Response> getSchedules() {
-        return ResponseEntity.ok(Response.builder()
-            .data(scheduleService.getSchedules().stream()
-            .map(schedule -> Schedules.builder()
-                .id(schedule.getId())
-                .name(schedule.getName())
-                .build())
-            .collect(Collectors.toList()))
-            .build());
+    public ResponseEntity<CommonDataResponse<List<Schedules>>> getSchedules() {
+        return ResponseEntity.ok(new CommonDataResponse(
+                scheduleService.getSchedules().stream()
+                    .map(schedule -> Schedules.builder()
+                        .id(schedule.getId())
+                        .name(schedule.getName())
+                        .build())
+                    .collect(Collectors.toList())
+            )
+        );
     }
 }
