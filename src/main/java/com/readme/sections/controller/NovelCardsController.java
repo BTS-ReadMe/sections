@@ -2,10 +2,10 @@ package com.readme.sections.controller;
 
 import com.readme.sections.dto.NovelCardsDTO;
 import com.readme.sections.dto.NovelCardsDTO.Tag;
-import com.readme.sections.dto.NovelCardsSliceDTO;
+import com.readme.sections.dto.NovelCardsPaginationDTO;
 import com.readme.sections.responseObject.Response;
 import com.readme.sections.responseObject.ResponseNovelCards;
-import com.readme.sections.responseObject.ResponseNovelCardsSlice;
+import com.readme.sections.responseObject.ResponseNovelCardsPagination;
 import com.readme.sections.service.NovelCardsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -65,14 +65,15 @@ public class NovelCardsController {
         if (pagination != null) {
             pageable = PageRequest.of(pagination, PAGE_SIZE);
         }
-        NovelCardsSliceDTO novelCardsSliceDTO = new NovelCardsSliceDTO();
-        novelCardsSliceDTO = novelCardsService.getAllCardsByGenre(genre, pageable);
+        NovelCardsPaginationDTO novelCardsPaginationDTO = novelCardsService.getAllCardsByGenre(
+            genre, pageable);
         return ResponseEntity.ok(Response.builder()
-            .data(ResponseNovelCardsSlice.builder()
-                .novelCardsData(novelCardsSliceDTO.getNovelCardsData())
-                .size(novelCardsSliceDTO.getSize())
-                .page(novelCardsSliceDTO.getPage())
-                .next(novelCardsSliceDTO.isNext())
+            .data(ResponseNovelCardsPagination.builder()
+                .novelCardsData(novelCardsPaginationDTO.getNovelCardsData())
+                .size(novelCardsPaginationDTO.getSize())
+                .page(novelCardsPaginationDTO.getPage())
+                .totalElements(novelCardsPaginationDTO.getTotalElements())
+                .totalPages(novelCardsPaginationDTO.getTotalPages())
                 .build())
             .build());
     }

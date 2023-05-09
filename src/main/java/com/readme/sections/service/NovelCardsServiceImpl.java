@@ -2,8 +2,8 @@ package com.readme.sections.service;
 
 import com.readme.sections.dto.NovelCardsDTO;
 import com.readme.sections.dto.NovelCardsDTO.Tag;
+import com.readme.sections.dto.NovelCardsPaginationDTO;
 import com.readme.sections.dto.NovelCardsPaginationDTO.NovelCardsData;
-import com.readme.sections.dto.NovelCardsSliceDTO;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.repository.NovelCardsRepository;
 import java.util.ArrayList;
@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -32,21 +33,25 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     }
 
     @Override
-    public NovelCardsSliceDTO getAllCardsByGenre(String genre, Pageable pageable) {
+    public NovelCardsPaginationDTO getAllCardsByGenre(String genre, Pageable pageable) {
         Slice<NovelCards> novelCardsList = null;
+        long totalElements = 0L;
         if (genre.equals("all")) {
             novelCardsList = novelCardsRepository.findAllNovelCards(getOneWeekAgo(), getNow(), pageable);
+            totalElements = novelCardsRepository.findAll().stream().count();
         } else {
             novelCardsList = novelCardsRepository.findAllByGenre(genre, getOneWeekAgo(), getNow(), pageable);
+            totalElements = novelCardsRepository.countGenre(genre);
         }
         List<NovelCardsData> novelCardsData = novelCardsList.stream()
             .map(novel -> modelMapper.map(novel, NovelCardsData.class))
             .collect(Collectors.toList());
-        return NovelCardsSliceDTO.builder()
+        return NovelCardsPaginationDTO.builder()
             .novelCardsData(novelCardsData)
             .size(novelCardsList.getSize())
             .page(novelCardsList.getNumber())
-            .next(novelCardsList.hasNext())
+            .totalElements(totalElements)
+            .totalPages((int) Math.ceil((double)totalElements / (double) novelCardsList.getSize()))
             .build();
     }
 

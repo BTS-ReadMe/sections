@@ -3,11 +3,11 @@ package com.readme.sections.repository;
 import com.readme.sections.model.NovelCards;
 import java.util.Date;
 import java.util.List;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -29,13 +29,6 @@ public interface NovelCardsRepository extends MongoRepository<NovelCards, Long> 
             "        localField: '_id',\n" +
             "        foreignField: '_id',\n" +
             "        as: 'episodes'\n" +
-            "    }}",
-        "{$addFields: {\n" +
-            "        episodeFields: {$map: {\n" +
-            "            input: '$episode.episodes',\n" +
-            "            as: 'episode',\n" +
-            "            in: {$size: {$objectToArray: '$$episode'}}\n" +
-            "        }}\n" +
             "    }}",
         "{$project: {\n" +
             "        _id: 0,\n" +
@@ -59,7 +52,8 @@ public interface NovelCardsRepository extends MongoRepository<NovelCards, Long> 
             "        friday: 1,\n" +
             "        saturday: 1,\n" +
             "        sunday: 1,\n" +
-            "        isNew: {$cond: [{$and: [{$gt: ['$startDate', ?0]}, {$lt: ['$startDate', ?1]}]}, true, false]},\n" +
+            "        isNew: {$cond: [{$and: [{$gt: ['$startDate', ?0]}, {$lt: ['$startDate', ?1]}]}, true, false]},\n"
+            +
             "        episodeCount: {$size: {$arrayElemAt: [\"$episodes.episodes\", 0]}}\n" +
             "    }}"
     })
@@ -72,13 +66,6 @@ public interface NovelCardsRepository extends MongoRepository<NovelCards, Long> 
             "        localField: '_id',\n" +
             "        foreignField: '_id',\n" +
             "        as: 'episodes'\n" +
-            "    }}",
-        "{$addFields: {\n" +
-            "        episodeFields: {$map: {\n" +
-            "            input: '$episode.episodes',\n" +
-            "            as: 'episode',\n" +
-            "            in: {$size: {$objectToArray: '$$episode'}}\n" +
-            "        }}\n" +
             "    }}",
         "{$project: {\n" +
             "        _id: 0,\n" +
@@ -107,4 +94,7 @@ public interface NovelCardsRepository extends MongoRepository<NovelCards, Long> 
             "    }}"
     })
     Slice<NovelCards> findAllByGenre(String genre, Date oneWeekAgo, Date now, Pageable pageable);
+
+    @Query(value = "{genre: ?0}", count = true)
+    Long countGenre(String genre);
 }
