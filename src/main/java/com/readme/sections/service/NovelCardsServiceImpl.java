@@ -53,11 +53,11 @@ public class NovelCardsServiceImpl implements NovelCardsService {
         Slice<NovelCards> novelCardsList = null;
         long totalElements = 0L;
         if (genre.equals("all")) {
-            novelCardsList = novelCardsRepository.findAllNovelCards(getOneWeekAgo(), getNow(),
+            novelCardsList = novelCardsRepository.findAllNovelCards(getOneMonthAgo(), getNow(),
                 pageable);
             totalElements = novelCardsRepository.findAll().stream().count();
         } else {
-            novelCardsList = novelCardsRepository.findAllByGenre(genre, getOneWeekAgo(), getNow(),
+            novelCardsList = novelCardsRepository.findAllByGenre(genre, getOneMonthAgo(), getNow(),
                 pageable);
             totalElements = novelCardsRepository.countGenre(genre);
         }
@@ -175,7 +175,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     public List<NovelCardsDTO> getNovelCardsForSchedule(Long scheduleId) {
         List<NovelCardsDTO> scheduleList = new ArrayList<>();
         List<NovelCards> novelCardsList = novelCardsRepository.findAllByScheduleId(scheduleId,
-            getOneWeekAgo(), getNow());
+            getOneMonthAgo(), getNow());
         return novelCardsList.stream()
             .map(novelCards -> NovelCardsDTO.builder()
                 .novelId(novelCards.getNovelId())
@@ -213,13 +213,13 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             pagination = 0;
         }
         AggregationOperation[] operations = {
-            match(where("startDate").gte(getOneWeekAgo()).lte(getNow())),
+            match(where("startDate").gte(getOneMonthAgo()).lte(getNow())),
             project("novelId", "title", "description", "author", "genre", "grade", "thumbnail",
                 "startDate", "views",
                 "serializationStatus", "tags", "scheduleId", "starRating", "monday", "tuesday",
                 "wednesday", "thursday",
                 "friday", "saturday", "sunday", "episodeCount")
-                .and(ComparisonOperators.Gt.valueOf("startDate").greaterThanValue(getOneWeekAgo()))
+                .and(ComparisonOperators.Gt.valueOf("startDate").greaterThanValue(getOneMonthAgo()))
                 .lt(ComparisonOperators.Lt.valueOf("startDate").lessThanValue(getNow()))
                 .as("isNew"),
             skip(PAGE_SIZE * pagination),
@@ -227,7 +227,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
         };
 
         Long totalElements = mongoTemplate.count(
-            Query.query(Criteria.where("startDate").gte(getOneWeekAgo()).lte(getNow())), NovelCards.class);
+            Query.query(Criteria.where("startDate").gte(getOneMonthAgo()).lte(getNow())), NovelCards.class);
 
         TypedAggregation<NovelCards> typedAggregation = Aggregation.<NovelCards>newAggregation(
             NovelCards.class, operations);
@@ -250,12 +250,12 @@ public class NovelCardsServiceImpl implements NovelCardsService {
         return new Date();
     }
 
-    private static Date getOneWeekAgo() {
+    private static Date getOneMonthAgo() {
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);
         now = calendar.getTime();
-        calendar.add(Calendar.DAY_OF_MONTH, -7);
+        calendar.add(Calendar.MONTH, -1);
         return calendar.getTime();
     }
 }

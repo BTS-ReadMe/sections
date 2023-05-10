@@ -125,7 +125,7 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);
         now = calendar.getTime();
-        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        calendar.add(Calendar.DAY_OF_MONTH, -7);
         return registrationDate.after(calendar.getTime()) &&registrationDate.before(now);
     }
 }
