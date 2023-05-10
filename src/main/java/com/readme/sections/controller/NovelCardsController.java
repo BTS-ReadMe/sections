@@ -81,6 +81,21 @@ public class NovelCardsController {
         );
     }
 
+    @GetMapping("/new-novels")
+    public ResponseEntity<CommonDataResponse<ResponseNovelCardsPagination>> getNewNovels(
+        @RequestParam(required = false) Integer pagination
+    ) {
+        NovelCardsPaginationDTO novelCardsPaginationDTO = novelCardsService.getNewNovels(
+            pagination);
+        return ResponseEntity.ok(new CommonDataResponse(ResponseNovelCardsPagination.builder()
+            .novelCardsData(novelCardsPaginationDTO.getNovelCardsData())
+            .page(novelCardsPaginationDTO.getPage())
+            .size(novelCardsPaginationDTO.getSize())
+            .totalElements(novelCardsPaginationDTO.getTotalElements())
+            .totalPages(novelCardsPaginationDTO.getTotalPages())
+            .build()));
+    }
+
     @Operation(summary = "스케줄에 해당하는 소설 카드 목록 조회", description = "scheduleId에 해당하는 소설 카드 목록 조회", tags = {
         "소설 카드"})
     @ApiResponses({

@@ -1,5 +1,11 @@
 package com.readme.sections.service;
 
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.limit;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.project;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.skip;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+
 import com.readme.sections.dto.NovelCardsDTO;
 import com.readme.sections.dto.NovelCardsDTO.Tag;
 import com.readme.sections.dto.NovelCardsPaginationDTO;
@@ -14,9 +20,16 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.aggregation.ComparisonOperators;
+import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,6 +37,9 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class NovelCardsServiceImpl implements NovelCardsService {
 
+    @Value("${spring.data.web.pageable.default-page-size}")
+    private int PAGE_SIZE;
+    private final MongoTemplate mongoTemplate;
     private final NovelCardsRepository novelCardsRepository;
     private final ModelMapper modelMapper;
 
@@ -37,10 +53,12 @@ public class NovelCardsServiceImpl implements NovelCardsService {
         Slice<NovelCards> novelCardsList = null;
         long totalElements = 0L;
         if (genre.equals("all")) {
-            novelCardsList = novelCardsRepository.findAllNovelCards(getOneWeekAgo(), getNow(), pageable);
+            novelCardsList = novelCardsRepository.findAllNovelCards(getOneWeekAgo(), getNow(),
+                pageable);
             totalElements = novelCardsRepository.findAll().stream().count();
         } else {
-            novelCardsList = novelCardsRepository.findAllByGenre(genre, getOneWeekAgo(), getNow(), pageable);
+            novelCardsList = novelCardsRepository.findAllByGenre(genre, getOneWeekAgo(), getNow(),
+                pageable);
             totalElements = novelCardsRepository.countGenre(genre);
         }
         List<NovelCardsData> novelCardsData = novelCardsList.stream()
@@ -51,7 +69,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             .size(novelCardsList.getSize())
             .page(novelCardsList.getNumber())
             .totalElements(totalElements)
-            .totalPages((int) Math.ceil((double)totalElements / (double) novelCardsList.getSize()))
+            .totalPages((int) Math.ceil((double) totalElements / (double) novelCardsList.getSize()))
             .build();
     }
 
@@ -156,7 +174,8 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     @Override
     public List<NovelCardsDTO> getNovelCardsForSchedule(Long scheduleId) {
         List<NovelCardsDTO> scheduleList = new ArrayList<>();
-        List<NovelCards> novelCardsList = novelCardsRepository.findAllByScheduleId(scheduleId, getOneWeekAgo(), getNow());
+        List<NovelCards> novelCardsList = novelCardsRepository.findAllByScheduleId(scheduleId,
+            getOneWeekAgo(), getNow());
         return novelCardsList.stream()
             .map(novelCards -> NovelCardsDTO.builder()
                 .novelId(novelCards.getNovelId())
@@ -186,6 +205,45 @@ public class NovelCardsServiceImpl implements NovelCardsService {
                 .isNew(novelCards.getIsNew())
                 .build())
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public NovelCardsPaginationDTO getNewNovels(Integer pagination) {
+        if (pagination == null) {
+            pagination = 0;
+        }
+        AggregationOperation[] operations = {
+            match(where("startDate").gte(getOneWeekAgo()).lte(getNow())),
+            project("novelId", "title", "description", "author", "genre", "grade", "thumbnail",
+                "startDate", "views",
+                "serializationStatus", "tags", "scheduleId", "starRating", "monday", "tuesday",
+                "wednesday", "thursday",
+                "friday", "saturday", "sunday", "episodeCount")
+                .and(ComparisonOperators.Gt.valueOf("startDate").greaterThanValue(getOneWeekAgo()))
+                .lt(ComparisonOperators.Lt.valueOf("startDate").lessThanValue(getNow()))
+                .as("isNew"),
+            skip(PAGE_SIZE * pagination),
+            limit(PAGE_SIZE)
+        };
+
+        Long totalElements = mongoTemplate.count(
+            Query.query(Criteria.where("startDate").gte(getOneWeekAgo()).lte(getNow())), NovelCards.class);
+
+        TypedAggregation<NovelCards> typedAggregation = Aggregation.<NovelCards>newAggregation(
+            NovelCards.class, operations);
+
+        List<NovelCards> results = mongoTemplate.aggregate(typedAggregation, NovelCards.class)
+            .getMappedResults();
+
+        return NovelCardsPaginationDTO.builder()
+            .novelCardsData(results.stream()
+                .map(novel -> modelMapper.map(novel, NovelCardsData.class))
+                .collect(Collectors.toList()))
+            .size(PAGE_SIZE)
+            .page(pagination)
+            .totalElements(totalElements)
+            .totalPages((int) Math.ceil((double) totalElements / (double) PAGE_SIZE))
+            .build();
     }
 
     private static Date getNow() {
