@@ -12,7 +12,6 @@ import com.readme.sections.dto.NovelCardsPaginationDTO;
 import com.readme.sections.dto.NovelCardsPaginationDTO.NovelCardsData;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.repository.NovelCardsRepository;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -21,8 +20,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
@@ -43,34 +40,105 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     private final NovelCardsRepository novelCardsRepository;
     private final ModelMapper modelMapper;
 
+    @Override
     public NovelCardsDTO getCards(Long id) {
         NovelCards novelCards = novelCardsRepository.findById(id).get();
         return modelMapper.map(novelCards, NovelCardsDTO.class);
     }
 
     @Override
-    public NovelCardsPaginationDTO getAllCardsByGenre(String genre, Pageable pageable) {
-        Slice<NovelCards> novelCardsList = null;
+    public NovelCardsPaginationDTO getAllCardsByGenre(String genre, Integer pagination) {
+        List<NovelCards> novelCardsList = null;
         long totalElements = 0L;
         if (genre.equals("all")) {
-            novelCardsList = novelCardsRepository.findAllNovelCards(getOneMonthAgo(), getNow(),
-                pageable);
-            totalElements = novelCardsRepository.findAll().stream().count();
+            novelCardsList = getAllNovelCards(pagination);
         } else {
-            novelCardsList = novelCardsRepository.findAllByGenre(genre, getOneMonthAgo(), getNow(),
-                pageable);
-            totalElements = novelCardsRepository.countGenre(genre);
+            novelCardsList = getAllGenre(genre, pagination);
         }
-        List<NovelCardsData> novelCardsData = novelCardsList.stream()
-            .map(novel -> modelMapper.map(novel, NovelCardsData.class))
-            .collect(Collectors.toList());
         return NovelCardsPaginationDTO.builder()
-            .novelCardsData(novelCardsData)
-            .size(novelCardsList.getSize())
-            .page(novelCardsList.getNumber())
+            .novelCardsData(novelCardsList.stream()
+                .map(novel -> modelMapper.map(novel, NovelCardsData.class))
+                .collect(Collectors.toList()))
+            .size(PAGE_SIZE)
+            .page(pagination)
             .totalElements(totalElements)
-            .totalPages((int) Math.ceil((double) totalElements / (double) novelCardsList.getSize()))
+            .totalPages((int) Math.ceil((double) totalElements / (double) PAGE_SIZE))
             .build();
+    }
+
+    public List<NovelCards> getAllByScheduleId(Long scheduleId) {
+        AggregationOperation[] operations = {
+            match(where("scheduleId").is(scheduleId)),
+            project("novelId", "title", "description", "author", "genre", "grade", "thumbnail",
+                "startDate", "views",
+                "serializationStatus", "tags", "scheduleId", "starRating", "monday", "tuesday",
+                "wednesday", "thursday",
+                "friday", "saturday", "sunday", "episodeCount")
+                .and(ComparisonOperators.Gt.valueOf("startDate").greaterThanValue(getOneMonthAgo()))
+                .lt(ComparisonOperators.Lt.valueOf("startDate").lessThanValue(getNow()))
+                .as("isNew")
+        };
+
+        TypedAggregation<NovelCards> typedAggregation = Aggregation.<NovelCards>newAggregation(
+            NovelCards.class, operations);
+
+        return mongoTemplate.aggregate(typedAggregation,
+                NovelCards.class)
+            .getMappedResults();
+    }
+
+    public List<NovelCards> getAllNovelCards(Integer pagination) {
+        if (pagination == null) {
+            pagination = 0;
+        }
+        AggregationOperation[] operations = {
+            project("novelId", "title", "description", "author", "genre", "grade", "thumbnail",
+                "startDate", "views",
+                "serializationStatus", "tags", "scheduleId", "starRating", "monday", "tuesday",
+                "wednesday", "thursday",
+                "friday", "saturday", "sunday", "episodeCount")
+                .and(ComparisonOperators.Gt.valueOf("startDate").greaterThanValue(getOneMonthAgo()))
+                .lt(ComparisonOperators.Lt.valueOf("startDate").lessThanValue(getNow()))
+                .as("isNew"),
+            skip(PAGE_SIZE * pagination),
+            limit(PAGE_SIZE)
+        };
+
+        Long totalElements = mongoTemplate.count(new Query(), NovelCards.class);
+
+        TypedAggregation<NovelCards> typedAggregation = Aggregation.<NovelCards>newAggregation(
+            NovelCards.class, operations);
+
+        return mongoTemplate.aggregate(typedAggregation, NovelCards.class)
+            .getMappedResults();
+    }
+
+    public List<NovelCards> getAllGenre(String genre, Integer pagination) {
+        if (pagination == null) {
+            pagination = 0;
+        }
+        AggregationOperation[] operations = {
+            match(where("genre").is(genre)),
+            project("novelId", "title", "description", "author", "genre", "grade", "thumbnail",
+                "startDate", "views",
+                "serializationStatus", "tags", "scheduleId", "starRating", "monday", "tuesday",
+                "wednesday", "thursday",
+                "friday", "saturday", "sunday", "episodeCount")
+                .and(ComparisonOperators.Gt.valueOf("startDate").greaterThanValue(getOneMonthAgo()))
+                .lt(ComparisonOperators.Lt.valueOf("startDate").lessThanValue(getNow()))
+                .as("isNew"),
+            skip(PAGE_SIZE * pagination),
+            limit(PAGE_SIZE)
+        };
+
+        Long totalElements = mongoTemplate.count(
+            Query.query(Criteria.where("genre").is(genre)), NovelCards.class);
+
+        TypedAggregation<NovelCards> typedAggregation = Aggregation.<NovelCards>newAggregation(
+            NovelCards.class, operations);
+
+        return mongoTemplate.aggregate(typedAggregation, NovelCards.class)
+            .getMappedResults();
     }
 
     public void addCards(NovelCardsDTO novelCardsDTO) {
@@ -173,10 +241,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
 
     @Override
     public List<NovelCardsDTO> getNovelCardsForSchedule(Long scheduleId) {
-        List<NovelCardsDTO> scheduleList = new ArrayList<>();
-        List<NovelCards> novelCardsList = novelCardsRepository.findAllByScheduleId(scheduleId,
-            getOneMonthAgo(), getNow());
-        return novelCardsList.stream()
+        return getAllByScheduleId(scheduleId).stream()
             .map(novelCards -> NovelCardsDTO.builder()
                 .novelId(novelCards.getNovelId())
                 .title(novelCards.getTitle())
@@ -203,6 +268,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
                 .saturday(novelCards.getSaturday())
                 .sunday(novelCards.getSunday())
                 .isNew(novelCards.getIsNew())
+                .episodeCount(novelCards.getEpisodeCount())
                 .build())
             .collect(Collectors.toList());
     }
@@ -212,6 +278,10 @@ public class NovelCardsServiceImpl implements NovelCardsService {
         if (pagination == null) {
             pagination = 0;
         }
+        return getNewNovelsData(pagination);
+    }
+
+    public NovelCardsPaginationDTO getNewNovelsData(Integer pagination) {
         AggregationOperation[] operations = {
             match(where("startDate").gte(getOneMonthAgo()).lte(getNow())),
             project("novelId", "title", "description", "author", "genre", "grade", "thumbnail",
@@ -227,7 +297,8 @@ public class NovelCardsServiceImpl implements NovelCardsService {
         };
 
         Long totalElements = mongoTemplate.count(
-            Query.query(Criteria.where("startDate").gte(getOneMonthAgo()).lte(getNow())), NovelCards.class);
+            Query.query(Criteria.where("startDate").gte(getOneMonthAgo()).lte(getNow())),
+            NovelCards.class);
 
         TypedAggregation<NovelCards> typedAggregation = Aggregation.<NovelCards>newAggregation(
             NovelCards.class, operations);

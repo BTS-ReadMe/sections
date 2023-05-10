@@ -62,23 +62,17 @@ public class NovelCardsController {
     @GetMapping
     public ResponseEntity<CommonDataResponse<ResponseNovelCardsPagination>> getAllNovelCardsByGere(
         @RequestParam(required = false) Integer pagination,
-        @Param("genre") String genre,
-        Pageable pageable) {
-        if (pagination != null) {
-            pageable = PageRequest.of(pagination, PAGE_SIZE);
-        }
+        @Param("genre") String genre) {
         NovelCardsPaginationDTO novelCardsPaginationDTO = novelCardsService.getAllCardsByGenre(
-            genre, pageable);
-        return ResponseEntity.ok(new CommonDataResponse(
-                ResponseNovelCardsPagination.builder()
-                    .novelCardsData(novelCardsPaginationDTO.getNovelCardsData())
-                    .size(novelCardsPaginationDTO.getSize())
-                    .page(novelCardsPaginationDTO.getPage())
-                    .totalElements(novelCardsPaginationDTO.getTotalElements())
-                    .totalPages(novelCardsPaginationDTO.getTotalPages())
-                    .build()
-            )
-        );
+            genre, pagination);
+        return ResponseEntity.ok(new CommonDataResponse(ResponseNovelCardsPagination.builder()
+            .novelCardsData(novelCardsPaginationDTO.getNovelCardsData())
+            .page(novelCardsPaginationDTO.getPage())
+            .size(novelCardsPaginationDTO.getSize())
+            .totalElements(novelCardsPaginationDTO.getTotalElements())
+            .totalPages(novelCardsPaginationDTO.getTotalPages())
+            .build()
+        ));
     }
 
     @GetMapping("/new-novels")
@@ -137,6 +131,7 @@ public class NovelCardsController {
                         .saturday(novelCardsDTO.getSaturday())
                         .sunday(novelCardsDTO.getSunday())
                         .isNew(novelCardsDTO.getIsNew())
+                        .episodeCount(novelCardsDTO.getEpisodeCount())
                         .build())
                     .collect(Collectors.toList())
             )
