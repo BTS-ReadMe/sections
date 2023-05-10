@@ -37,9 +37,11 @@ public class NovelCardsServiceImpl implements NovelCardsService {
         List<NovelCards> novelCardsList = null;
         long totalElements = 0L;
         if (genre.equals("all")) {
-            novelCardsList = novelCardsDataAccessLayer.getAllNovelCards(pagination);
+            novelCardsList = novelCardsDataAccessLayer.getAllNovelCardsData(pagination);
+            totalElements = novelCardsDataAccessLayer.getAllNovelCardsData();
         } else {
-            novelCardsList = novelCardsDataAccessLayer.getAllGenre(genre, pagination);
+            novelCardsList = novelCardsDataAccessLayer.getAllGenreData(genre, pagination);
+            totalElements = novelCardsDataAccessLayer.getAllGenreDataCount(genre);
         }
         return NovelCardsPaginationDTO.builder()
             .novelCardsData(novelCardsList.stream()
@@ -152,7 +154,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
 
     @Override
     public List<NovelCardsDTO> getNovelCardsForSchedule(Long scheduleId) {
-        return novelCardsDataAccessLayer.getAllByScheduleId(scheduleId).stream()
+        return novelCardsDataAccessLayer.getAllByScheduleIdData(scheduleId).stream()
             .map(novelCards -> NovelCardsDTO.builder()
                 .novelId(novelCards.getNovelId())
                 .title(novelCards.getTitle())
@@ -189,6 +191,16 @@ public class NovelCardsServiceImpl implements NovelCardsService {
         if (pagination == null) {
             pagination = 0;
         }
-        return novelCardsDataAccessLayer.getNewNovelsData(pagination);
+        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getNewNovelsData(pagination);
+        Long totalElements = novelCardsDataAccessLayer.getNewNovelsDataCount();
+        return NovelCardsPaginationDTO.builder()
+            .novelCardsData(novelCardsList.stream()
+                .map(novel -> modelMapper.map(novel, NovelCardsData.class))
+                .collect(Collectors.toList()))
+            .size(PAGE_SIZE)
+            .page(pagination)
+            .totalElements(totalElements)
+            .totalPages((int) Math.ceil((double) totalElements / (double) PAGE_SIZE))
+            .build();
     }
 }
