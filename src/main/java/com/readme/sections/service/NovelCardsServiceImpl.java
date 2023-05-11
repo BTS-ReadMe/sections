@@ -7,6 +7,7 @@ import com.readme.sections.dto.NovelCardsPaginationDTO;
 import com.readme.sections.dto.NovelCardsPaginationDTO.NovelCardsData;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.repository.NovelCardsRepository;
+import com.readme.sections.responseObject.ResponseNovelCardsPagination;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -33,16 +34,24 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     }
 
     @Override
+    public NovelCardsPaginationDTO getAllCardsBySerializationDays(String serializationDays, Integer pagination) {
+        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getAllSerializationDays(serializationDays, pagination);
+        long totalElements = novelCardsDataAccessLayer.getAllSerializationDaysDataCount(serializationDays);
+        return NovelCardsPaginationDTO.builder()
+            .novelCardsData(novelCardsList.stream()
+                .map(novel -> modelMapper.map(novel, NovelCardsData.class))
+                .collect(Collectors.toList()))
+            .size(PAGE_SIZE)
+            .page(pagination)
+            .totalElements(totalElements)
+            .totalPages((int) Math.ceil((double) totalElements / (double) PAGE_SIZE))
+            .build();
+    }
+
+    @Override
     public NovelCardsPaginationDTO getAllCardsByGenre(String genre, String serializationStatus, Integer pagination) {
-        List<NovelCards> novelCardsList = null;
-        long totalElements = 0L;
-        if (genre.equals("all")) {
-            novelCardsList = novelCardsDataAccessLayer.getAllNovelCardsData(pagination);
-            totalElements = novelCardsDataAccessLayer.getAllNovelCardsData();
-        } else {
-            novelCardsList = novelCardsDataAccessLayer.getAllGenreData(genre, pagination);
-            totalElements = novelCardsDataAccessLayer.getAllGenreDataCount(genre);
-        }
+        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getAllGenreData(genre, serializationStatus, pagination);
+        Long totalElements = novelCardsDataAccessLayer.getAllGenreDataCount(genre, serializationStatus);
         return NovelCardsPaginationDTO.builder()
             .novelCardsData(novelCardsList.stream()
                 .map(novel -> modelMapper.map(novel, NovelCardsData.class))
@@ -192,12 +201,12 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     }
 
     @Override
-    public NovelCardsPaginationDTO getNewNovels(Integer pagination) {
+    public NovelCardsPaginationDTO getNewNovelsByGenre(String genre, Integer pagination) {
         if (pagination == null) {
             pagination = 0;
         }
-        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getNewNovelsData(pagination);
-        Long totalElements = novelCardsDataAccessLayer.getNewNovelsDataCount();
+        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getNewNovelsData(genre, pagination);
+        Long totalElements = novelCardsDataAccessLayer.getNewNovelsDataCount(genre);
         return NovelCardsPaginationDTO.builder()
             .novelCardsData(novelCardsList.stream()
                 .map(novel -> modelMapper.map(novel, NovelCardsData.class))

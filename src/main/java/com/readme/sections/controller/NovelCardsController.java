@@ -52,6 +52,15 @@ public class NovelCardsController {
         );
     }
 
+    @GetMapping("/test")
+    public CommonDataResponse test(
+        @RequestParam String serializationDays,
+        @RequestParam Integer pagination
+    ) {
+        return new CommonDataResponse(
+            novelCardsService.getAllCardsBySerializationDays(serializationDays, pagination));
+    }
+
     @Operation(summary = "소설 카드 전체 조회", description = "소설 카드 전체 조회", tags = {"소설 카드"})
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
@@ -62,10 +71,21 @@ public class NovelCardsController {
     @GetMapping
     public ResponseEntity<CommonDataResponse<ResponseNovelCardsPagination>> getAllNovelCardsByGere(
         @RequestParam(required = false) Integer pagination,
-        @RequestParam(required = false) String serializationStatus,
-        @Param("genre") String genre) {
-        NovelCardsPaginationDTO novelCardsPaginationDTO = novelCardsService.getAllCardsByGenre(
-            genre, serializationStatus,  pagination);
+        @RequestParam String category,
+        @RequestParam String subCategory) {
+        NovelCardsPaginationDTO novelCardsPaginationDTO;
+        if (category.equals("요일")) {
+            novelCardsPaginationDTO = novelCardsService.getAllCardsBySerializationDays(subCategory,
+                pagination);
+        } else {
+            if (subCategory.equals("신작")) {
+                novelCardsPaginationDTO = novelCardsService.getNewNovelsByGenre(category, pagination);
+            } else {
+                novelCardsPaginationDTO = novelCardsService.getAllCardsByGenre(category,
+                    subCategory, pagination);
+            }
+
+        }
         return ResponseEntity.ok(new CommonDataResponse(ResponseNovelCardsPagination.builder()
             .novelCardsData(novelCardsPaginationDTO.getNovelCardsData())
             .page(novelCardsPaginationDTO.getPage())
@@ -81,21 +101,6 @@ public class NovelCardsController {
         @RequestParam String tags
     ) {
         return ResponseEntity.ok(new CommonDataResponse(novelCardsService.searchTags(tags)));
-    }
-
-    @GetMapping("/new-novels")
-    public ResponseEntity<CommonDataResponse<ResponseNovelCardsPagination>> getNewNovels(
-        @RequestParam(required = false) Integer pagination
-    ) {
-        NovelCardsPaginationDTO novelCardsPaginationDTO = novelCardsService.getNewNovels(
-            pagination);
-        return ResponseEntity.ok(new CommonDataResponse(ResponseNovelCardsPagination.builder()
-            .novelCardsData(novelCardsPaginationDTO.getNovelCardsData())
-            .page(novelCardsPaginationDTO.getPage())
-            .size(novelCardsPaginationDTO.getSize())
-            .totalElements(novelCardsPaginationDTO.getTotalElements())
-            .totalPages(novelCardsPaginationDTO.getTotalPages())
-            .build()));
     }
 
     @Operation(summary = "스케줄에 해당하는 소설 카드 목록 조회", description = "scheduleId에 해당하는 소설 카드 목록 조회", tags = {
