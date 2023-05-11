@@ -1,22 +1,18 @@
 package com.readme.sections.service;
 
+import com.readme.sections.dataAccessLayer.NovelCardsDataAccessLayer;
 import com.readme.sections.dto.NovelCardsDTO;
 import com.readme.sections.dto.NovelCardsDTO.Tag;
 import com.readme.sections.dto.NovelCardsPaginationDTO;
 import com.readme.sections.dto.NovelCardsPaginationDTO.NovelCardsData;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.repository.NovelCardsRepository;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,34 +20,37 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class NovelCardsServiceImpl implements NovelCardsService {
 
+    @Value("${spring.data.web.pageable.default-page-size}")
+    private int PAGE_SIZE;
+    private final NovelCardsDataAccessLayer novelCardsDataAccessLayer;
     private final NovelCardsRepository novelCardsRepository;
     private final ModelMapper modelMapper;
 
+    @Override
     public NovelCardsDTO getCards(Long id) {
         NovelCards novelCards = novelCardsRepository.findById(id).get();
         return modelMapper.map(novelCards, NovelCardsDTO.class);
     }
 
     @Override
-    public NovelCardsPaginationDTO getAllCardsByGenre(String genre, Pageable pageable) {
-        Slice<NovelCards> novelCardsList = null;
+    public NovelCardsPaginationDTO getAllCardsByGenre(String genre, Integer pagination) {
+        List<NovelCards> novelCardsList = null;
         long totalElements = 0L;
         if (genre.equals("all")) {
-            novelCardsList = novelCardsRepository.findAllNovelCards(getOneWeekAgo(), getNow(), pageable);
-            totalElements = novelCardsRepository.findAll().stream().count();
+            novelCardsList = novelCardsDataAccessLayer.getAllNovelCardsData(pagination);
+            totalElements = novelCardsDataAccessLayer.getAllNovelCardsData();
         } else {
-            novelCardsList = novelCardsRepository.findAllByGenre(genre, getOneWeekAgo(), getNow(), pageable);
-            totalElements = novelCardsRepository.countGenre(genre);
+            novelCardsList = novelCardsDataAccessLayer.getAllGenreData(genre, pagination);
+            totalElements = novelCardsDataAccessLayer.getAllGenreDataCount(genre);
         }
-        List<NovelCardsData> novelCardsData = novelCardsList.stream()
-            .map(novel -> modelMapper.map(novel, NovelCardsData.class))
-            .collect(Collectors.toList());
         return NovelCardsPaginationDTO.builder()
-            .novelCardsData(novelCardsData)
-            .size(novelCardsList.getSize())
-            .page(novelCardsList.getNumber())
+            .novelCardsData(novelCardsList.stream()
+                .map(novel -> modelMapper.map(novel, NovelCardsData.class))
+                .collect(Collectors.toList()))
+            .size(PAGE_SIZE)
+            .page(pagination)
             .totalElements(totalElements)
-            .totalPages((int) Math.ceil((double)totalElements / (double) novelCardsList.getSize()))
+            .totalPages((int) Math.ceil((double) totalElements / (double) PAGE_SIZE))
             .build();
     }
 
@@ -155,9 +154,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
 
     @Override
     public List<NovelCardsDTO> getNovelCardsForSchedule(Long scheduleId) {
-        List<NovelCardsDTO> scheduleList = new ArrayList<>();
-        List<NovelCards> novelCardsList = novelCardsRepository.findAllByScheduleId(scheduleId, getOneWeekAgo(), getNow());
-        return novelCardsList.stream()
+        return novelCardsDataAccessLayer.getAllByScheduleIdData(scheduleId).stream()
             .map(novelCards -> NovelCardsDTO.builder()
                 .novelId(novelCards.getNovelId())
                 .title(novelCards.getTitle())
@@ -184,20 +181,26 @@ public class NovelCardsServiceImpl implements NovelCardsService {
                 .saturday(novelCards.getSaturday())
                 .sunday(novelCards.getSunday())
                 .isNew(novelCards.getIsNew())
+                .episodeCount(novelCards.getEpisodeCount())
                 .build())
             .collect(Collectors.toList());
     }
 
-    private static Date getNow() {
-        return new Date();
-    }
-
-    private static Date getOneWeekAgo() {
-        Date now = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(now);
-        now = calendar.getTime();
-        calendar.add(Calendar.DAY_OF_MONTH, -7);
-        return calendar.getTime();
+    @Override
+    public NovelCardsPaginationDTO getNewNovels(Integer pagination) {
+        if (pagination == null) {
+            pagination = 0;
+        }
+        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getNewNovelsData(pagination);
+        Long totalElements = novelCardsDataAccessLayer.getNewNovelsDataCount();
+        return NovelCardsPaginationDTO.builder()
+            .novelCardsData(novelCardsList.stream()
+                .map(novel -> modelMapper.map(novel, NovelCardsData.class))
+                .collect(Collectors.toList()))
+            .size(PAGE_SIZE)
+            .page(pagination)
+            .totalElements(totalElements)
+            .totalPages((int) Math.ceil((double) totalElements / (double) PAGE_SIZE))
+            .build();
     }
 }

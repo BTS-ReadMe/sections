@@ -62,23 +62,32 @@ public class NovelCardsController {
     @GetMapping
     public ResponseEntity<CommonDataResponse<ResponseNovelCardsPagination>> getAllNovelCardsByGere(
         @RequestParam(required = false) Integer pagination,
-        @Param("genre") String genre,
-        Pageable pageable) {
-        if (pagination != null) {
-            pageable = PageRequest.of(pagination, PAGE_SIZE);
-        }
+        @Param("genre") String genre) {
         NovelCardsPaginationDTO novelCardsPaginationDTO = novelCardsService.getAllCardsByGenre(
-            genre, pageable);
-        return ResponseEntity.ok(new CommonDataResponse(
-                ResponseNovelCardsPagination.builder()
-                    .novelCardsData(novelCardsPaginationDTO.getNovelCardsData())
-                    .size(novelCardsPaginationDTO.getSize())
-                    .page(novelCardsPaginationDTO.getPage())
-                    .totalElements(novelCardsPaginationDTO.getTotalElements())
-                    .totalPages(novelCardsPaginationDTO.getTotalPages())
-                    .build()
-            )
-        );
+            genre, pagination);
+        return ResponseEntity.ok(new CommonDataResponse(ResponseNovelCardsPagination.builder()
+            .novelCardsData(novelCardsPaginationDTO.getNovelCardsData())
+            .page(novelCardsPaginationDTO.getPage())
+            .size(novelCardsPaginationDTO.getSize())
+            .totalElements(novelCardsPaginationDTO.getTotalElements())
+            .totalPages(novelCardsPaginationDTO.getTotalPages())
+            .build()
+        ));
+    }
+
+    @GetMapping("/new-novels")
+    public ResponseEntity<CommonDataResponse<ResponseNovelCardsPagination>> getNewNovels(
+        @RequestParam(required = false) Integer pagination
+    ) {
+        NovelCardsPaginationDTO novelCardsPaginationDTO = novelCardsService.getNewNovels(
+            pagination);
+        return ResponseEntity.ok(new CommonDataResponse(ResponseNovelCardsPagination.builder()
+            .novelCardsData(novelCardsPaginationDTO.getNovelCardsData())
+            .page(novelCardsPaginationDTO.getPage())
+            .size(novelCardsPaginationDTO.getSize())
+            .totalElements(novelCardsPaginationDTO.getTotalElements())
+            .totalPages(novelCardsPaginationDTO.getTotalPages())
+            .build()));
     }
 
     @Operation(summary = "스케줄에 해당하는 소설 카드 목록 조회", description = "scheduleId에 해당하는 소설 카드 목록 조회", tags = {
@@ -122,6 +131,7 @@ public class NovelCardsController {
                         .saturday(novelCardsDTO.getSaturday())
                         .sunday(novelCardsDTO.getSunday())
                         .isNew(novelCardsDTO.getIsNew())
+                        .episodeCount(novelCardsDTO.getEpisodeCount())
                         .build())
                     .collect(Collectors.toList())
             )
