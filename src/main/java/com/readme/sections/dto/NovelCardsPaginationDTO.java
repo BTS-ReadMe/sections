@@ -1,7 +1,5 @@
 package com.readme.sections.dto;
 
-import com.readme.sections.dto.NovelCardsDTO.Tag;
-import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +19,6 @@ public class NovelCardsPaginationDTO {
     private long totalElements;
     private int totalPages;
     @Getter
-    @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
@@ -34,7 +31,6 @@ public class NovelCardsPaginationDTO {
         private String genre;
         private int grade;
         private String thumbnail;
-        private long views;
         private String serializationStatus;
         private double starRating;
         private boolean isNew;
