@@ -67,7 +67,7 @@ public class NovelCardsController {
         @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
     })
     @GetMapping
-    public ResponseEntity<CommonDataResponse<ResponseNovelCardsPagination>> getAllNovelCardsByGere(
+    public ResponseEntity<CommonDataResponse<ResponseNovelCardsPagination>> getAllNovelCardsByGenre(
         @RequestParam(required = false) Integer pagination,
         @RequestParam String category,
         @RequestParam String subCategory) {
