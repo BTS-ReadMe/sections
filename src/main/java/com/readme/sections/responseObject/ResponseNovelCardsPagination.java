@@ -13,8 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ResponseNovelCardsPagination {
     List<NovelCardsData> novelCardsData;
-    private int page;
-    private int size;
     private long totalElements;
     private int totalPages;
 }
