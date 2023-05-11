@@ -29,7 +29,7 @@ public class ResponseNovelCards {
     String serializationStatus;
     List<Tag> tags;
     Long scheduleId;
-    Float starRating;
+    Double starRating;
     Boolean monday;
     Boolean tuesday;
     Boolean wednesday;

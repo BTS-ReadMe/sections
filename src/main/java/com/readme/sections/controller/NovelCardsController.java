@@ -15,8 +15,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,6 +50,15 @@ public class NovelCardsController {
         );
     }
 
+    @GetMapping("/test")
+    public CommonDataResponse test(
+        @RequestParam String serializationDays,
+        @RequestParam Integer pagination
+    ) {
+        return new CommonDataResponse(
+            novelCardsService.getAllCardsBySerializationDays(serializationDays, pagination));
+    }
+
     @Operation(summary = "소설 카드 전체 조회", description = "소설 카드 전체 조회", tags = {"소설 카드"})
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
@@ -60,34 +67,36 @@ public class NovelCardsController {
         @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
     })
     @GetMapping
-    public ResponseEntity<CommonDataResponse<ResponseNovelCardsPagination>> getAllNovelCardsByGere(
+    public ResponseEntity<CommonDataResponse<ResponseNovelCardsPagination>> getAllNovelCardsByGenre(
         @RequestParam(required = false) Integer pagination,
-        @Param("genre") String genre) {
-        NovelCardsPaginationDTO novelCardsPaginationDTO = novelCardsService.getAllCardsByGenre(
-            genre, pagination);
+        @RequestParam String category,
+        @RequestParam String subCategory) {
+        NovelCardsPaginationDTO novelCardsPaginationDTO;
+        if (category.equals("요일")) {
+            novelCardsPaginationDTO = novelCardsService.getAllCardsBySerializationDays(subCategory,
+                pagination);
+        } else {
+            if (subCategory.equals("신작")) {
+                novelCardsPaginationDTO = novelCardsService.getNewNovelsByGenre(category, pagination);
+            } else {
+                novelCardsPaginationDTO = novelCardsService.getAllCardsByGenre(category,
+                    subCategory, pagination);
+            }
+
+        }
         return ResponseEntity.ok(new CommonDataResponse(ResponseNovelCardsPagination.builder()
             .novelCardsData(novelCardsPaginationDTO.getNovelCardsData())
-            .page(novelCardsPaginationDTO.getPage())
-            .size(novelCardsPaginationDTO.getSize())
             .totalElements(novelCardsPaginationDTO.getTotalElements())
             .totalPages(novelCardsPaginationDTO.getTotalPages())
             .build()
         ));
     }
 
-    @GetMapping("/new-novels")
-    public ResponseEntity<CommonDataResponse<ResponseNovelCardsPagination>> getNewNovels(
-        @RequestParam(required = false) Integer pagination
+    @GetMapping("/search")
+    public ResponseEntity<CommonDataResponse> searchTags(
+        @RequestParam String tags
     ) {
-        NovelCardsPaginationDTO novelCardsPaginationDTO = novelCardsService.getNewNovels(
-            pagination);
-        return ResponseEntity.ok(new CommonDataResponse(ResponseNovelCardsPagination.builder()
-            .novelCardsData(novelCardsPaginationDTO.getNovelCardsData())
-            .page(novelCardsPaginationDTO.getPage())
-            .size(novelCardsPaginationDTO.getSize())
-            .totalElements(novelCardsPaginationDTO.getTotalElements())
-            .totalPages(novelCardsPaginationDTO.getTotalPages())
-            .build()));
+        return ResponseEntity.ok(new CommonDataResponse(novelCardsService.searchTags(tags)));
     }
 
     @Operation(summary = "스케줄에 해당하는 소설 카드 목록 조회", description = "scheduleId에 해당하는 소설 카드 목록 조회", tags = {

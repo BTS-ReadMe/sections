@@ -7,6 +7,7 @@ import com.readme.sections.dto.NovelCardsPaginationDTO;
 import com.readme.sections.dto.NovelCardsPaginationDTO.NovelCardsData;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.repository.NovelCardsRepository;
+import com.readme.sections.responseObject.ResponseNovelCardsPagination;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -33,22 +34,56 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     }
 
     @Override
-    public NovelCardsPaginationDTO getAllCardsByGenre(String genre, Integer pagination) {
-        List<NovelCards> novelCardsList = null;
-        long totalElements = 0L;
-        if (genre.equals("all")) {
-            novelCardsList = novelCardsDataAccessLayer.getAllNovelCardsData(pagination);
-            totalElements = novelCardsDataAccessLayer.getAllNovelCardsData();
-        } else {
-            novelCardsList = novelCardsDataAccessLayer.getAllGenreData(genre, pagination);
-            totalElements = novelCardsDataAccessLayer.getAllGenreDataCount(genre);
-        }
+    public NovelCardsPaginationDTO getAllCardsBySerializationDays(String serializationDays,
+        Integer pagination) {
+        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getAllSerializationDays(
+            serializationDays, pagination);
+        long totalElements = novelCardsDataAccessLayer.getAllSerializationDaysDataCount(
+            serializationDays);
         return NovelCardsPaginationDTO.builder()
             .novelCardsData(novelCardsList.stream()
-                .map(novel -> modelMapper.map(novel, NovelCardsData.class))
+                .map(novelCards -> NovelCardsData.builder()
+                    .novelId(novelCards.getNovelId())
+                    .title(novelCards.getTitle())
+                    .author(novelCards.getAuthor())
+                    .grade(novelCards.getGrade())
+                    .genre(novelCards.getGenre())
+                    .thumbnail(novelCards.getThumbnail())
+                    .serializationStatus(novelCards.getSerializationStatus())
+                    .description(novelCards.getDescription())
+                    .starRating(novelCards.getStarRating())
+                    .isNew(novelCards.getIsNew())
+                    .episodeCount(novelCards.getEpisodeCount())
+                    .build())
                 .collect(Collectors.toList()))
-            .size(PAGE_SIZE)
-            .page(pagination)
+            .totalElements(totalElements)
+            .totalPages((int) Math.ceil((double) totalElements / (double) PAGE_SIZE))
+            .build();
+    }
+
+    @Override
+    public NovelCardsPaginationDTO getAllCardsByGenre(String genre, String serializationStatus,
+        Integer pagination) {
+        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getAllGenreData(genre,
+            serializationStatus, pagination);
+        Long totalElements = novelCardsDataAccessLayer.getAllGenreDataCount(genre,
+            serializationStatus);
+        return NovelCardsPaginationDTO.builder()
+            .novelCardsData(novelCardsList.stream()
+                .map(novelCards -> NovelCardsData.builder()
+                    .novelId(novelCards.getNovelId())
+                    .title(novelCards.getTitle())
+                    .author(novelCards.getAuthor())
+                    .grade(novelCards.getGrade())
+                    .genre(novelCards.getGenre())
+                    .thumbnail(novelCards.getThumbnail())
+                    .serializationStatus(novelCards.getSerializationStatus())
+                    .description(novelCards.getDescription())
+                    .starRating(novelCards.getStarRating())
+                    .isNew(novelCards.getIsNew())
+                    .episodeCount(novelCards.getEpisodeCount())
+                    .build())
+                .collect(Collectors.toList()))
             .totalElements(totalElements)
             .totalPages((int) Math.ceil((double) totalElements / (double) PAGE_SIZE))
             .build();
@@ -80,6 +115,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             .friday(novelCardsDTO.getFriday())
             .saturday(novelCardsDTO.getSaturday())
             .sunday(novelCardsDTO.getSunday())
+            .episodeCount(novelCardsDTO.getEpisodeCount())
             .build());
     }
 
@@ -139,6 +175,8 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             .sunday(
                 novelCardsDTO.getSunday() != null ? novelCardsDTO.getSunday()
                     : novelCards.getSunday())
+            .episodeCount(novelCardsDTO.getEpisodeCount() != null ? novelCardsDTO.getEpisodeCount()
+                : novelCards.getEpisodeCount())
             .build();
     }
 
@@ -187,20 +225,62 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     }
 
     @Override
-    public NovelCardsPaginationDTO getNewNovels(Integer pagination) {
+    public List<NovelCards> searchTags(String tag) {
+        return novelCardsRepository.findAllByTagsNameContaining(tag);
+    }
+
+    @Override
+    public NovelCardsPaginationDTO getNewNovelsByGenre(String genre, Integer pagination) {
         if (pagination == null) {
             pagination = 0;
         }
-        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getNewNovelsData(pagination);
-        Long totalElements = novelCardsDataAccessLayer.getNewNovelsDataCount();
+        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getNewNovelsData(genre,
+            pagination);
+        Long totalElements = novelCardsDataAccessLayer.getNewNovelsDataCount(genre);
         return NovelCardsPaginationDTO.builder()
             .novelCardsData(novelCardsList.stream()
-                .map(novel -> modelMapper.map(novel, NovelCardsData.class))
+                .map(novelCards -> NovelCardsData.builder()
+                    .novelId(novelCards.getNovelId())
+                    .title(novelCards.getTitle())
+                    .author(novelCards.getAuthor())
+                    .grade(novelCards.getGrade())
+                    .genre(novelCards.getGenre())
+                    .thumbnail(novelCards.getThumbnail())
+                    .serializationStatus(novelCards.getSerializationStatus())
+                    .description(novelCards.getDescription())
+                    .starRating(novelCards.getStarRating())
+                    .isNew(novelCards.getIsNew())
+                    .episodeCount(novelCards.getEpisodeCount())
+                    .build())
                 .collect(Collectors.toList()))
-            .size(PAGE_SIZE)
-            .page(pagination)
             .totalElements(totalElements)
             .totalPages((int) Math.ceil((double) totalElements / (double) PAGE_SIZE))
             .build();
+    }
+
+    private static String getSerializationDays(NovelCards novelCards) {
+        String serializationDays = "";
+        if (novelCards.getMonday()) {
+            serializationDays += "월 ";
+        }
+        if (novelCards.getTuesday()) {
+            serializationDays += "화 ";
+        }
+        if (novelCards.getWednesday()) {
+            serializationDays += "수 ";
+        }
+        if (novelCards.getThursday()) {
+            serializationDays += "목 ";
+        }
+        if (novelCards.getFriday()) {
+            serializationDays += "금 ";
+        }
+        if (novelCards.getSaturday()) {
+            serializationDays += "토 ";
+        }
+        if (novelCards.getSunday()) {
+            serializationDays += "일 ";
+        }
+        return serializationDays.substring(0, serializationDays.length() - 1);
     }
 }
