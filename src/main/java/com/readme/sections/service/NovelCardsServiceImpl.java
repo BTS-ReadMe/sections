@@ -34,9 +34,12 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     }
 
     @Override
-    public NovelCardsPaginationDTO getAllCardsBySerializationDays(String serializationDays, Integer pagination) {
-        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getAllSerializationDays(serializationDays, pagination);
-        long totalElements = novelCardsDataAccessLayer.getAllSerializationDaysDataCount(serializationDays);
+    public NovelCardsPaginationDTO getAllCardsBySerializationDays(String serializationDays,
+        Integer pagination) {
+        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getAllSerializationDays(
+            serializationDays, pagination);
+        long totalElements = novelCardsDataAccessLayer.getAllSerializationDaysDataCount(
+            serializationDays);
         return NovelCardsPaginationDTO.builder()
             .novelCardsData(novelCardsList.stream()
                 .map(novel -> modelMapper.map(novel, NovelCardsData.class))
@@ -49,9 +52,12 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     }
 
     @Override
-    public NovelCardsPaginationDTO getAllCardsByGenre(String genre, String serializationStatus, Integer pagination) {
-        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getAllGenreData(genre, serializationStatus, pagination);
-        Long totalElements = novelCardsDataAccessLayer.getAllGenreDataCount(genre, serializationStatus);
+    public NovelCardsPaginationDTO getAllCardsByGenre(String genre, String serializationStatus,
+        Integer pagination) {
+        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getAllGenreData(genre,
+            serializationStatus, pagination);
+        Long totalElements = novelCardsDataAccessLayer.getAllGenreDataCount(genre,
+            serializationStatus);
         return NovelCardsPaginationDTO.builder()
             .novelCardsData(novelCardsList.stream()
                 .map(novel -> modelMapper.map(novel, NovelCardsData.class))
@@ -89,6 +95,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             .friday(novelCardsDTO.getFriday())
             .saturday(novelCardsDTO.getSaturday())
             .sunday(novelCardsDTO.getSunday())
+            .episodeCount(novelCardsDTO.getEpisodeCount())
             .build());
     }
 
@@ -148,6 +155,8 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             .sunday(
                 novelCardsDTO.getSunday() != null ? novelCardsDTO.getSunday()
                     : novelCards.getSunday())
+            .episodeCount(novelCardsDTO.getEpisodeCount() != null ? novelCardsDTO.getEpisodeCount()
+                : novelCards.getEpisodeCount())
             .build();
     }
 
@@ -205,7 +214,8 @@ public class NovelCardsServiceImpl implements NovelCardsService {
         if (pagination == null) {
             pagination = 0;
         }
-        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getNewNovelsData(genre, pagination);
+        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getNewNovelsData(genre,
+            pagination);
         Long totalElements = novelCardsDataAccessLayer.getNewNovelsDataCount(genre);
         return NovelCardsPaginationDTO.builder()
             .novelCardsData(novelCardsList.stream()

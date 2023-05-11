@@ -35,4 +35,5 @@ public class RequestNovelCards {
     Boolean friday;
     Boolean saturday;
     Boolean sunday;
+    Long episodeCount;
 }
