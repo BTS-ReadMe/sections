@@ -33,7 +33,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     }
 
     @Override
-    public NovelCardsPaginationDTO getAllCardsByGenre(String genre, Integer pagination) {
+    public NovelCardsPaginationDTO getAllCardsByGenre(String genre, String serializationStatus, Integer pagination) {
         List<NovelCards> novelCardsList = null;
         long totalElements = 0L;
         if (genre.equals("all")) {
@@ -184,6 +184,11 @@ public class NovelCardsServiceImpl implements NovelCardsService {
                 .episodeCount(novelCards.getEpisodeCount())
                 .build())
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<NovelCards> searchTags(String tag) {
+        return novelCardsRepository.findAllByTagsNameContaining(tag);
     }
 
     @Override

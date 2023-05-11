@@ -62,9 +62,10 @@ public class NovelCardsController {
     @GetMapping
     public ResponseEntity<CommonDataResponse<ResponseNovelCardsPagination>> getAllNovelCardsByGere(
         @RequestParam(required = false) Integer pagination,
+        @RequestParam(required = false) String serializationStatus,
         @Param("genre") String genre) {
         NovelCardsPaginationDTO novelCardsPaginationDTO = novelCardsService.getAllCardsByGenre(
-            genre, pagination);
+            genre, serializationStatus,  pagination);
         return ResponseEntity.ok(new CommonDataResponse(ResponseNovelCardsPagination.builder()
             .novelCardsData(novelCardsPaginationDTO.getNovelCardsData())
             .page(novelCardsPaginationDTO.getPage())
@@ -73,6 +74,13 @@ public class NovelCardsController {
             .totalPages(novelCardsPaginationDTO.getTotalPages())
             .build()
         ));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<CommonDataResponse> searchTags(
+        @RequestParam String tags
+    ) {
+        return ResponseEntity.ok(new CommonDataResponse(novelCardsService.searchTags(tags)));
     }
 
     @GetMapping("/new-novels")
