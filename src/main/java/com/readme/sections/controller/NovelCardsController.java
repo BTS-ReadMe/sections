@@ -50,15 +50,6 @@ public class NovelCardsController {
         );
     }
 
-    @GetMapping("/test")
-    public CommonDataResponse test(
-        @RequestParam String serializationDays,
-        @RequestParam Integer pagination
-    ) {
-        return new CommonDataResponse(
-            novelCardsService.getAllCardsBySerializationDays(serializationDays, pagination));
-    }
-
     @Operation(summary = "소설 카드 전체 조회", description = "소설 카드 전체 조회", tags = {"소설 카드"})
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
