@@ -124,7 +124,7 @@ public class NovelCardsController {
                         .startDate(novelCardsDTO.getStartDate())
                         .starRating(novelCardsDTO.getStarRating())
                         .serializationDays(novelCardsDTO.getSerializationDays())
-                        .isNew(novelCardsDTO.getIsNew())
+                        .newChecking(novelCardsDTO.getNewChecking())
                         .episodeCount(novelCardsDTO.getEpisodeCount())
                         .build())
                     .collect(Collectors.toList())

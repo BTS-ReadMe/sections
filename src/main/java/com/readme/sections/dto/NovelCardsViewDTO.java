@@ -1,6 +1,5 @@
 package com.readme.sections.dto;
 
-import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +29,7 @@ public class NovelCardsViewDTO {
     Long scheduleId;
     Double starRating;
     String serializationDays;
-    Boolean isNew;
+    Boolean newChecking;
     Long episodeCount;
     @Getter
     @Builder

@@ -41,7 +41,7 @@ public class NovelCards {
     Boolean friday;
     Boolean saturday;
     Boolean sunday;
-    Boolean isNew;
+    Boolean newChecking;
     Long episodeCount;
 
     public double getStarRating() {

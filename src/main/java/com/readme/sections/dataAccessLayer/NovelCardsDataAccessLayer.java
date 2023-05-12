@@ -43,8 +43,7 @@ public class NovelCardsDataAccessLayer {
                 "wednesday", "thursday",
                 "friday", "saturday", "sunday", "episodeCount")
                 .and(ComparisonOperators.Gt.valueOf("startDate").greaterThanValue(getOneMonthAgo()))
-                .lt(ComparisonOperators.Lt.valueOf("startDate").lessThanValue(getNow()))
-                .as("isNew"),
+                .as("newChecking"),
             skip(PAGE_SIZE * pagination),
             limit(PAGE_SIZE)
         };
@@ -73,8 +72,7 @@ public class NovelCardsDataAccessLayer {
                 "wednesday", "thursday",
                 "friday", "saturday", "sunday", "episodeCount")
                 .and(ComparisonOperators.Gt.valueOf("startDate").greaterThanValue(getOneMonthAgo()))
-                .lt(ComparisonOperators.Lt.valueOf("startDate").lessThanValue(getNow()))
-                .as("isNew"),
+                .as("newChecking"),
             skip(PAGE_SIZE * pagination),
             limit(PAGE_SIZE)
         };
@@ -103,8 +101,7 @@ public class NovelCardsDataAccessLayer {
                 "wednesday", "thursday",
                 "friday", "saturday", "sunday", "episodeCount")
                 .and(ComparisonOperators.Gt.valueOf("startDate").greaterThanValue(getOneMonthAgo()))
-                .lt(ComparisonOperators.Lt.valueOf("startDate").lessThanValue(getNow()))
-                .as("isNew"),
+                .as("newChecking"),
             skip(PAGE_SIZE * pagination),
             limit(PAGE_SIZE)
         };
@@ -130,8 +127,7 @@ public class NovelCardsDataAccessLayer {
                 "wednesday", "thursday",
                 "friday", "saturday", "sunday", "episodeCount")
                 .and(ComparisonOperators.Gt.valueOf("startDate").greaterThanValue(getOneMonthAgo()))
-                .lt(ComparisonOperators.Lt.valueOf("startDate").lessThanValue(getNow()))
-                .as("isNew"),
+                .as("newChecking"),
             skip(PAGE_SIZE * pagination),
             limit(PAGE_SIZE)
         };
@@ -158,8 +154,7 @@ public class NovelCardsDataAccessLayer {
                 "wednesday", "thursday",
                 "friday", "saturday", "sunday", "episodeCount")
                 .and(ComparisonOperators.Gt.valueOf("startDate").greaterThanValue(getOneMonthAgo()))
-                .lt(ComparisonOperators.Lt.valueOf("startDate").lessThanValue(getNow()))
-                .as("isNew")
+                .as("newChecking")
         };
 
         TypedAggregation<NovelCards> typedAggregation = Aggregation.<NovelCards>newAggregation(

@@ -1,7 +1,6 @@
 package com.readme.sections.responseObject;
 
 import com.readme.sections.dto.NovelCardsViewDTO.Tag;
-import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,6 +30,6 @@ public class ResponseNovelCards {
     Long scheduleId;
     Double starRating;
     String serializationDays;
-    Boolean isNew;
+    Boolean newChecking;
     Long episodeCount;
 }

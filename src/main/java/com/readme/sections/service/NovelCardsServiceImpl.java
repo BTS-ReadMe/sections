@@ -8,11 +8,7 @@ import com.readme.sections.dto.NovelCardsPaginationDTO;
 import com.readme.sections.dto.NovelCardsPaginationDTO.NovelCardsData;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.repository.NovelCardsRepository;
-import com.readme.sections.responseObject.ResponseNovelCards;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -57,7 +53,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             .startDate(getUtcToKoreanTime(novelCards.getStartDate()))
             .starRating(novelCards.getStarRating())
             .serializationDays(getSerializationDays(novelCards))
-            .isNew(startDate.compareTo(novelCardsDataAccessLayer.getOneMonthAgo()) >= 0 && startDate.compareTo(novelCardsDataAccessLayer.getNow()) <= 0)
+            .newChecking(startDate.compareTo(novelCardsDataAccessLayer.getOneMonthAgo()) >= 0 && startDate.compareTo(novelCardsDataAccessLayer.getNow()) <= 0)
             .episodeCount(novelCards.getEpisodeCount())
             .build();
     }
@@ -81,7 +77,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
                     .serializationStatus(novelCards.getSerializationStatus())
                     .description(novelCards.getDescription())
                     .starRating(novelCards.getStarRating())
-                    .isNew(novelCards.getIsNew())
+                    .newChecking(novelCards.getNewChecking())
                     .episodeCount(novelCards.getEpisodeCount())
                     .build())
                 .collect(Collectors.toList()))
@@ -109,7 +105,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
                     .serializationStatus(novelCards.getSerializationStatus())
                     .description(novelCards.getDescription())
                     .starRating(novelCards.getStarRating())
-                    .isNew(novelCards.getIsNew())
+                    .newChecking(novelCards.getNewChecking())
                     .episodeCount(novelCards.getEpisodeCount())
                     .build())
                 .collect(Collectors.toList()))
@@ -241,7 +237,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
                 .scheduleId(novelCards.getScheduleId())
                 .startDate(getUtcToKoreanTime(novelCards.getStartDate()))
                 .starRating(novelCards.getStarRating())
-                .isNew(novelCards.getIsNew())
+                .newChecking(novelCards.getNewChecking())
                 .episodeCount(novelCards.getEpisodeCount())
                 .build())
             .collect(Collectors.toList());
@@ -272,7 +268,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
                     .serializationStatus(novelCards.getSerializationStatus())
                     .description(novelCards.getDescription())
                     .starRating(novelCards.getStarRating())
-                    .isNew(novelCards.getIsNew())
+                    .newChecking(novelCards.getNewChecking())
                     .episodeCount(novelCards.getEpisodeCount())
                     .build())
                 .collect(Collectors.toList()))
