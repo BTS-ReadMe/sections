@@ -43,4 +43,8 @@ public class NovelCards {
     Boolean sunday;
     Boolean isNew;
     Long episodeCount;
+
+    public double getStarRating() {
+        return Math.round(this.starRating * 100.0) / 100.0;
+    }
 }
