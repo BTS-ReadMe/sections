@@ -1,7 +1,7 @@
 package com.readme.sections.controller;
 
-import com.readme.sections.dto.NovelCardsDTO;
-import com.readme.sections.dto.NovelCardsDTO.Tag;
+import com.readme.sections.dto.NovelCardsViewDTO;
+import com.readme.sections.dto.NovelCardsViewDTO.Tag;
 import com.readme.sections.dto.NovelCardsPaginationDTO;
 import com.readme.sections.commonResponseObject.CommonDataResponse;
 import com.readme.sections.responseObject.ResponseNovelCards;
@@ -43,20 +43,11 @@ public class NovelCardsController {
     @GetMapping("/{id}")
     public ResponseEntity<CommonDataResponse<ResponseNovelCards>> getNovelCard(
         @PathVariable Long id) {
-        NovelCardsDTO novelCardsDTO = novelCardsService.getCards(id);
+        NovelCardsViewDTO novelCardsViewDTO = novelCardsService.getCards(id);
         return ResponseEntity.ok(new CommonDataResponse(
-                modelMapper.map(novelCardsDTO, ResponseNovelCards.class)
+                modelMapper.map(novelCardsViewDTO, ResponseNovelCards.class)
             )
         );
-    }
-
-    @GetMapping("/test")
-    public CommonDataResponse test(
-        @RequestParam String serializationDays,
-        @RequestParam Integer pagination
-    ) {
-        return new CommonDataResponse(
-            novelCardsService.getAllCardsBySerializationDays(serializationDays, pagination));
     }
 
     @Operation(summary = "소설 카드 전체 조회", description = "소설 카드 전체 조회", tags = {"소설 카드"})
@@ -110,10 +101,10 @@ public class NovelCardsController {
     @GetMapping("/schedules")
     public ResponseEntity<CommonDataResponse<List<ResponseNovelCards>>> getNovelCardsForSchedule(
         @Param("scheduleId") Long scheduleId) {
-        List<NovelCardsDTO> novelCardsDTOList = novelCardsService.getNovelCardsForSchedule(
+        List<NovelCardsViewDTO> novelCardsViewDTOList = novelCardsService.getNovelCardsForSchedule(
             scheduleId);
         return ResponseEntity.ok(new CommonDataResponse(
-                novelCardsDTOList.stream()
+                novelCardsViewDTOList.stream()
                     .map(novelCardsDTO -> ResponseNovelCards.builder()
                         .novelId(novelCardsDTO.getNovelId())
                         .title(novelCardsDTO.getTitle())
@@ -132,14 +123,8 @@ public class NovelCardsController {
                         .scheduleId(novelCardsDTO.getScheduleId())
                         .startDate(novelCardsDTO.getStartDate())
                         .starRating(novelCardsDTO.getStarRating())
-                        .monday(novelCardsDTO.getMonday())
-                        .tuesday(novelCardsDTO.getTuesday())
-                        .wednesday(novelCardsDTO.getWednesday())
-                        .thursday(novelCardsDTO.getThursday())
-                        .friday(novelCardsDTO.getFriday())
-                        .saturday(novelCardsDTO.getSaturday())
-                        .sunday(novelCardsDTO.getSunday())
-                        .isNew(novelCardsDTO.getIsNew())
+                        .serializationDays(novelCardsDTO.getSerializationDays())
+                        .newChecking(novelCardsDTO.getNewChecking())
                         .episodeCount(novelCardsDTO.getEpisodeCount())
                         .build())
                     .collect(Collectors.toList())

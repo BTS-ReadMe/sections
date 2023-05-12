@@ -1,6 +1,6 @@
 package com.readme.sections.model;
 
-import com.readme.sections.dto.NovelCardsDTO.Tag;
+import com.readme.sections.dto.NovelCardsViewDTO.Tag;
 import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -41,6 +41,10 @@ public class NovelCards {
     Boolean friday;
     Boolean saturday;
     Boolean sunday;
-    Boolean isNew;
+    Boolean newChecking;
     Long episodeCount;
+
+    public double getStarRating() {
+        return Math.round(this.starRating * 100.0) / 100.0;
+    }
 }

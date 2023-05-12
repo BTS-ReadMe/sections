@@ -33,7 +33,7 @@ public class NovelCardsPaginationDTO {
         private String thumbnail;
         private String serializationStatus;
         private double starRating;
-        private boolean isNew;
+        private boolean newChecking;
         private long episodeCount;
     }
 
