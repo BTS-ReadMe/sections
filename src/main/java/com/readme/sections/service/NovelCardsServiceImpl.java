@@ -1,14 +1,21 @@
 package com.readme.sections.service;
 
 import com.readme.sections.dataAccessLayer.NovelCardsDataAccessLayer;
-import com.readme.sections.dto.NovelCardsDTO;
-import com.readme.sections.dto.NovelCardsDTO.Tag;
+import com.readme.sections.dto.NovelCardsEntityDTO;
+import com.readme.sections.dto.NovelCardsViewDTO;
+import com.readme.sections.dto.NovelCardsViewDTO.Tag;
 import com.readme.sections.dto.NovelCardsPaginationDTO;
 import com.readme.sections.dto.NovelCardsPaginationDTO.NovelCardsData;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.repository.NovelCardsRepository;
-import com.readme.sections.responseObject.ResponseNovelCardsPagination;
+import com.readme.sections.responseObject.ResponseNovelCards;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,9 +35,31 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     private final ModelMapper modelMapper;
 
     @Override
-    public NovelCardsDTO getCards(Long id) {
+    public NovelCardsViewDTO getCards(Long id) {
         NovelCards novelCards = novelCardsRepository.findById(id).get();
-        return modelMapper.map(novelCards, NovelCardsDTO.class);
+        Date startDate = novelCards.getStartDate();
+        return NovelCardsViewDTO.builder()
+            .novelId(novelCards.getNovelId())
+            .title(novelCards.getTitle())
+            .author(novelCards.getAuthor())
+            .grade(novelCards.getGrade())
+            .genre(novelCards.getGenre())
+            .tags(novelCards.getTags().stream()
+                .map(element -> Tag.builder()
+                    .id(element.getId())
+                    .name(element.getName())
+                    .build()).collect(Collectors.toList()))
+            .thumbnail(novelCards.getThumbnail())
+            .views(novelCards.getViews())
+            .serializationStatus(novelCards.getSerializationStatus())
+            .description(novelCards.getDescription())
+            .scheduleId(novelCards.getScheduleId())
+            .startDate(getUtcToKoreanTime(novelCards.getStartDate()))
+            .starRating(novelCards.getStarRating())
+            .serializationDays(getSerializationDays(novelCards))
+            .isNew(startDate.compareTo(novelCardsDataAccessLayer.getOneMonthAgo()) >= 0 && startDate.compareTo(novelCardsDataAccessLayer.getNow()) <= 0)
+            .episodeCount(novelCards.getEpisodeCount())
+            .build();
     }
 
     @Override
@@ -89,100 +118,101 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             .build();
     }
 
-    public void addCards(NovelCardsDTO novelCardsDTO) {
+    @Override
+    public void addCards(NovelCardsEntityDTO novelCardsEntityDTO) {
         novelCardsRepository.insert(NovelCards.builder()
-            .novelId(novelCardsDTO.getNovelId())
-            .title(novelCardsDTO.getTitle())
-            .author(novelCardsDTO.getAuthor())
-            .grade(novelCardsDTO.getGrade())
-            .genre(novelCardsDTO.getGenre())
-            .tags(novelCardsDTO.getTags().stream()
+            .novelId(novelCardsEntityDTO.getNovelId())
+            .title(novelCardsEntityDTO.getTitle())
+            .author(novelCardsEntityDTO.getAuthor())
+            .grade(novelCardsEntityDTO.getGrade())
+            .genre(novelCardsEntityDTO.getGenre())
+            .tags(novelCardsEntityDTO.getTags().stream()
                 .map(element -> Tag.builder()
                     .id(element.getId())
                     .name(element.getName())
                     .build()).collect(Collectors.toList()))
-            .thumbnail(novelCardsDTO.getThumbnail())
-            .views(novelCardsDTO.getViews())
-            .serializationStatus(novelCardsDTO.getSerializationStatus())
-            .description(novelCardsDTO.getDescription())
-            .scheduleId(novelCardsDTO.getScheduleId())
-            .startDate(novelCardsDTO.getStartDate())
-            .starRating(novelCardsDTO.getStarRating())
-            .monday(novelCardsDTO.getMonday())
-            .tuesday(novelCardsDTO.getTuesday())
-            .wednesday(novelCardsDTO.getWednesday())
-            .thursday(novelCardsDTO.getThursday())
-            .friday(novelCardsDTO.getFriday())
-            .saturday(novelCardsDTO.getSaturday())
-            .sunday(novelCardsDTO.getSunday())
-            .episodeCount(novelCardsDTO.getEpisodeCount())
+            .thumbnail(novelCardsEntityDTO.getThumbnail())
+            .views(novelCardsEntityDTO.getViews())
+            .serializationStatus(novelCardsEntityDTO.getSerializationStatus())
+            .description(novelCardsEntityDTO.getDescription())
+            .scheduleId(novelCardsEntityDTO.getScheduleId())
+            .startDate(novelCardsEntityDTO.getStartDate())
+            .starRating(novelCardsEntityDTO.getStarRating())
+            .monday(novelCardsEntityDTO.getMonday())
+            .tuesday(novelCardsEntityDTO.getTuesday())
+            .wednesday(novelCardsEntityDTO.getWednesday())
+            .thursday(novelCardsEntityDTO.getThursday())
+            .friday(novelCardsEntityDTO.getFriday())
+            .saturday(novelCardsEntityDTO.getSaturday())
+            .sunday(novelCardsEntityDTO.getSunday())
+            .episodeCount(novelCardsEntityDTO.getEpisodeCount())
             .build());
     }
 
     @Override
-    public NovelCardsDTO existUpdateData(Long id, NovelCardsDTO novelCardsDTO) {
+    public NovelCardsEntityDTO existUpdateData(Long id, NovelCardsEntityDTO novelCardsEntityDTO) {
         NovelCards novelCards = novelCardsRepository.findById(id).get();
-        return NovelCardsDTO.builder()
+        return NovelCardsEntityDTO.builder()
             .novelId(novelCards.getNovelId())
-            .title(novelCardsDTO.getTitle() != null ? novelCardsDTO.getTitle()
+            .title(novelCardsEntityDTO.getTitle() != null ? novelCardsEntityDTO.getTitle()
                 : novelCards.getTitle())
             .description(
-                novelCardsDTO.getDescription() != null ? novelCardsDTO.getDescription()
+                novelCardsEntityDTO.getDescription() != null ? novelCardsEntityDTO.getDescription()
                     : novelCards.getDescription())
-            .author(novelCardsDTO.getAuthor() != null ? novelCardsDTO.getAuthor()
+            .author(novelCardsEntityDTO.getAuthor() != null ? novelCardsEntityDTO.getAuthor()
                 : novelCards.getAuthor())
-            .genre(novelCardsDTO.getGenre() != null ? novelCardsDTO.getGenre()
+            .genre(novelCardsEntityDTO.getGenre() != null ? novelCardsEntityDTO.getGenre()
                 : novelCards.getGenre())
-            .grade(novelCardsDTO.getGrade() != null ? novelCardsDTO.getGrade()
+            .grade(novelCardsEntityDTO.getGrade() != null ? novelCardsEntityDTO.getGrade()
                 : novelCards.getGrade())
             .thumbnail(
-                novelCardsDTO.getThumbnail() != null ? novelCardsDTO.getThumbnail()
+                novelCardsEntityDTO.getThumbnail() != null ? novelCardsEntityDTO.getThumbnail()
                     : novelCards.getThumbnail())
             .startDate(
-                novelCardsDTO.getStartDate() != null ? novelCardsDTO.getStartDate()
+                novelCardsEntityDTO.getStartDate() != null ? novelCardsEntityDTO.getStartDate()
                     : novelCards.getStartDate())
-            .views(novelCardsDTO.getViews() != null ? novelCardsDTO.getViews()
+            .views(novelCardsEntityDTO.getViews() != null ? novelCardsEntityDTO.getViews()
                 : novelCards.getViews())
-            .serializationStatus(novelCardsDTO.getSerializationStatus() != null
-                ? novelCardsDTO.getSerializationStatus()
+            .serializationStatus(novelCardsEntityDTO.getSerializationStatus() != null
+                ? novelCardsEntityDTO.getSerializationStatus()
                 : novelCards.getSerializationStatus())
-            .tags(novelCardsDTO.getTags() != null ? novelCardsDTO.getTags()
+            .tags(novelCardsEntityDTO.getTags() != null ? novelCardsEntityDTO.getTags()
                 : novelCards.getTags())
             .scheduleId(
-                novelCardsDTO.getScheduleId() != null ? novelCardsDTO.getScheduleId()
+                novelCardsEntityDTO.getScheduleId() != null ? novelCardsEntityDTO.getScheduleId()
                     : novelCards.getScheduleId())
             .starRating(
-                novelCardsDTO.getStarRating() != null ? novelCardsDTO.getStarRating()
+                novelCardsEntityDTO.getStarRating() != null ? novelCardsEntityDTO.getStarRating()
                     : novelCards.getStarRating())
             .monday(
-                novelCardsDTO.getMonday() != null ? novelCardsDTO.getMonday()
+                novelCardsEntityDTO.getMonday() != null ? novelCardsEntityDTO.getMonday()
                     : novelCards.getMonday())
             .tuesday(
-                novelCardsDTO.getTuesday() != null ? novelCardsDTO.getTuesday()
+                novelCardsEntityDTO.getTuesday() != null ? novelCardsEntityDTO.getTuesday()
                     : novelCards.getTuesday())
             .wednesday(
-                novelCardsDTO.getWednesday() != null ? novelCardsDTO.getWednesday()
+                novelCardsEntityDTO.getWednesday() != null ? novelCardsEntityDTO.getWednesday()
                     : novelCards.getWednesday())
             .thursday(
-                novelCardsDTO.getThursday() != null ? novelCardsDTO.getThursday()
+                novelCardsEntityDTO.getThursday() != null ? novelCardsEntityDTO.getThursday()
                     : novelCards.getThursday())
             .friday(
-                novelCardsDTO.getFriday() != null ? novelCardsDTO.getFriday()
+                novelCardsEntityDTO.getFriday() != null ? novelCardsEntityDTO.getFriday()
                     : novelCards.getFriday())
             .saturday(
-                novelCardsDTO.getSaturday() != null ? novelCardsDTO.getSaturday()
+                novelCardsEntityDTO.getSaturday() != null ? novelCardsEntityDTO.getSaturday()
                     : novelCards.getSaturday())
             .sunday(
-                novelCardsDTO.getSunday() != null ? novelCardsDTO.getSunday()
+                novelCardsEntityDTO.getSunday() != null ? novelCardsEntityDTO.getSunday()
                     : novelCards.getSunday())
-            .episodeCount(novelCardsDTO.getEpisodeCount() != null ? novelCardsDTO.getEpisodeCount()
+            .episodeCount(novelCardsEntityDTO.getEpisodeCount() != null ? novelCardsEntityDTO.getEpisodeCount()
                 : novelCards.getEpisodeCount())
             .build();
     }
 
     @Override
-    public void updateCards(NovelCardsDTO novelCardsDTO) {
-        novelCardsRepository.save(modelMapper.map(novelCardsDTO, NovelCards.class));
+    public void updateCards(NovelCardsEntityDTO novelCardsEntityDTO) {
+        novelCardsRepository.save(modelMapper.map(novelCardsEntityDTO, NovelCards.class));
     }
 
     @Override
@@ -191,9 +221,9 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     }
 
     @Override
-    public List<NovelCardsDTO> getNovelCardsForSchedule(Long scheduleId) {
+    public List<NovelCardsViewDTO> getNovelCardsForSchedule(Long scheduleId) {
         return novelCardsDataAccessLayer.getAllByScheduleIdData(scheduleId).stream()
-            .map(novelCards -> NovelCardsDTO.builder()
+            .map(novelCards -> NovelCardsViewDTO.builder()
                 .novelId(novelCards.getNovelId())
                 .title(novelCards.getTitle())
                 .author(novelCards.getAuthor())
@@ -209,15 +239,8 @@ public class NovelCardsServiceImpl implements NovelCardsService {
                 .serializationStatus(novelCards.getSerializationStatus())
                 .description(novelCards.getDescription())
                 .scheduleId(novelCards.getScheduleId())
-                .startDate(novelCards.getStartDate())
+                .startDate(getUtcToKoreanTime(novelCards.getStartDate()))
                 .starRating(novelCards.getStarRating())
-                .monday(novelCards.getMonday())
-                .tuesday(novelCards.getTuesday())
-                .wednesday(novelCards.getWednesday())
-                .thursday(novelCards.getThursday())
-                .friday(novelCards.getFriday())
-                .saturday(novelCards.getSaturday())
-                .sunday(novelCards.getSunday())
                 .isNew(novelCards.getIsNew())
                 .episodeCount(novelCards.getEpisodeCount())
                 .build())
@@ -260,27 +283,34 @@ public class NovelCardsServiceImpl implements NovelCardsService {
 
     private static String getSerializationDays(NovelCards novelCards) {
         String serializationDays = "";
-        if (novelCards.getMonday()) {
+        if (novelCards.getMonday() != null && novelCards.getMonday() != null) {
             serializationDays += "월 ";
         }
-        if (novelCards.getTuesday()) {
+        if (novelCards.getTuesday() != null && novelCards.getTuesday() != null) {
             serializationDays += "화 ";
         }
-        if (novelCards.getWednesday()) {
+        if (novelCards.getWednesday() != null && novelCards.getWednesday() != null) {
             serializationDays += "수 ";
         }
-        if (novelCards.getThursday()) {
+        if (novelCards.getThursday() != null && novelCards.getThursday() != null) {
             serializationDays += "목 ";
         }
-        if (novelCards.getFriday()) {
+        if (novelCards.getFriday() != null && novelCards.getFriday() != null) {
             serializationDays += "금 ";
         }
-        if (novelCards.getSaturday()) {
+        if (novelCards.getSaturday() != null && novelCards.getSaturday() != null) {
             serializationDays += "토 ";
         }
-        if (novelCards.getSunday()) {
+        if (novelCards.getSunday() != null && novelCards.getSunday() != null) {
             serializationDays += "일 ";
         }
+        if (serializationDays.equals("")) return serializationDays;
         return serializationDays.substring(0, serializationDays.length() - 1);
+    }
+
+    private static String getUtcToKoreanTime(Date utcTime) {
+        SimpleDateFormat koreaFormat = new SimpleDateFormat("yyyy-MM-dd");
+        koreaFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+        return koreaFormat.format(utcTime);
     }
 }
