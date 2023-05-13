@@ -67,10 +67,7 @@ public class NovelCardsDataAccessLayer {
         AggregationOperation[] operations = {
             match(where(serializationDays).is(true)),
             project("novelId", "title", "description", "author", "genre", "grade", "thumbnail",
-                "startDate", "views",
-                "serializationStatus", "tags", "scheduleId", "starRating", "monday", "tuesday",
-                "wednesday", "thursday",
-                "friday", "saturday", "sunday", "episodeCount")
+                "serializationStatus", "tags", "scheduleId", "starRating","episodeCount")
                 .and(ComparisonOperators.Gt.valueOf("startDate").greaterThanValue(getOneMonthAgo()))
                 .as("newChecking"),
             skip(PAGE_SIZE * pagination),
@@ -96,10 +93,7 @@ public class NovelCardsDataAccessLayer {
         AggregationOperation[] operations = {
             match(where("genre").is(genre).and("serializationStatus").is(serializationStatus)),
             project("novelId", "title", "description", "author", "genre", "grade", "thumbnail",
-                "startDate", "views",
-                "serializationStatus", "tags", "scheduleId", "starRating", "monday", "tuesday",
-                "wednesday", "thursday",
-                "friday", "saturday", "sunday", "episodeCount")
+                "serializationStatus", "tags", "scheduleId", "starRating","episodeCount")
                 .and(ComparisonOperators.Gt.valueOf("startDate").greaterThanValue(getOneMonthAgo()))
                 .as("newChecking"),
             skip(PAGE_SIZE * pagination),
@@ -122,10 +116,7 @@ public class NovelCardsDataAccessLayer {
         AggregationOperation[] operations = {
             match(where("startDate").gte(getOneMonthAgo()).lte(getNow()).and("genre").is(genre)),
             project("novelId", "title", "description", "author", "genre", "grade", "thumbnail",
-                "startDate", "views",
-                "serializationStatus", "tags", "scheduleId", "starRating", "monday", "tuesday",
-                "wednesday", "thursday",
-                "friday", "saturday", "sunday", "episodeCount")
+                "serializationStatus", "tags", "scheduleId", "starRating","episodeCount")
                 .and(ComparisonOperators.Gt.valueOf("startDate").greaterThanValue(getOneMonthAgo()))
                 .as("newChecking"),
             skip(PAGE_SIZE * pagination),
