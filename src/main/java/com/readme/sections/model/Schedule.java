@@ -3,6 +3,7 @@ package com.readme.sections.model;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,6 +13,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
@@ -20,6 +24,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Table(name = "schedule")
+@EntityListeners(AuditingEntityListener.class)
 public class Schedule {
 
     @Id
@@ -32,4 +37,10 @@ public class Schedule {
     LocalDateTime startDate;
     @Column(name = "end_date", nullable = false)
     LocalDateTime endDate;
+    @CreatedDate
+    @Column(name = "created_date",updatable = false)
+    private LocalDateTime createdDate;
+    @LastModifiedDate
+    @Column(name = "updated_date")
+    private LocalDateTime updatedDate;
 }
