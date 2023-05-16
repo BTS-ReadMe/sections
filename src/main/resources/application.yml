@@ -25,6 +25,28 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
         format_sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: sections-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    producer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+    kafka-connect:
+      cluster:
+        servers: http://localhost:8083
+      connector:
+        configs:
+          my-connector:
+            config:
+              connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector
+              tasks.max: 1
+              file: /path/to/file
+              topics: my-topic
 logging:
   level:
     org:
