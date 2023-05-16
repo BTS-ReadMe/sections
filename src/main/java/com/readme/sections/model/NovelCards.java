@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "novel_cards")
@@ -19,9 +21,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@CompoundIndex(def = "{'genre': 1, 'serializationStatus': 1}")
 public class NovelCards {
     @Id
     Long novelId;
+    @Indexed
     String title;
     String description;
     String author;
