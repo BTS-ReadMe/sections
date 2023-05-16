@@ -38,6 +38,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             .novelId(novelCards.getNovelId())
             .title(novelCards.getTitle())
             .author(novelCards.getAuthor())
+            .authorComment(novelCards.getAuthorComment())
             .grade(novelCards.getGrade())
             .genre(novelCards.getGenre())
             .tags(novelCards.getTags().stream()
@@ -53,7 +54,8 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             .startDate(getUtcToKoreanTime(novelCards.getStartDate()))
             .starRating(novelCards.getStarRating())
             .serializationDays(getSerializationDays(novelCards))
-            .newChecking(startDate.compareTo(novelCardsDataAccessLayer.getOneMonthAgo()) >= 0 && startDate.compareTo(novelCardsDataAccessLayer.getNow()) <= 0)
+            .newChecking(startDate.compareTo(novelCardsDataAccessLayer.getOneMonthAgo()) >= 0
+                && startDate.compareTo(novelCardsDataAccessLayer.getNow()) <= 0)
             .episodeCount(novelCards.getEpisodeCount())
             .build();
     }
@@ -120,6 +122,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             .novelId(novelCardsEntityDTO.getNovelId())
             .title(novelCardsEntityDTO.getTitle())
             .author(novelCardsEntityDTO.getAuthor())
+            .authorComment(novelCardsEntityDTO.getAuthorComment())
             .grade(novelCardsEntityDTO.getGrade())
             .genre(novelCardsEntityDTO.getGenre())
             .tags(novelCardsEntityDTO.getTags().stream()
@@ -157,6 +160,8 @@ public class NovelCardsServiceImpl implements NovelCardsService {
                     : novelCards.getDescription())
             .author(novelCardsEntityDTO.getAuthor() != null ? novelCardsEntityDTO.getAuthor()
                 : novelCards.getAuthor())
+            .authorComment(novelCardsEntityDTO.getAuthorComment() != null ? novelCardsEntityDTO.getAuthorComment()
+                : novelCards.getAuthorComment())
             .genre(novelCardsEntityDTO.getGenre() != null ? novelCardsEntityDTO.getGenre()
                 : novelCards.getGenre())
             .grade(novelCardsEntityDTO.getGrade() != null ? novelCardsEntityDTO.getGrade()
@@ -201,7 +206,8 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             .sunday(
                 novelCardsEntityDTO.getSunday() != null ? novelCardsEntityDTO.getSunday()
                     : novelCards.getSunday())
-            .episodeCount(novelCardsEntityDTO.getEpisodeCount() != null ? novelCardsEntityDTO.getEpisodeCount()
+            .episodeCount(novelCardsEntityDTO.getEpisodeCount() != null
+                ? novelCardsEntityDTO.getEpisodeCount()
                 : novelCards.getEpisodeCount())
             .build();
     }
@@ -300,7 +306,9 @@ public class NovelCardsServiceImpl implements NovelCardsService {
         if (novelCards.getSunday() != null && novelCards.getSunday() != null) {
             serializationDays += "일 ";
         }
-        if (serializationDays.equals("")) return serializationDays;
+        if (serializationDays.equals("")) {
+            return serializationDays;
+        }
         return serializationDays.substring(0, serializationDays.length() - 1);
     }
 

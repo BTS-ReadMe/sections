@@ -21,6 +21,7 @@ public class NovelCardsEntityDTO {
     String title;
     String description;
     String author;
+    String authorComment;
     String genre;
     Integer grade;
     String thumbnail;

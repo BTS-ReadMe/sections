@@ -29,6 +29,7 @@ public class NovelCards {
     String title;
     String description;
     String author;
+    String authorComment;
     String genre;
     Integer grade;
     String thumbnail;
