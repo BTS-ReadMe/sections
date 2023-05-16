@@ -40,21 +40,9 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
-        
-    
-    ## create application-dev.yml
-    - name: make application-dev.yml
-      if: contains(github.ref, 'develop')
-      run: |
-          mkdir ./src/main/resources
-          cd ./src/main/resources
-          touch ./application.yml
-          echo '${{ secrets.PROPERTIES_DEV }}' > ./application.yml
-      shell: bash
 
     ## create application-prod.yml
     - name: make application-prod.yml
-      if: contains(github.ref, 'main')
       run: |
           mkdir ./src/main/resources
           cd ./src/main/resources
@@ -72,25 +60,16 @@ jobs:
       
     ## docker build & push to production
     - name: Docker build & push to prod
-      if: contains(github.ref, 'main')
       run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -f Dockerfile-prod -t ${{ secrets.DOCKER_REPO }}/sections-prod .
           docker push ${{ secrets.DOCKER_REPO }}/sections-prod
 
-    ## docker build & push to develop
-    - name: Docker build & push to dev
-      if: contains(github.ref, 'develop')
-      run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -f Dockerfile-dev -t ${{ secrets.DOCKER_REPO }}/sections-dev .
-          docker push ${{ secrets.DOCKER_REPO }}/sections-dev
           
     ## deploy to production
     - name: Deploy to prod
       uses: appleboy/ssh-action@master
       id: deploy-prod
-      if: contains(github.ref, 'main')
       with:
         host: ${{ secrets.HOST_EC2 }} # EC2 퍼블릭 IPv4 DNS
         username: ubuntu
