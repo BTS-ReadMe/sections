@@ -1,4 +1,4 @@
-package com.readme.sections.requestObject;
+package com.readme.sections.dto;
 
 import com.readme.sections.dto.NovelCardsViewDTO.Tag;
 import java.util.Date;
@@ -7,14 +7,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class RequestNovelCards {
+public class NovelCardsEntityDTO {
     Long novelId;
     String title;
     String description;
@@ -28,7 +30,7 @@ public class RequestNovelCards {
     String serializationStatus;
     List<Tag> tags;
     Long scheduleId;
-    Float starRating;
+    Double starRating;
     Boolean monday;
     Boolean tuesday;
     Boolean wednesday;
@@ -36,5 +38,6 @@ public class RequestNovelCards {
     Boolean friday;
     Boolean saturday;
     Boolean sunday;
+    Boolean isNew;
     Long episodeCount;
 }

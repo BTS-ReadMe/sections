@@ -1,6 +1,5 @@
 package com.readme.sections.dto;
 
-import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,21 +14,24 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class NovelCardsDTO {
+public class NovelCardsViewDTO {
     Long novelId;
     String title;
     String description;
     String author;
+    String authorComment;
     String genre;
     Integer grade;
     String thumbnail;
-    Date startDate;
-    Integer serializationDays;
+    String startDate;
     Long views;
     String serializationStatus;
     List<Tag> tags;
     Long scheduleId;
-    Float starRating;
+    Double starRating;
+    String serializationDays;
+    Boolean newChecking;
+    Long episodeCount;
     @Getter
     @Builder
     @NoArgsConstructor
