@@ -3,13 +3,22 @@ package com.readme.sections.service;
 import com.readme.sections.dto.ScheduleDTO;
 import com.readme.sections.model.Schedule;
 import com.readme.sections.repository.ScheduleRepository;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ScheduleServiceImpl implements ScheduleService{
     private final ScheduleRepository scheduleRepository;
 
@@ -26,6 +35,14 @@ public class ScheduleServiceImpl implements ScheduleService{
 
     @Override
     public List<ScheduleDTO> getSchedules() {
+        log.info(scheduleRepository.getCurrentSchedules().stream()
+            .map(schedule -> ScheduleDTO.builder()
+                .id(schedule.getId())
+                .name(schedule.getName())
+                .startDate(schedule.getStartDate())
+                .endDate(schedule.getEndDate())
+                .build())
+            .collect(Collectors.toList()).toString());
         return scheduleRepository.getCurrentSchedules().stream()
             .map(schedule -> ScheduleDTO.builder()
                 .id(schedule.getId())
@@ -73,4 +90,11 @@ public class ScheduleServiceImpl implements ScheduleService{
     public void deleteSchedule(Long id) {
         scheduleRepository.deleteById(id);
     }
+
+    public String getUtcToKoreanTime(LocalDateTime utcTime) {
+        ZonedDateTime koreanTime = utcTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        return formatter.format(koreanTime);
+    }
+
 }

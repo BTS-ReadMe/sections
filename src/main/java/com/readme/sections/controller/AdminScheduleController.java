@@ -4,7 +4,6 @@ import com.readme.sections.dto.ScheduleDTO;
 import com.readme.sections.requestObject.RequestSchedule;
 import com.readme.sections.commonResponseObject.CommonDataResponse;
 import com.readme.sections.responseObject.ResponseSchedule;
-import com.readme.sections.responseObject.ResponseSchedule.Schedules;
 import com.readme.sections.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -45,8 +44,8 @@ public class AdminScheduleController {
                 ResponseSchedule.builder()
                     .id(scheduleDTO.getId())
                     .name(scheduleDTO.getName())
-                    .startDate(scheduleDTO.getStartDate())
-                    .endDate(scheduleDTO.getEndDate())
+                    .startDate(scheduleService.getUtcToKoreanTime(scheduleDTO.getStartDate()))
+                    .endDate(scheduleService.getUtcToKoreanTime(scheduleDTO.getEndDate()))
                     .build()
             )
         );
@@ -62,9 +61,11 @@ public class AdminScheduleController {
     @GetMapping
     public ResponseEntity<CommonDataResponse<List<ResponseSchedule>>> getSchedules() {
         return ResponseEntity.ok(new CommonDataResponse(scheduleService.getSchedules().stream()
-                .map(schedule -> Schedules.builder()
+                .map(schedule -> ResponseSchedule.builder()
                     .id(schedule.getId())
                     .name(schedule.getName())
+                    .startDate(scheduleService.getUtcToKoreanTime(schedule.getStartDate()))
+                    .endDate(scheduleService.getUtcToKoreanTime(schedule.getEndDate()))
                     .build())
                 .collect(Collectors.toList())
             )
