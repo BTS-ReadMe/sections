@@ -83,11 +83,24 @@ public class NovelCardsController {
         ));
     }
 
+    @Operation(summary = "소설 카드 검색", description = "title or tag로 검색: title은 글자가 포함되어도 검색되고, tag는 일치해야 검색 됨", tags = {"소설 카드"})
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
+        @ApiResponse(responseCode = "404", description = "NOT FOUND"),
+        @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
+    })
     @GetMapping("/search")
-    public ResponseEntity<CommonDataResponse> searchTags(
-        @RequestParam String tags
+    public ResponseEntity<CommonDataResponse<ResponseNovelCardsPagination>> searchKeyword(
+        @RequestParam String keyword,
+        @RequestParam(required = false) Integer pagination
     ) {
-        return ResponseEntity.ok(new CommonDataResponse(novelCardsService.searchTags(tags)));
+        NovelCardsPaginationDTO novelCardsPaginationDTO = novelCardsService.searchNovelCards(keyword, pagination);
+        return ResponseEntity.ok(new CommonDataResponse(ResponseNovelCardsPagination.builder()
+            .novelCardsData(novelCardsPaginationDTO.getNovelCardsData())
+            .totalElements(novelCardsPaginationDTO.getTotalElements())
+            .totalPages(novelCardsPaginationDTO.getTotalPages())
+            .build()));
     }
 
     @Operation(summary = "스케줄에 해당하는 소설 카드 목록 조회", description = "scheduleId에 해당하는 소설 카드 목록 조회", tags = {

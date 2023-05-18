@@ -1,7 +1,7 @@
 package com.readme.sections.controller;
 
 import com.readme.sections.commonResponseObject.CommonDataResponse;
-import com.readme.sections.responseObject.ResponseSchedule.Schedules;
+import com.readme.sections.responseObject.ResponseSchedule;
 import com.readme.sections.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -31,10 +31,10 @@ public class ScheduleController {
         @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
     })
     @GetMapping
-    public ResponseEntity<CommonDataResponse<List<Schedules>>> getSchedules() {
+    public ResponseEntity<CommonDataResponse<List<ResponseSchedule>>> getSchedules() {
         return ResponseEntity.ok(new CommonDataResponse(
                 scheduleService.getSchedules().stream()
-                    .map(schedule -> Schedules.builder()
+                    .map(schedule -> ResponseSchedule.builder()
                         .id(schedule.getId())
                         .name(schedule.getName())
                         .build())

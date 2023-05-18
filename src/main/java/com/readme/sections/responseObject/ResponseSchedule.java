@@ -15,16 +15,6 @@ import lombok.ToString;
 public class ResponseSchedule {
     Long id;
     String name;
-    LocalDateTime startDate;
-    LocalDateTime endDate;
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @ToString
-    public static class Schedules {
-        Long id;
-        String name;
-    }
+    String startDate;
+    String endDate;
 }

@@ -9,6 +9,8 @@ import com.readme.sections.dto.NovelCardsPaginationDTO.NovelCardsData;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.repository.NovelCardsRepository;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -17,6 +19,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -250,8 +255,31 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     }
 
     @Override
-    public List<NovelCards> searchTags(String tag) {
-        return novelCardsRepository.findAllByTagsNameContaining(tag);
+    public NovelCardsPaginationDTO searchNovelCards(String keyword, Integer pagination) {
+        if (pagination == null) {
+            pagination = 0;
+        }
+        Pageable pageable = PageRequest.of(pagination, PAGE_SIZE);
+        Page<NovelCards> novelCardsPage = novelCardsRepository.findAllByTagsNameOrTitleContaining(keyword, keyword, pageable);
+        return NovelCardsPaginationDTO.builder()
+            .novelCardsData(novelCardsPage.stream()
+                .map(novelCards -> NovelCardsData.builder()
+                    .novelId(novelCards.getNovelId())
+                    .title(novelCards.getTitle())
+                    .author(novelCards.getAuthor())
+                    .grade(novelCards.getGrade())
+                    .genre(novelCards.getGenre())
+                    .thumbnail(novelCards.getThumbnail())
+                    .serializationStatus(novelCards.getSerializationStatus())
+                    .description(novelCards.getDescription())
+                    .starRating(novelCards.getStarRating())
+                    .newChecking(checkNewNovel(novelCards.getStartDate()))
+                    .episodeCount(novelCards.getEpisodeCount())
+                    .build())
+                .collect(Collectors.toList()))
+            .totalElements(novelCardsPage.getTotalElements())
+            .totalPages(novelCardsPage.getTotalPages())
+            .build();
     }
 
     @Override
@@ -316,5 +344,17 @@ public class NovelCardsServiceImpl implements NovelCardsService {
         SimpleDateFormat koreaFormat = new SimpleDateFormat("yyyy-MM-dd");
         koreaFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
         return koreaFormat.format(utcTime);
+    }
+
+    public static boolean checkNewNovel(Date startDate) {
+        // UTC 시간대에서 한국 시간대로 변경
+        ZonedDateTime zonedDateTimeUtc = ZonedDateTime.ofInstant(startDate.toInstant(), ZoneId.of("UTC"));
+        ZonedDateTime zonedDateTimeKst = zonedDateTimeUtc.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+
+        // 한 달 전의 현재 시간
+        ZonedDateTime oneMonthAgo = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).minusMonths(1);
+
+        // startDate가 한 달 전과 현재 사이에 있는지 확인
+        return (zonedDateTimeKst.isAfter(oneMonthAgo) && zonedDateTimeKst.isBefore(ZonedDateTime.now(ZoneId.of("Asia/Seoul"))));
     }
 }
