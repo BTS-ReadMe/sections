@@ -72,7 +72,7 @@ public class AdminScheduleController {
         );
     }
 
-    @Operation(summary = "진행 중인 스케줄 목록 조회", description = "현재 진행 중인 스케줄 조회", tags = {"Admin 스케줄"})
+    @Operation(summary = "스케줄 생성", description = "스케줄 생성", tags = {"Admin 스케줄"})
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
         @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
