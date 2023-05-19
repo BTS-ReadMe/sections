@@ -14,7 +14,6 @@ import java.util.TimeZone;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +28,6 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     private int PAGE_SIZE;
     private final NovelCardsDataAccessLayer novelCardsDataAccessLayer;
     private final NovelCardsRepository novelCardsRepository;
-    private final ModelMapper modelMapper;
 
     @Override
     public NovelCardsViewDTO getCards(Long id) {
@@ -40,29 +38,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     @Override
     public NovelCardsPaginationDTO getAllCardsBySerializationDays(String serializationDays,
         Integer pagination) {
-        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getAllSerializationDays(
-            serializationDays, pagination);
-        long totalElements = novelCardsDataAccessLayer.getAllSerializationDaysDataCount(
-            serializationDays);
-        return NovelCardsPaginationDTO.builder()
-            .novelCardsData(novelCardsList.stream()
-                .map(novelCards -> NovelCardsData.builder()
-                    .novelId(novelCards.getNovelId())
-                    .title(novelCards.getTitle())
-                    .author(novelCards.getAuthor())
-                    .grade(novelCards.getGrade())
-                    .genre(novelCards.getGenre())
-                    .thumbnail(novelCards.getThumbnail())
-                    .serializationStatus(novelCards.getSerializationStatus())
-                    .description(novelCards.getDescription())
-                    .starRating(novelCards.getStarRating())
-                    .newChecking(novelCards.getNewChecking())
-                    .episodeCount(novelCards.getEpisodeCount())
-                    .build())
-                .collect(Collectors.toList()))
-            .totalElements(totalElements)
-            .totalPages((int) Math.ceil((double) totalElements / (double) PAGE_SIZE))
-            .build();
+        return new NovelCardsPaginationDTO(novelCardsDataAccessLayer.findByDayTrue(serializationDays, pagination));
     }
 
     @Override
@@ -164,7 +140,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
 
     @Override
     public void updateCards(NovelCardsEntityDTO novelCardsEntityDTO) {
-        novelCardsRepository.save(modelMapper.map(novelCardsEntityDTO, NovelCards.class));
+        novelCardsRepository.save(new NovelCards(novelCardsEntityDTO));
     }
 
     @Override
@@ -217,7 +193,8 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             .build();
     }
 
-    private static String getSerializationDays(NovelCards novelCards) {
+
+    public static String getSerializationDays(NovelCards novelCards) {
         String serializationDays = "";
         if (novelCards.getMonday() != null && novelCards.getMonday() != null) {
             serializationDays += "월 ";

@@ -14,6 +14,10 @@ import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
@@ -31,6 +35,17 @@ public class NovelCardsDataAccessLayer {
     @Value("${spring.data.web.pageable.default-page-size}")
     private int PAGE_SIZE;
     private final MongoTemplate mongoTemplate;
+
+    public Page<NovelCards> findByDayTrue(String day, Integer pagination) {
+        Pageable pageable = PageRequest.of(pagination, PAGE_SIZE);
+
+        Query query = new Query();
+        query.addCriteria(Criteria.where(getSerializationName(day)).is(true)).with(pageable);
+
+        List<NovelCards> novelCardsList = mongoTemplate.find(query, NovelCards.class);
+
+        return new PageImpl<>(novelCardsList, pageable, mongoTemplate.count(query, NovelCards.class));
+    }
 
     public List<NovelCards> getAllNovelCardsData(Integer pagination) {
         if (pagination == null) {

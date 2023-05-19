@@ -51,7 +51,7 @@ public class NovelCardsViewDTO {
         this.tags = novelCards.getTags();
         this.scheduleId = novelCards.getScheduleId();
         this.starRating = novelCards.getStarRating();
-        this.serializationDays = novelCards.getSerializationStatus();
+        this.serializationDays = NovelCardsServiceImpl.getSerializationDays(novelCards);
         this.newChecking = NovelCardsServiceImpl.checkNewNovel(novelCards.getStartDate());
         this.episodeCount = novelCards.getEpisodeCount();
     }
