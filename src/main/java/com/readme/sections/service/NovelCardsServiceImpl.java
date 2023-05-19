@@ -3,14 +3,11 @@ package com.readme.sections.service;
 import com.readme.sections.dataAccessLayer.NovelCardsDataAccessLayer;
 import com.readme.sections.dto.NovelCardsEntityDTO;
 import com.readme.sections.dto.NovelCardsViewDTO;
-import com.readme.sections.dto.NovelCardsViewDTO.Tag;
 import com.readme.sections.dto.NovelCardsPaginationDTO;
 import com.readme.sections.dto.NovelCardsPaginationDTO.NovelCardsData;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.repository.NovelCardsRepository;
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -19,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,31 +34,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     @Override
     public NovelCardsViewDTO getCards(Long id) {
         NovelCards novelCards = novelCardsRepository.findById(id).get();
-        Date startDate = novelCards.getStartDate();
-        return NovelCardsViewDTO.builder()
-            .novelId(novelCards.getNovelId())
-            .title(novelCards.getTitle())
-            .author(novelCards.getAuthor())
-            .authorComment(novelCards.getAuthorComment())
-            .grade(novelCards.getGrade())
-            .genre(novelCards.getGenre())
-            .tags(novelCards.getTags().stream()
-                .map(element -> Tag.builder()
-                    .id(element.getId())
-                    .name(element.getName())
-                    .build()).collect(Collectors.toList()))
-            .thumbnail(novelCards.getThumbnail())
-            .views(novelCards.getViews())
-            .serializationStatus(novelCards.getSerializationStatus())
-            .description(novelCards.getDescription())
-            .scheduleId(novelCards.getScheduleId())
-            .startDate(getUtcToKoreanTime(novelCards.getStartDate()))
-            .starRating(novelCards.getStarRating())
-            .serializationDays(getSerializationDays(novelCards))
-            .newChecking(startDate.compareTo(novelCardsDataAccessLayer.getOneMonthAgo()) >= 0
-                && startDate.compareTo(novelCardsDataAccessLayer.getNow()) <= 0)
-            .episodeCount(novelCards.getEpisodeCount())
-            .build();
+        return new NovelCardsViewDTO(novelCards);
     }
 
     @Override
@@ -123,34 +95,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
 
     @Override
     public void addCards(NovelCardsEntityDTO novelCardsEntityDTO) {
-        novelCardsRepository.insert(NovelCards.builder()
-            .novelId(novelCardsEntityDTO.getNovelId())
-            .title(novelCardsEntityDTO.getTitle())
-            .author(novelCardsEntityDTO.getAuthor())
-            .authorComment(novelCardsEntityDTO.getAuthorComment())
-            .grade(novelCardsEntityDTO.getGrade())
-            .genre(novelCardsEntityDTO.getGenre())
-            .tags(novelCardsEntityDTO.getTags().stream()
-                .map(element -> Tag.builder()
-                    .id(element.getId())
-                    .name(element.getName())
-                    .build()).collect(Collectors.toList()))
-            .thumbnail(novelCardsEntityDTO.getThumbnail())
-            .views(novelCardsEntityDTO.getViews())
-            .serializationStatus(novelCardsEntityDTO.getSerializationStatus())
-            .description(novelCardsEntityDTO.getDescription())
-            .scheduleId(novelCardsEntityDTO.getScheduleId())
-            .startDate(novelCardsEntityDTO.getStartDate())
-            .starRating(novelCardsEntityDTO.getStarRating())
-            .monday(novelCardsEntityDTO.getMonday())
-            .tuesday(novelCardsEntityDTO.getTuesday())
-            .wednesday(novelCardsEntityDTO.getWednesday())
-            .thursday(novelCardsEntityDTO.getThursday())
-            .friday(novelCardsEntityDTO.getFriday())
-            .saturday(novelCardsEntityDTO.getSaturday())
-            .sunday(novelCardsEntityDTO.getSunday())
-            .episodeCount(novelCardsEntityDTO.getEpisodeCount())
-            .build());
+        novelCardsRepository.insert(new NovelCards(novelCardsEntityDTO));
     }
 
     @Override
@@ -230,27 +175,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     @Override
     public List<NovelCardsViewDTO> getNovelCardsForSchedule(Long scheduleId) {
         return novelCardsDataAccessLayer.getAllByScheduleIdData(scheduleId).stream()
-            .map(novelCards -> NovelCardsViewDTO.builder()
-                .novelId(novelCards.getNovelId())
-                .title(novelCards.getTitle())
-                .author(novelCards.getAuthor())
-                .grade(novelCards.getGrade())
-                .genre(novelCards.getGenre())
-                .tags(novelCards.getTags().stream()
-                    .map(element -> Tag.builder()
-                        .id(element.getId())
-                        .name(element.getName())
-                        .build()).collect(Collectors.toList()))
-                .thumbnail(novelCards.getThumbnail())
-                .views(novelCards.getViews())
-                .serializationStatus(novelCards.getSerializationStatus())
-                .description(novelCards.getDescription())
-                .scheduleId(novelCards.getScheduleId())
-                .startDate(getUtcToKoreanTime(novelCards.getStartDate()))
-                .starRating(novelCards.getStarRating())
-                .newChecking(novelCards.getNewChecking())
-                .episodeCount(novelCards.getEpisodeCount())
-                .build())
+            .map(novelCards -> new NovelCardsViewDTO(novelCards))
             .collect(Collectors.toList());
     }
 
@@ -260,26 +185,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             pagination = 0;
         }
         Pageable pageable = PageRequest.of(pagination, PAGE_SIZE);
-        Page<NovelCards> novelCardsPage = novelCardsRepository.findAllByTagsNameOrTitleContaining(keyword, keyword, pageable);
-        return NovelCardsPaginationDTO.builder()
-            .novelCardsData(novelCardsPage.stream()
-                .map(novelCards -> NovelCardsData.builder()
-                    .novelId(novelCards.getNovelId())
-                    .title(novelCards.getTitle())
-                    .author(novelCards.getAuthor())
-                    .grade(novelCards.getGrade())
-                    .genre(novelCards.getGenre())
-                    .thumbnail(novelCards.getThumbnail())
-                    .serializationStatus(novelCards.getSerializationStatus())
-                    .description(novelCards.getDescription())
-                    .starRating(novelCards.getStarRating())
-                    .newChecking(checkNewNovel(novelCards.getStartDate()))
-                    .episodeCount(novelCards.getEpisodeCount())
-                    .build())
-                .collect(Collectors.toList()))
-            .totalElements(novelCardsPage.getTotalElements())
-            .totalPages(novelCardsPage.getTotalPages())
-            .build();
+        return new NovelCardsPaginationDTO(novelCardsRepository.findAllByTagsNameOrTitleContaining(keyword, keyword, pageable));
     }
 
     @Override
@@ -340,21 +246,14 @@ public class NovelCardsServiceImpl implements NovelCardsService {
         return serializationDays.substring(0, serializationDays.length() - 1);
     }
 
-    private static String getUtcToKoreanTime(Date utcTime) {
+    public static String getUtcToKoreanTime(Date utcTime) {
         SimpleDateFormat koreaFormat = new SimpleDateFormat("yyyy-MM-dd");
         koreaFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
         return koreaFormat.format(utcTime);
     }
 
     public static boolean checkNewNovel(Date startDate) {
-        // UTC 시간대에서 한국 시간대로 변경
-        ZonedDateTime zonedDateTimeUtc = ZonedDateTime.ofInstant(startDate.toInstant(), ZoneId.of("UTC"));
-        ZonedDateTime zonedDateTimeKst = zonedDateTimeUtc.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-
-        // 한 달 전의 현재 시간
-        ZonedDateTime oneMonthAgo = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).minusMonths(1);
-
-        // startDate가 한 달 전과 현재 사이에 있는지 확인
-        return (zonedDateTimeKst.isAfter(oneMonthAgo) && zonedDateTimeKst.isBefore(ZonedDateTime.now(ZoneId.of("Asia/Seoul"))));
+        return startDate.compareTo(NovelCardsDataAccessLayer.getOneMonthAgo()) >= 0
+            && startDate.compareTo(NovelCardsDataAccessLayer.getNow()) <= 0;
     }
 }

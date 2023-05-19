@@ -156,11 +156,11 @@ public class NovelCardsDataAccessLayer {
             .getMappedResults();
     }
 
-    public Date getNow() {
+    public static Date getNow() {
         return new Date();
     }
 
-    public Date getOneMonthAgo() {
+    public static Date getOneMonthAgo() {
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);
