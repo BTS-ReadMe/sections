@@ -71,24 +71,6 @@ public class NovelCardsDataAccessLayer {
         return mongoTemplate.count(new Query(), NovelCards.class);
     }
 
-    public List<NovelCards> getAllByScheduleIdData(Long scheduleId) {
-        AggregationOperation[] operations = {
-            match(where("scheduleId").is(scheduleId)),
-            project("novelId", "title", "description", "author", "genre", "grade", "thumbnail",
-                "startDate", "views",
-                "serializationStatus", "tags", "scheduleId", "starRating", "monday", "tuesday",
-                "wednesday", "thursday",
-                "friday", "saturday", "sunday", "episodeCount")
-        };
-
-        TypedAggregation<NovelCards> typedAggregation = Aggregation.<NovelCards>newAggregation(
-            NovelCards.class, operations);
-
-        return mongoTemplate.aggregate(typedAggregation,
-                NovelCards.class)
-            .getMappedResults();
-    }
-
     public String getSerializationName(String serializationDays) {
         switch (serializationDays) {
             case "월":

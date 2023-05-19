@@ -133,7 +133,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
 
     @Override
     public List<NovelCardsViewDTO> getNovelCardsForSchedule(Long scheduleId) {
-        return novelCardsDataAccessLayer.getAllByScheduleIdData(scheduleId).stream()
+        return novelCardsRepository.findAllByScheduleId(scheduleId).stream()
             .map(novelCards -> new NovelCardsViewDTO(novelCards))
             .collect(Collectors.toList());
     }
