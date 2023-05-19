@@ -1,6 +1,7 @@
 package com.readme.sections.dto;
 
-import com.readme.sections.dto.NovelCardsViewDTO.Tag;
+import com.readme.sections.model.NovelCards.Tag;
+import com.readme.sections.requestObject.RequestNovelCards;
 import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -38,6 +39,30 @@ public class NovelCardsEntityDTO {
     Boolean friday;
     Boolean saturday;
     Boolean sunday;
-    Boolean isNew;
     Long episodeCount;
+
+    public NovelCardsEntityDTO (RequestNovelCards requestNovelCards) {
+        this.novelId = requestNovelCards.getNovelId();
+        this.title = requestNovelCards.getTitle();
+        this.description = requestNovelCards.getDescription();
+        this.author = requestNovelCards.getAuthor();
+        this.authorComment = requestNovelCards.getAuthorComment();
+        this.genre = requestNovelCards.getGenre();
+        this.grade = requestNovelCards.getGrade();
+        this.thumbnail = requestNovelCards.getThumbnail();
+        this.startDate = requestNovelCards.getStartDate();
+        this.views = requestNovelCards.getViews();
+        this.serializationStatus = requestNovelCards.getSerializationStatus();
+        this.tags = requestNovelCards.getTags();
+        this.scheduleId = requestNovelCards.getScheduleId();
+        this.starRating = requestNovelCards.getStarRating();
+        this.monday = requestNovelCards.getMonday();
+        this.tuesday = requestNovelCards.getTuesday();
+        this.wednesday = requestNovelCards.getWednesday();
+        this.thursday = requestNovelCards.getThursday();
+        this.friday = requestNovelCards.getFriday();
+        this.saturday = requestNovelCards.getSaturday();
+        this.sunday= requestNovelCards.getSunday();
+        this.episodeCount = requestNovelCards.getEpisodeCount();
+    }
 }
