@@ -1,6 +1,7 @@
 package com.readme.sections.responseObject;
 
-import com.readme.sections.dto.NovelCardsViewDTO.Tag;
+import com.readme.sections.dto.NovelCardsViewDTO;
+import com.readme.sections.model.NovelCards.Tag;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,4 +34,24 @@ public class ResponseNovelCards {
     String serializationDays;
     Boolean newChecking;
     Long episodeCount;
+
+    public ResponseNovelCards(NovelCardsViewDTO novelCardsViewDTO) {
+        this.novelId = novelCardsViewDTO.getNovelId();
+        this.title = novelCardsViewDTO.getTitle();
+        this.description = novelCardsViewDTO.getDescription();
+        this.author = novelCardsViewDTO.getAuthor();
+        this.authorComment = novelCardsViewDTO.getAuthorComment();
+        this.genre = novelCardsViewDTO.getGenre();
+        this.grade = novelCardsViewDTO.getGrade();
+        this.thumbnail = novelCardsViewDTO.getThumbnail();
+        this.startDate = novelCardsViewDTO.getStartDate();
+        this.views = novelCardsViewDTO.getViews();
+        this.serializationStatus = novelCardsViewDTO.getSerializationStatus();
+        this.tags = novelCardsViewDTO.getTags();
+        this.scheduleId = novelCardsViewDTO.getScheduleId();
+        this.starRating = novelCardsViewDTO.getStarRating();
+        this.serializationDays = novelCardsViewDTO.getSerializationDays();
+        this.newChecking = novelCardsViewDTO.getNewChecking();
+        this.episodeCount = novelCardsViewDTO.getEpisodeCount();
+    }
 }
