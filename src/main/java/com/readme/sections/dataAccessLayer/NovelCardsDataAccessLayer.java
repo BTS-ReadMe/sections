@@ -21,7 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.ComparisonOperators;
 import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -56,9 +55,7 @@ public class NovelCardsDataAccessLayer {
                 "startDate", "views",
                 "serializationStatus", "tags", "scheduleId", "starRating", "monday", "tuesday",
                 "wednesday", "thursday",
-                "friday", "saturday", "sunday", "episodeCount")
-                .and(ComparisonOperators.Gt.valueOf("startDate").greaterThanValue(getOneMonthAgo()))
-                .as("newChecking"),
+                "friday", "saturday", "sunday", "episodeCount"),
             skip(PAGE_SIZE * pagination),
             limit(PAGE_SIZE)
         };
@@ -74,31 +71,6 @@ public class NovelCardsDataAccessLayer {
         return mongoTemplate.count(new Query(), NovelCards.class);
     }
 
-
-    public List<NovelCards> getNewNovelsData(String genre, Integer pagination) {
-        AggregationOperation[] operations = {
-            match(where("startDate").gte(getOneMonthAgo()).lte(getNow()).and("genre").is(genre)),
-            project("novelId", "title", "description", "author", "genre", "grade", "thumbnail",
-                "serializationStatus", "tags", "scheduleId", "starRating","episodeCount")
-                .and(ComparisonOperators.Gt.valueOf("startDate").greaterThanValue(getOneMonthAgo()))
-                .as("newChecking"),
-            skip(PAGE_SIZE * pagination),
-            limit(PAGE_SIZE)
-        };
-
-        TypedAggregation<NovelCards> typedAggregation = Aggregation.<NovelCards>newAggregation(
-            NovelCards.class, operations);
-
-        return mongoTemplate.aggregate(typedAggregation, NovelCards.class)
-            .getMappedResults();
-    }
-
-    public Long getNewNovelsDataCount(String genre) {
-        return mongoTemplate.count(
-            Query.query(Criteria.where("startDate").gte(getOneMonthAgo()).lte(getNow()).and("genre").is(genre)),
-            NovelCards.class);
-    }
-
     public List<NovelCards> getAllByScheduleIdData(Long scheduleId) {
         AggregationOperation[] operations = {
             match(where("scheduleId").is(scheduleId)),
@@ -107,8 +79,6 @@ public class NovelCardsDataAccessLayer {
                 "serializationStatus", "tags", "scheduleId", "starRating", "monday", "tuesday",
                 "wednesday", "thursday",
                 "friday", "saturday", "sunday", "episodeCount")
-                .and(ComparisonOperators.Gt.valueOf("startDate").greaterThanValue(getOneMonthAgo()))
-                .as("newChecking")
         };
 
         TypedAggregation<NovelCards> typedAggregation = Aggregation.<NovelCards>newAggregation(
@@ -117,19 +87,6 @@ public class NovelCardsDataAccessLayer {
         return mongoTemplate.aggregate(typedAggregation,
                 NovelCards.class)
             .getMappedResults();
-    }
-
-    public static Date getNow() {
-        return new Date();
-    }
-
-    public static Date getOneMonthAgo() {
-        Date now = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(now);
-        now = calendar.getTime();
-        calendar.add(Calendar.MONTH, -1);
-        return calendar.getTime();
     }
 
     public String getSerializationName(String serializationDays) {

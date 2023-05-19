@@ -8,6 +8,7 @@ import com.readme.sections.dto.NovelCardsPaginationDTO.NovelCardsData;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.repository.NovelCardsRepository;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -151,30 +152,9 @@ public class NovelCardsServiceImpl implements NovelCardsService {
         if (pagination == null) {
             pagination = 0;
         }
-        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getNewNovelsData(genre,
-            pagination);
-        Long totalElements = novelCardsDataAccessLayer.getNewNovelsDataCount(genre);
-        return NovelCardsPaginationDTO.builder()
-            .novelCardsData(novelCardsList.stream()
-                .map(novelCards -> NovelCardsData.builder()
-                    .novelId(novelCards.getNovelId())
-                    .title(novelCards.getTitle())
-                    .author(novelCards.getAuthor())
-                    .grade(novelCards.getGrade())
-                    .genre(novelCards.getGenre())
-                    .thumbnail(novelCards.getThumbnail())
-                    .serializationStatus(novelCards.getSerializationStatus())
-                    .description(novelCards.getDescription())
-                    .starRating(novelCards.getStarRating())
-                    .newChecking(novelCards.getNewChecking())
-                    .episodeCount(novelCards.getEpisodeCount())
-                    .build())
-                .collect(Collectors.toList()))
-            .totalElements(totalElements)
-            .totalPages((int) Math.ceil((double) totalElements / (double) PAGE_SIZE))
-            .build();
+        Pageable pageable = PageRequest.of(pagination, PAGE_SIZE);
+        return new NovelCardsPaginationDTO(novelCardsRepository.findAllByStartDateBetween(getOneMonthAgo(), getNow(), pageable));
     }
-
 
     public static String getSerializationDays(NovelCards novelCards) {
         String serializationDays = "";
@@ -212,7 +192,20 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     }
 
     public static boolean checkNewNovel(Date startDate) {
-        return startDate.compareTo(NovelCardsDataAccessLayer.getOneMonthAgo()) >= 0
-            && startDate.compareTo(NovelCardsDataAccessLayer.getNow()) <= 0;
+        return startDate.compareTo(getOneMonthAgo()) >= 0
+            && startDate.compareTo(getNow()) <= 0;
+    }
+
+    public static Date getNow() {
+        return new Date();
+    }
+
+    public static Date getOneMonthAgo() {
+        Date now = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        now = calendar.getTime();
+        calendar.add(Calendar.MONTH, -1);
+        return calendar.getTime();
     }
 }
