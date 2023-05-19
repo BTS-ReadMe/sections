@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NovelCardsRepository extends MongoRepository<NovelCards, Long> {
     Page<NovelCards> findAllByTagsNameOrTitleContaining(String keyword, String keyword2, Pageable pageable);
+    Page<NovelCards> findAllByGenreAndSerializationStatus(String genre, String serializationStatus, Pageable pageable);
 }

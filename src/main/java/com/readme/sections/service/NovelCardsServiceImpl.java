@@ -44,29 +44,11 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     @Override
     public NovelCardsPaginationDTO getAllCardsByGenre(String genre, String serializationStatus,
         Integer pagination) {
-        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getAllGenreData(genre,
-            serializationStatus, pagination);
-        Long totalElements = novelCardsDataAccessLayer.getAllGenreDataCount(genre,
-            serializationStatus);
-        return NovelCardsPaginationDTO.builder()
-            .novelCardsData(novelCardsList.stream()
-                .map(novelCards -> NovelCardsData.builder()
-                    .novelId(novelCards.getNovelId())
-                    .title(novelCards.getTitle())
-                    .author(novelCards.getAuthor())
-                    .grade(novelCards.getGrade())
-                    .genre(novelCards.getGenre())
-                    .thumbnail(novelCards.getThumbnail())
-                    .serializationStatus(novelCards.getSerializationStatus())
-                    .description(novelCards.getDescription())
-                    .starRating(novelCards.getStarRating())
-                    .newChecking(novelCards.getNewChecking())
-                    .episodeCount(novelCards.getEpisodeCount())
-                    .build())
-                .collect(Collectors.toList()))
-            .totalElements(totalElements)
-            .totalPages((int) Math.ceil((double) totalElements / (double) PAGE_SIZE))
-            .build();
+        if (pagination == null) {
+            pagination = 0;
+        }
+        Pageable pageable = PageRequest.of(pagination, PAGE_SIZE);
+        return new NovelCardsPaginationDTO(novelCardsRepository.findAllByGenreAndSerializationStatus(genre, serializationStatus, pageable));
     }
 
     @Override
