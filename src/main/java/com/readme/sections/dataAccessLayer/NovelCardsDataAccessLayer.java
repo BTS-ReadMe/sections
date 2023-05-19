@@ -74,33 +74,6 @@ public class NovelCardsDataAccessLayer {
         return mongoTemplate.count(new Query(), NovelCards.class);
     }
 
-    public List<NovelCards> getAllSerializationDays(String serializationDays, Integer pagination) {
-        if (pagination == null) {
-            pagination = 0;
-        }
-        serializationDays = getSerializationName(serializationDays);
-        AggregationOperation[] operations = {
-            match(where(serializationDays).is(true)),
-            project("novelId", "title", "description", "author", "genre", "grade", "thumbnail",
-                "serializationStatus", "tags", "scheduleId", "starRating","episodeCount")
-                .and(ComparisonOperators.Gt.valueOf("startDate").greaterThanValue(getOneMonthAgo()))
-                .as("newChecking"),
-            skip(PAGE_SIZE * pagination),
-            limit(PAGE_SIZE)
-        };
-
-        TypedAggregation<NovelCards> typedAggregation = Aggregation.<NovelCards>newAggregation(
-            NovelCards.class, operations);
-
-        return mongoTemplate.aggregate(typedAggregation, NovelCards.class)
-            .getMappedResults();
-    }
-
-    public Long getAllSerializationDaysDataCount(String serializationDays) {
-        return mongoTemplate.count(
-            Query.query(Criteria.where(getSerializationName(serializationDays)).is(true)), NovelCards.class);
-    }
-
     public List<NovelCards> getAllGenreData(String genre, String serializationStatus, Integer pagination) {
         if (pagination == null) {
             pagination = 0;
