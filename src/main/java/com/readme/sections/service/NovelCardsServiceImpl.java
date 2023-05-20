@@ -37,6 +37,12 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     }
 
     @Override
+    public NovelCardsPaginationDTO getAllCards(Integer pagination) {
+        Pageable pageable = PageRequest.of(pagination, PAGE_SIZE);
+        return new NovelCardsPaginationDTO(novelCardsRepository.findAll(pageable));
+    }
+
+    @Override
     public NovelCardsPaginationDTO getAllCardsBySerializationDays(String serializationDays,
         Integer pagination) {
         return new NovelCardsPaginationDTO(novelCardsDataAccessLayer.findByDayTrue(serializationDays, pagination));

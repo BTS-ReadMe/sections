@@ -46,7 +46,7 @@ public class NovelCardsController {
         );
     }
 
-    @Operation(summary = "소설 카드 전체 조회", description = "소설 카드 전체 조회", tags = {"소설 카드"})
+    @Operation(summary = "소설 카드 카테고리 조회", description = "장르 및 요일, 연재 상태에 따른 소설 카드 조회", tags = {"소설 카드"})
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
         @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
@@ -62,7 +62,10 @@ public class NovelCardsController {
         if (category.equals("요일")) {
             novelCardsPaginationDTO = novelCardsService.getAllCardsBySerializationDays(subCategory,
                 pagination);
-        } else {
+        } else if(category.equals("전체")) {
+            novelCardsPaginationDTO = novelCardsService.getAllCards(pagination);
+        }
+        else {
             if (subCategory.equals("신작")) {
                 novelCardsPaginationDTO = novelCardsService.getNewNovelsByGenre(category,
                     pagination);

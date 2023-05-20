@@ -14,4 +14,5 @@ public interface NovelCardsRepository extends MongoRepository<NovelCards, Long> 
     Page<NovelCards> findAllByGenreAndSerializationStatus(String genre, String serializationStatus, Pageable pageable);
     Page<NovelCards> findAllByStartDateBetween(Date oneMonthAgo, Date now, Pageable pageable);
     List<NovelCards> findAllByScheduleId(Long scheduleId);
+    Page<NovelCards> findAll(Pageable pageable);
 }

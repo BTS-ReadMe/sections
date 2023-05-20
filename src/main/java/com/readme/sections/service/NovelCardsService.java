@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface NovelCardsService {
     public NovelCardsViewDTO getCards(Long id);
+    public NovelCardsPaginationDTO getAllCards(Integer pagination);
     public NovelCardsPaginationDTO getAllCardsByGenre(String genre, String serializationStatus, Integer pagination);
     public NovelCardsPaginationDTO getNewNovelsByGenre(String genre, Integer pagination);
     public void addCards(NovelCardsEntityDTO novelCardsEntityDTO);
