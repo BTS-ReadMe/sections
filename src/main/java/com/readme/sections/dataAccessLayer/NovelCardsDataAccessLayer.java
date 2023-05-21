@@ -4,13 +4,10 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.limi
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.project;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.skip;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
 
+import com.readme.sections.enums.SerializationDays;
 import com.readme.sections.model.NovelCards;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,7 +36,7 @@ public class NovelCardsDataAccessLayer {
         Pageable pageable = PageRequest.of(pagination, PAGE_SIZE);
 
         Query query = new Query();
-        query.addCriteria(Criteria.where(getSerializationName(day)).is(true)).with(pageable);
+        query.addCriteria(Criteria.where(SerializationDays.fromKorean(day).getEnglishDay()).is(true)).with(pageable);
 
         List<NovelCards> novelCardsList = mongoTemplate.find(query, NovelCards.class);
 
@@ -69,38 +66,5 @@ public class NovelCardsDataAccessLayer {
 
     public Long getAllNovelCardsData() {
         return mongoTemplate.count(new Query(), NovelCards.class);
-    }
-
-    public String getSerializationName(String serializationDays) {
-        switch (serializationDays) {
-            case "월":
-                serializationDays = "monday";
-                break;
-
-            case "화":
-                serializationDays = "tuesday";
-                break;
-
-            case "수":
-                serializationDays = "wednesday";
-                break;
-
-            case "목":
-                serializationDays = "thursday";
-                break;
-
-            case "금":
-                serializationDays = "friday";
-                break;
-
-            case "토":
-                serializationDays = "saturday";
-                break;
-
-            case "일":
-                serializationDays = "sunday";
-                break;
-        }
-        return serializationDays;
     }
 }

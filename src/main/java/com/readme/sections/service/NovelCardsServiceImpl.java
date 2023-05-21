@@ -5,6 +5,7 @@ import com.readme.sections.dto.NovelCardsEntityDTO;
 import com.readme.sections.dto.NovelCardsViewDTO;
 import com.readme.sections.dto.NovelCardsPaginationDTO;
 import com.readme.sections.dto.NovelCardsPaginationDTO.NovelCardsData;
+import com.readme.sections.enums.SerializationDays;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.repository.NovelCardsRepository;
 import java.text.SimpleDateFormat;
@@ -164,26 +165,26 @@ public class NovelCardsServiceImpl implements NovelCardsService {
 
     public static String getSerializationDays(NovelCards novelCards) {
         String serializationDays = "";
-        if (novelCards.getMonday() != null && novelCards.getMonday() != null) {
-            serializationDays += "월 ";
+        if (novelCards.getMonday()) {
+            serializationDays += SerializationDays.월.getShortDay() + " ";
         }
-        if (novelCards.getTuesday() != null && novelCards.getTuesday() != null) {
-            serializationDays += "화 ";
+        if (novelCards.getTuesday()) {
+            serializationDays += SerializationDays.화.getShortDay() + " ";
         }
-        if (novelCards.getWednesday() != null && novelCards.getWednesday() != null) {
-            serializationDays += "수 ";
+        if (novelCards.getWednesday()) {
+            serializationDays += SerializationDays.수.getShortDay() + " ";
         }
-        if (novelCards.getThursday() != null && novelCards.getThursday() != null) {
-            serializationDays += "목 ";
+        if (novelCards.getThursday()) {
+            serializationDays += SerializationDays.목.getShortDay() + " ";
         }
-        if (novelCards.getFriday() != null && novelCards.getFriday() != null) {
-            serializationDays += "금 ";
+        if (novelCards.getFriday()) {
+            serializationDays += SerializationDays.금.getShortDay() + " ";
         }
-        if (novelCards.getSaturday() != null && novelCards.getSaturday() != null) {
-            serializationDays += "토 ";
+        if (novelCards.getSaturday()) {
+            serializationDays += SerializationDays.토.getShortDay() + " ";
         }
-        if (novelCards.getSunday() != null && novelCards.getSunday() != null) {
-            serializationDays += "일 ";
+        if (novelCards.getSunday()) {
+            serializationDays += SerializationDays.일.getShortDay() + " ";
         }
         if (serializationDays.equals("")) {
             return serializationDays;
