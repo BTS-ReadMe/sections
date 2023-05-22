@@ -1,10 +1,5 @@
 package com.readme.sections.service;
 
-import static com.mongodb.client.model.Aggregates.project;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-
 import com.readme.sections.dataAccessLayer.EpisodeCardsDataAccessLayer;
 import com.readme.sections.dto.EpisodeCardsDTO;
 import com.readme.sections.model.EpisodeCards;
@@ -39,16 +34,7 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
         }
         return EpisodeCardsDTO.builder()
             .novelId(episodeCards.getNovelId())
-            .episodes(episodeCards.getEpisodes().stream()
-                .map(episode -> Episode.builder()
-                    .id(episode.getId())
-                    .name(episode.getName())
-                    .free(episode.getFree())
-                    .registrationDate(episode.getRegistrationDate())
-                    .starRating(episode.getStarRating())
-                    .isNew(true == checkIsNew(episode.getRegistrationDate()) ? true : false)
-                    .build())
-                .collect(Collectors.toList()))
+            .episodes(episodeCards.getEpisodes())
             .page(pagination)
             .size(PAGE_SIZE)
             .totalElements(episodeCards.getEpisodeCount())
@@ -59,26 +45,12 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
 
     @Override
     public void addCards(EpisodeCardsDTO episodeCardsDTO) {
-        episodeCardsRepository.insert(EpisodeCards.builder()
-            .novelId(episodeCardsDTO.getNovelId())
-            .episodes(episodeCardsDTO.getEpisodes().stream()
-                .map(episode -> EpisodeCards.Episode.builder()
-                    .id(episode.getId())
-                    .name(episode.getName())
-                    .free(episode.getFree())
-                    .registrationDate(episode.getRegistrationDate())
-                    .starRating(episode.getStarRating())
-                    .build())
-                .collect(Collectors.toList()))
-            .build());
+        episodeCardsRepository.insert(new EpisodeCards(episodeCardsDTO));
     }
 
     @Override
     public void updateCards(EpisodeCardsDTO episodeCardsDTO) {
-        episodeCardsRepository.save(EpisodeCards.builder()
-            .novelId(episodeCardsDTO.getNovelId())
-            .episodes(episodeCardsDTO.getEpisodes())
-            .build());
+        episodeCardsRepository.save(new EpisodeCards(episodeCardsDTO));
     }
 
     @Override
@@ -97,7 +69,7 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
         episodeCardsRepository.deleteById(id);
     }
 
-    private boolean checkIsNew(Date registrationDate) {
+    public static boolean checkIsNew(Date registrationDate) {
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);

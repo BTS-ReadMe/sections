@@ -30,11 +30,11 @@ public class EpisodeCardsController {
         @ApiResponse(responseCode = "404", description = "NOT FOUND"),
         @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
     })
-    @GetMapping("/{id}")
+    @GetMapping("/{novelId}")
     public ResponseEntity<CommonDataResponse<ResponseEpisodeCards>> getEpisodeCard(
-        @PathVariable Long id,
+        @PathVariable Long novelId,
         @RequestParam(required = false) Integer pagination) {
-        EpisodeCardsDTO episodeCardsDTO = episodeCardsService.getCards(id, pagination);
+        EpisodeCardsDTO episodeCardsDTO = episodeCardsService.getCards(novelId, pagination);
         return ResponseEntity.ok(new CommonDataResponse(ResponseEpisodeCards.builder()
                 .novelId(episodeCardsDTO.getNovelId())
                 .episodes(episodeCardsDTO.getEpisodes())
