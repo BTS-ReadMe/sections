@@ -1,27 +1,24 @@
 package com.readme.sections.responseObject;
 
-import com.readme.sections.model.EpisodeCards;
-import com.readme.sections.model.EpisodeCards.Episode;
-import java.util.Date;
+import com.readme.sections.dto.EpisodeCardsPaginationDTO;
+
+import com.readme.sections.dto.EpisodeCardsPaginationDTO.ViewEpisode;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 @Getter
-@Setter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
-@ToString
 public class ResponseEpisodeCards {
-    Long novelId;
-    List<Episode> episodes;
-    private int page;
-    private int size;
+    private long novelId;
+    private List<ViewEpisode> episodes;
     private long totalElements;
     private int totalPages;
+
+    public ResponseEpisodeCards(EpisodeCardsPaginationDTO episodeCardsPaginationDTO) {
+        this.novelId = episodeCardsPaginationDTO.getNovelId();
+        this.episodes = episodeCardsPaginationDTO.getEpisodes();
+        this.totalElements = episodeCardsPaginationDTO.getTotalElements();
+        this.totalPages = episodeCardsPaginationDTO.getTotalPages();
+    }
 }

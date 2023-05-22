@@ -1,22 +1,19 @@
 package com.readme.sections.service;
 
-import static com.mongodb.client.model.Aggregates.project;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-
 import com.readme.sections.dataAccessLayer.EpisodeCardsDataAccessLayer;
-import com.readme.sections.dto.EpisodeCardsDTO;
+import com.readme.sections.dto.EpisodeCardsEntityDTO;
+import com.readme.sections.dto.EpisodeCardsPaginationDTO;
 import com.readme.sections.model.EpisodeCards;
-import com.readme.sections.model.EpisodeCards.Episode;
 import com.readme.sections.repository.EpisodeCardsRepository;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -28,81 +25,62 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
     private final EpisodeCardsRepository episodeCardsRepository;
     private final EpisodeCardsDataAccessLayer episodeCardsDataAccessLayer;
 
+    @Transactional(readOnly = true)
     @Override
-    public EpisodeCardsDTO getCards(Long novelId, Integer pagination) {
+    public EpisodeCardsPaginationDTO getCards(Long novelId, Integer pagination) {
         EpisodeCards episodeCards = new EpisodeCards();
         if (pagination == null) {
-            episodeCards = episodeCardsDataAccessLayer.findEpisodesByEpisodeCardId(novelId, 0, PAGE_SIZE);
+            episodeCards = episodeCardsDataAccessLayer.findEpisodesByEpisodeCardId(novelId, 0,
+                PAGE_SIZE);
             pagination = 0;
         } else {
-            episodeCards = episodeCardsDataAccessLayer.findEpisodesByEpisodeCardId(novelId, pagination * PAGE_SIZE, PAGE_SIZE);
+            episodeCards = episodeCardsDataAccessLayer.findEpisodesByEpisodeCardId(novelId,
+                pagination * PAGE_SIZE, PAGE_SIZE);
         }
-        return EpisodeCardsDTO.builder()
-            .novelId(episodeCards.getNovelId())
-            .episodes(episodeCards.getEpisodes().stream()
-                .map(episode -> Episode.builder()
-                    .id(episode.getId())
-                    .name(episode.getName())
-                    .free(episode.getFree())
-                    .registrationDate(episode.getRegistrationDate())
-                    .starRating(episode.getStarRating())
-                    .isNew(true == checkIsNew(episode.getRegistrationDate()) ? true : false)
-                    .build())
-                .collect(Collectors.toList()))
-            .page(pagination)
-            .size(PAGE_SIZE)
-            .totalElements(episodeCards.getEpisodeCount())
-            .totalPages(
-                (int) Math.ceil((double) episodeCards.getEpisodeCount() / (double) PAGE_SIZE))
-            .build();
+        try {
+            return new EpisodeCardsPaginationDTO(episodeCards, PAGE_SIZE);
+        } catch (Exception exception) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void addCards(EpisodeCardsEntityDTO episodeCardsEntityDTO) {
+        try {
+            episodeCardsRepository.insert(new EpisodeCards(episodeCardsEntityDTO));
+        } catch (Exception exception) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void updateCards(EpisodeCardsEntityDTO episodeCardsEntityDTO) {
+        episodeCardsRepository.save(new EpisodeCards(episodeCardsEntityDTO));
     }
 
     @Override
-    public void addCards(EpisodeCardsDTO episodeCardsDTO) {
-        episodeCardsRepository.insert(EpisodeCards.builder()
-            .novelId(episodeCardsDTO.getNovelId())
-            .episodes(episodeCardsDTO.getEpisodes().stream()
-                .map(episode -> EpisodeCards.Episode.builder()
-                    .id(episode.getId())
-                    .name(episode.getName())
-                    .free(episode.getFree())
-                    .registrationDate(episode.getRegistrationDate())
-                    .starRating(episode.getStarRating())
-                    .build())
-                .collect(Collectors.toList()))
-            .build());
+    public EpisodeCardsEntityDTO existUpdateData(Long id,
+        EpisodeCardsEntityDTO episodeCardsEntityDTO) {
+        EpisodeCards episodeCards = episodeCardsRepository.findById(id).orElseThrow(
+            () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+        );
+        return new EpisodeCardsEntityDTO(episodeCards, episodeCardsEntityDTO);
     }
 
-    @Override
-    public void updateCards(EpisodeCardsDTO episodeCardsDTO) {
-        episodeCardsRepository.save(EpisodeCards.builder()
-            .novelId(episodeCardsDTO.getNovelId())
-            .episodes(episodeCardsDTO.getEpisodes())
-            .build());
-    }
-
-    @Override
-    public EpisodeCardsDTO existUpdateData(Long id, EpisodeCardsDTO episodeCardsDTO) {
-        EpisodeCards episodeCards = episodeCardsRepository.findById(id).get();
-        return EpisodeCardsDTO.builder()
-            .novelId(episodeCardsDTO.getNovelId() != null ? episodeCardsDTO.getNovelId()
-                : episodeCards.getNovelId())
-            .episodes(episodeCardsDTO.getEpisodes() != null ? episodeCardsDTO.getEpisodes()
-                : episodeCards.getEpisodes())
-            .build();
-    }
-
+    @Transactional
     @Override
     public void deleteCards(Long id) {
         episodeCardsRepository.deleteById(id);
     }
 
-    private boolean checkIsNew(Date registrationDate) {
+    public static boolean checkIsNew(Date registrationDate) {
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);
         now = calendar.getTime();
         calendar.add(Calendar.DAY_OF_MONTH, -7);
-        return registrationDate.after(calendar.getTime()) &&registrationDate.before(now);
+        return registrationDate.after(calendar.getTime()) && registrationDate.before(now);
     }
 }

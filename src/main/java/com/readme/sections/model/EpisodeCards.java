@@ -1,40 +1,36 @@
 package com.readme.sections.model;
 
+import com.readme.sections.dto.EpisodeCardsEntityDTO;
+import com.readme.sections.dto.EpisodeCardsPaginationDTO;
+import com.readme.sections.service.EpisodeCardsServiceImpl;
 import java.util.Date;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "episode_cards")
 @Getter
-@Setter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
-@ToString
 public class EpisodeCards {
     @Id
-    Long novelId;
-    List<Episode> episodes;
-    Long episodeCount;
+    private Long novelId;
+    private List<Episode> episodes;
+    private Long episodeCount;
     @Getter
-    @Setter
-    @Builder
     @NoArgsConstructor
-    @AllArgsConstructor
-    @ToString
     public static class Episode {
-        Long id;
-        String name;
-        Boolean free;
-        Date registrationDate;
-        Float starRating;
-        Boolean isNew;
+        private Long id;
+        private String name;
+        private Boolean free;
+        private Date registrationDate;
+        private Float starRating;
+        private Boolean isNew;
+    }
+
+    public EpisodeCards(EpisodeCardsEntityDTO episodeCardsEntityDTO) {
+        this.novelId = episodeCardsEntityDTO.getNovelId();
+        this.episodes = episodeCardsEntityDTO.getEpisodes();
     }
 }
