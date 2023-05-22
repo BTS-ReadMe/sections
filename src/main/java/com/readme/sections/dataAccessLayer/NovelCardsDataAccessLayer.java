@@ -16,9 +16,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
@@ -41,30 +38,5 @@ public class NovelCardsDataAccessLayer {
         List<NovelCards> novelCardsList = mongoTemplate.find(query, NovelCards.class);
 
         return new PageImpl<>(novelCardsList, pageable, mongoTemplate.count(query, NovelCards.class));
-    }
-
-    public List<NovelCards> getAllNovelCardsData(Integer pagination) {
-        if (pagination == null) {
-            pagination = 0;
-        }
-        AggregationOperation[] operations = {
-            project("novelId", "title", "description", "author", "genre", "grade", "thumbnail",
-                "startDate", "views",
-                "serializationStatus", "tags", "scheduleId", "starRating", "monday", "tuesday",
-                "wednesday", "thursday",
-                "friday", "saturday", "sunday", "episodeCount"),
-            skip(PAGE_SIZE * pagination),
-            limit(PAGE_SIZE)
-        };
-
-        TypedAggregation<NovelCards> typedAggregation = Aggregation.<NovelCards>newAggregation(
-            NovelCards.class, operations);
-
-        return mongoTemplate.aggregate(typedAggregation, NovelCards.class)
-            .getMappedResults();
-    }
-
-    public Long getAllNovelCardsData() {
-        return mongoTemplate.count(new Query(), NovelCards.class);
     }
 }
