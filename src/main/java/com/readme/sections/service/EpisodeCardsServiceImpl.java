@@ -29,20 +29,19 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
     @Override
     public EpisodeCardsPaginationDTO getCards(Long novelId, Integer pagination) {
         EpisodeCards episodeCards = new EpisodeCards();
+        if (pagination == null) {
+            episodeCards = episodeCardsDataAccessLayer.findEpisodesByEpisodeCardId(novelId, 0,
+                PAGE_SIZE);
+            pagination = 0;
+        } else {
+            episodeCards = episodeCardsDataAccessLayer.findEpisodesByEpisodeCardId(novelId,
+                pagination * PAGE_SIZE, PAGE_SIZE);
+        }
         try {
-            if (pagination == null) {
-                episodeCards = episodeCardsDataAccessLayer.findEpisodesByEpisodeCardId(novelId, 0,
-                    PAGE_SIZE);
-                pagination = 0;
-            } else {
-                episodeCards = episodeCardsDataAccessLayer.findEpisodesByEpisodeCardId(novelId,
-                    pagination * PAGE_SIZE, PAGE_SIZE);
-            }
+            return new EpisodeCardsPaginationDTO(episodeCards, PAGE_SIZE);
         } catch (Exception exception) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-
-        return new EpisodeCardsPaginationDTO(episodeCards, PAGE_SIZE);
     }
 
     @Transactional
