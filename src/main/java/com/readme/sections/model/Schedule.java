@@ -25,13 +25,13 @@ public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    Long id;
+    private Long id;
     @Column(name = "name", nullable = false)
-    String name;
+    private String name;
     @Column(name = "start_date", nullable = false)
-    LocalDateTime startDate;
+    private LocalDateTime startDate;
     @Column(name = "end_date", nullable = false)
-    LocalDateTime endDate;
+    private LocalDateTime endDate;
     @CreatedDate
     @Column(name = "created_date",updatable = false)
     private LocalDateTime createdDate;

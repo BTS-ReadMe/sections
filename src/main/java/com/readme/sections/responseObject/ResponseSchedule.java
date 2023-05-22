@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ResponseSchedule {
-    Long id;
-    String name;
-    String startDate;
-    String endDate;
+    private long id;
+    private String name;
+    private String startDate;
+    private String endDate;
 
     public ResponseSchedule(ScheduleDTO scheduleDTO) {
         this.id = scheduleDTO.getId();

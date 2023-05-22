@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ScheduleDTO {
     private Long id;
-    String name;
-    LocalDateTime startDate;
-    LocalDateTime endDate;
+    private String name;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 
     public ScheduleDTO(RequestSchedule requestSchedule) {
         this.name = requestSchedule.getName();
