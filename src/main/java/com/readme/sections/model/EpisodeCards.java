@@ -27,15 +27,6 @@ public class EpisodeCards {
         private Date registrationDate;
         private Float starRating;
         private Boolean isNew;
-
-        public Episode(Episode episode) {
-            this.id = episode.getId();
-            this.name = episode.getName();
-            this.free = episode.getFree();
-            this.registrationDate = episode.getRegistrationDate();
-            this.starRating = episode.getStarRating();
-            this.isNew = EpisodeCardsServiceImpl.checkIsNew(episode.getRegistrationDate());
-        }
     }
 
     public EpisodeCards(EpisodeCardsEntityDTO episodeCardsEntityDTO) {

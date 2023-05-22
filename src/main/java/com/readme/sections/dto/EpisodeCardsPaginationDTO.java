@@ -34,7 +34,7 @@ public class EpisodeCardsPaginationDTO {
             this.free = episode.getFree();
             this.registrationDate = NovelCardsServiceImpl.getUtcToKoreanTime(
                 episode.getRegistrationDate());
-            this.starRating = episode.getStarRating();
+            this.starRating = Math.round(episode.getStarRating() * 100.0) / 100.0;
             this.isNew = EpisodeCardsServiceImpl.checkIsNew(episode.getRegistrationDate());
         }
     }
