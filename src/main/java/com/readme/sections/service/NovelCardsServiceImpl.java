@@ -18,7 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +34,10 @@ public class NovelCardsServiceImpl implements NovelCardsService {
 
     @Override
     public NovelCardsViewDTO getCards(Long id) {
-        NovelCards novelCards = novelCardsRepository.findById(id).get();
+        NovelCards novelCards = novelCardsRepository.findById(id)
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+            );
         return new NovelCardsViewDTO(novelCards);
     }
 
@@ -65,7 +70,10 @@ public class NovelCardsServiceImpl implements NovelCardsService {
 
     @Override
     public NovelCardsEntityDTO updateCards(Long id, NovelCardsEntityDTO novelCardsEntityDTO) {
-        NovelCards novelCards = novelCardsRepository.findById(id).get();
+        NovelCards novelCards = novelCardsRepository.findById(id)
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+            );
         return new NovelCardsEntityDTO(novelCards, novelCardsEntityDTO);
     }
 
