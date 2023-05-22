@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,13 +64,14 @@ public class NovelCardsServiceImpl implements NovelCardsService {
         return new NovelCardsPaginationDTO(novelCardsRepository.findAllByGenreAndSerializationStatus(genre, serializationStatus, pageable));
     }
 
+    @Transactional
     @Override
     public void addCards(NovelCardsEntityDTO novelCardsEntityDTO) {
         novelCardsRepository.insert(new NovelCards(novelCardsEntityDTO));
     }
 
     @Override
-    public NovelCardsEntityDTO updateCards(Long id, NovelCardsEntityDTO novelCardsEntityDTO) {
+    public NovelCardsEntityDTO updateNovelCardsDTO(Long id, NovelCardsEntityDTO novelCardsEntityDTO) {
         NovelCards novelCards = novelCardsRepository.findById(id)
             .orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
@@ -77,11 +79,13 @@ public class NovelCardsServiceImpl implements NovelCardsService {
         return new NovelCardsEntityDTO(novelCards, novelCardsEntityDTO);
     }
 
+    @Transactional
     @Override
-    public void updateCards(NovelCardsEntityDTO novelCardsEntityDTO) {
+    public void updateNovelCardsDTO(NovelCardsEntityDTO novelCardsEntityDTO) {
         novelCardsRepository.save(new NovelCards(novelCardsEntityDTO));
     }
 
+    @Transactional
     @Override
     public void deleteCards(Long id) {
         novelCardsRepository.deleteById(id);

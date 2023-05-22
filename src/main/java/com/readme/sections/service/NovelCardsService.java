@@ -11,8 +11,8 @@ public interface NovelCardsService {
     public NovelCardsPaginationDTO getAllCardsByGenre(String genre, String serializationStatus, Integer pagination);
     public NovelCardsPaginationDTO getNewNovelsByGenre(String genre, Integer pagination);
     public void addCards(NovelCardsEntityDTO novelCardsEntityDTO);
-    public void updateCards(NovelCardsEntityDTO novelCardsEntityDTO);
-    public NovelCardsEntityDTO updateCards(Long id, NovelCardsEntityDTO novelCardsEntityDTO);
+    public void updateNovelCardsDTO(NovelCardsEntityDTO novelCardsEntityDTO);
+    public NovelCardsEntityDTO updateNovelCardsDTO(Long id, NovelCardsEntityDTO novelCardsEntityDTO);
     public void deleteCards(Long id);
     public List<NovelCardsViewDTO> getNovelCardsForSchedule(Long scheduleId);
     public NovelCardsPaginationDTO searchNovelCards(String keyword, Integer pagination);
