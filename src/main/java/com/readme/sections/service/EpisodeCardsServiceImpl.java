@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +23,7 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
     private final EpisodeCardsRepository episodeCardsRepository;
     private final EpisodeCardsDataAccessLayer episodeCardsDataAccessLayer;
 
+    @Transactional(readOnly = true)
     @Override
     public EpisodeCardsPaginationDTO getCards(Long novelId, Integer pagination) {
         EpisodeCards episodeCards = new EpisodeCards();
@@ -34,11 +36,13 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
         return new EpisodeCardsPaginationDTO(episodeCards, PAGE_SIZE);
     }
 
+    @Transactional
     @Override
     public void addCards(EpisodeCardsEntityDTO episodeCardsEntityDTO) {
         episodeCardsRepository.insert(new EpisodeCards(episodeCardsEntityDTO));
     }
 
+    @Transactional
     @Override
     public void updateCards(EpisodeCardsEntityDTO episodeCardsEntityDTO) {
         episodeCardsRepository.save(new EpisodeCards(episodeCardsEntityDTO));
@@ -50,6 +54,7 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
         return new EpisodeCardsEntityDTO(episodeCards, episodeCardsEntityDTO);
     }
 
+    @Transactional
     @Override
     public void deleteCards(Long id) {
         episodeCardsRepository.deleteById(id);
