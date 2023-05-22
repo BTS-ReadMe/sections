@@ -64,7 +64,12 @@ public class ScheduleServiceImpl implements ScheduleService{
     @Transactional
     @Override
     public void deleteSchedule(Long id) {
-        scheduleRepository.deleteById(id);
+        try {
+            scheduleRepository.deleteById(id);
+        } catch (Exception exception) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
     }
 
     public static String getUtcToKoreanTime(LocalDateTime utcTime) {
