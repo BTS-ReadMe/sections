@@ -3,26 +3,25 @@ package com.readme.sections.service;
 import com.readme.sections.dataAccessLayer.NovelCardsDataAccessLayer;
 import com.readme.sections.dto.NovelCardsEntityDTO;
 import com.readme.sections.dto.NovelCardsViewDTO;
-import com.readme.sections.dto.NovelCardsViewDTO.Tag;
 import com.readme.sections.dto.NovelCardsPaginationDTO;
-import com.readme.sections.dto.NovelCardsPaginationDTO.NovelCardsData;
+import com.readme.sections.enums.SerializationDays;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.repository.NovelCardsRepository;
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -33,306 +32,131 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     private int PAGE_SIZE;
     private final NovelCardsDataAccessLayer novelCardsDataAccessLayer;
     private final NovelCardsRepository novelCardsRepository;
-    private final ModelMapper modelMapper;
 
+    @Transactional(readOnly = true)
     @Override
     public NovelCardsViewDTO getCards(Long id) {
-        NovelCards novelCards = novelCardsRepository.findById(id).get();
-        Date startDate = novelCards.getStartDate();
-        return NovelCardsViewDTO.builder()
-            .novelId(novelCards.getNovelId())
-            .title(novelCards.getTitle())
-            .author(novelCards.getAuthor())
-            .authorComment(novelCards.getAuthorComment())
-            .grade(novelCards.getGrade())
-            .genre(novelCards.getGenre())
-            .tags(novelCards.getTags().stream()
-                .map(element -> Tag.builder()
-                    .id(element.getId())
-                    .name(element.getName())
-                    .build()).collect(Collectors.toList()))
-            .thumbnail(novelCards.getThumbnail())
-            .views(novelCards.getViews())
-            .serializationStatus(novelCards.getSerializationStatus())
-            .description(novelCards.getDescription())
-            .scheduleId(novelCards.getScheduleId())
-            .startDate(getUtcToKoreanTime(novelCards.getStartDate()))
-            .starRating(novelCards.getStarRating())
-            .serializationDays(getSerializationDays(novelCards))
-            .newChecking(startDate.compareTo(novelCardsDataAccessLayer.getOneMonthAgo()) >= 0
-                && startDate.compareTo(novelCardsDataAccessLayer.getNow()) <= 0)
-            .episodeCount(novelCards.getEpisodeCount())
-            .build();
+        NovelCards novelCards = novelCardsRepository.findById(id)
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+            );
+        return new NovelCardsViewDTO(novelCards);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public NovelCardsPaginationDTO getAllCards(Integer pagination) {
+        Pageable pageable = PageRequest.of(pagination, PAGE_SIZE);
+        return new NovelCardsPaginationDTO(novelCardsRepository.findAll(pageable));
+    }
+
+    @Transactional(readOnly = true)
     @Override
     public NovelCardsPaginationDTO getAllCardsBySerializationDays(String serializationDays,
         Integer pagination) {
-        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getAllSerializationDays(
-            serializationDays, pagination);
-        long totalElements = novelCardsDataAccessLayer.getAllSerializationDaysDataCount(
-            serializationDays);
-        return NovelCardsPaginationDTO.builder()
-            .novelCardsData(novelCardsList.stream()
-                .map(novelCards -> NovelCardsData.builder()
-                    .novelId(novelCards.getNovelId())
-                    .title(novelCards.getTitle())
-                    .author(novelCards.getAuthor())
-                    .grade(novelCards.getGrade())
-                    .genre(novelCards.getGenre())
-                    .thumbnail(novelCards.getThumbnail())
-                    .serializationStatus(novelCards.getSerializationStatus())
-                    .description(novelCards.getDescription())
-                    .starRating(novelCards.getStarRating())
-                    .newChecking(novelCards.getNewChecking())
-                    .episodeCount(novelCards.getEpisodeCount())
-                    .build())
-                .collect(Collectors.toList()))
-            .totalElements(totalElements)
-            .totalPages((int) Math.ceil((double) totalElements / (double) PAGE_SIZE))
-            .build();
+        return new NovelCardsPaginationDTO(
+            novelCardsDataAccessLayer.findByDayTrue(serializationDays, pagination));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public NovelCardsPaginationDTO getAllCardsByGenre(String genre, String serializationStatus,
         Integer pagination) {
-        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getAllGenreData(genre,
-            serializationStatus, pagination);
-        Long totalElements = novelCardsDataAccessLayer.getAllGenreDataCount(genre,
-            serializationStatus);
-        return NovelCardsPaginationDTO.builder()
-            .novelCardsData(novelCardsList.stream()
-                .map(novelCards -> NovelCardsData.builder()
-                    .novelId(novelCards.getNovelId())
-                    .title(novelCards.getTitle())
-                    .author(novelCards.getAuthor())
-                    .grade(novelCards.getGrade())
-                    .genre(novelCards.getGenre())
-                    .thumbnail(novelCards.getThumbnail())
-                    .serializationStatus(novelCards.getSerializationStatus())
-                    .description(novelCards.getDescription())
-                    .starRating(novelCards.getStarRating())
-                    .newChecking(novelCards.getNewChecking())
-                    .episodeCount(novelCards.getEpisodeCount())
-                    .build())
-                .collect(Collectors.toList()))
-            .totalElements(totalElements)
-            .totalPages((int) Math.ceil((double) totalElements / (double) PAGE_SIZE))
-            .build();
+        if (pagination == null) {
+            pagination = 0;
+        }
+        Pageable pageable = PageRequest.of(pagination, PAGE_SIZE);
+        return new NovelCardsPaginationDTO(
+            novelCardsRepository.findAllByGenreAndSerializationStatus(genre, serializationStatus,
+                pageable));
     }
 
+    @Transactional
     @Override
     public void addCards(NovelCardsEntityDTO novelCardsEntityDTO) {
-        novelCardsRepository.insert(NovelCards.builder()
-            .novelId(novelCardsEntityDTO.getNovelId())
-            .title(novelCardsEntityDTO.getTitle())
-            .author(novelCardsEntityDTO.getAuthor())
-            .authorComment(novelCardsEntityDTO.getAuthorComment())
-            .grade(novelCardsEntityDTO.getGrade())
-            .genre(novelCardsEntityDTO.getGenre())
-            .tags(novelCardsEntityDTO.getTags().stream()
-                .map(element -> Tag.builder()
-                    .id(element.getId())
-                    .name(element.getName())
-                    .build()).collect(Collectors.toList()))
-            .thumbnail(novelCardsEntityDTO.getThumbnail())
-            .views(novelCardsEntityDTO.getViews())
-            .serializationStatus(novelCardsEntityDTO.getSerializationStatus())
-            .description(novelCardsEntityDTO.getDescription())
-            .scheduleId(novelCardsEntityDTO.getScheduleId())
-            .startDate(novelCardsEntityDTO.getStartDate())
-            .starRating(novelCardsEntityDTO.getStarRating())
-            .monday(novelCardsEntityDTO.getMonday())
-            .tuesday(novelCardsEntityDTO.getTuesday())
-            .wednesday(novelCardsEntityDTO.getWednesday())
-            .thursday(novelCardsEntityDTO.getThursday())
-            .friday(novelCardsEntityDTO.getFriday())
-            .saturday(novelCardsEntityDTO.getSaturday())
-            .sunday(novelCardsEntityDTO.getSunday())
-            .episodeCount(novelCardsEntityDTO.getEpisodeCount())
-            .build());
+        try {
+            novelCardsRepository.insert(new NovelCards(novelCardsEntityDTO));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+
     }
 
     @Override
-    public NovelCardsEntityDTO existUpdateData(Long id, NovelCardsEntityDTO novelCardsEntityDTO) {
-        NovelCards novelCards = novelCardsRepository.findById(id).get();
-        return NovelCardsEntityDTO.builder()
-            .novelId(novelCards.getNovelId())
-            .title(novelCardsEntityDTO.getTitle() != null ? novelCardsEntityDTO.getTitle()
-                : novelCards.getTitle())
-            .description(
-                novelCardsEntityDTO.getDescription() != null ? novelCardsEntityDTO.getDescription()
-                    : novelCards.getDescription())
-            .author(novelCardsEntityDTO.getAuthor() != null ? novelCardsEntityDTO.getAuthor()
-                : novelCards.getAuthor())
-            .authorComment(novelCardsEntityDTO.getAuthorComment() != null ? novelCardsEntityDTO.getAuthorComment()
-                : novelCards.getAuthorComment())
-            .genre(novelCardsEntityDTO.getGenre() != null ? novelCardsEntityDTO.getGenre()
-                : novelCards.getGenre())
-            .grade(novelCardsEntityDTO.getGrade() != null ? novelCardsEntityDTO.getGrade()
-                : novelCards.getGrade())
-            .thumbnail(
-                novelCardsEntityDTO.getThumbnail() != null ? novelCardsEntityDTO.getThumbnail()
-                    : novelCards.getThumbnail())
-            .startDate(
-                novelCardsEntityDTO.getStartDate() != null ? novelCardsEntityDTO.getStartDate()
-                    : novelCards.getStartDate())
-            .views(novelCardsEntityDTO.getViews() != null ? novelCardsEntityDTO.getViews()
-                : novelCards.getViews())
-            .serializationStatus(novelCardsEntityDTO.getSerializationStatus() != null
-                ? novelCardsEntityDTO.getSerializationStatus()
-                : novelCards.getSerializationStatus())
-            .tags(novelCardsEntityDTO.getTags() != null ? novelCardsEntityDTO.getTags()
-                : novelCards.getTags())
-            .scheduleId(
-                novelCardsEntityDTO.getScheduleId() != null ? novelCardsEntityDTO.getScheduleId()
-                    : novelCards.getScheduleId())
-            .starRating(
-                novelCardsEntityDTO.getStarRating() != null ? novelCardsEntityDTO.getStarRating()
-                    : novelCards.getStarRating())
-            .monday(
-                novelCardsEntityDTO.getMonday() != null ? novelCardsEntityDTO.getMonday()
-                    : novelCards.getMonday())
-            .tuesday(
-                novelCardsEntityDTO.getTuesday() != null ? novelCardsEntityDTO.getTuesday()
-                    : novelCards.getTuesday())
-            .wednesday(
-                novelCardsEntityDTO.getWednesday() != null ? novelCardsEntityDTO.getWednesday()
-                    : novelCards.getWednesday())
-            .thursday(
-                novelCardsEntityDTO.getThursday() != null ? novelCardsEntityDTO.getThursday()
-                    : novelCards.getThursday())
-            .friday(
-                novelCardsEntityDTO.getFriday() != null ? novelCardsEntityDTO.getFriday()
-                    : novelCards.getFriday())
-            .saturday(
-                novelCardsEntityDTO.getSaturday() != null ? novelCardsEntityDTO.getSaturday()
-                    : novelCards.getSaturday())
-            .sunday(
-                novelCardsEntityDTO.getSunday() != null ? novelCardsEntityDTO.getSunday()
-                    : novelCards.getSunday())
-            .episodeCount(novelCardsEntityDTO.getEpisodeCount() != null
-                ? novelCardsEntityDTO.getEpisodeCount()
-                : novelCards.getEpisodeCount())
-            .build();
+    public NovelCardsEntityDTO updateNovelCardsDTO(Long id,
+        NovelCardsEntityDTO novelCardsEntityDTO) {
+        NovelCards novelCards = novelCardsRepository.findById(id)
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+            );
+        return new NovelCardsEntityDTO(novelCards, novelCardsEntityDTO);
     }
 
+    @Transactional
     @Override
-    public void updateCards(NovelCardsEntityDTO novelCardsEntityDTO) {
-        novelCardsRepository.save(modelMapper.map(novelCardsEntityDTO, NovelCards.class));
+    public void updateNovelCardsDTO(NovelCardsEntityDTO novelCardsEntityDTO) {
+        novelCardsRepository.save(new NovelCards(novelCardsEntityDTO));
     }
 
+    @Transactional
     @Override
     public void deleteCards(Long id) {
         novelCardsRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<NovelCardsViewDTO> getNovelCardsForSchedule(Long scheduleId) {
-        return novelCardsDataAccessLayer.getAllByScheduleIdData(scheduleId).stream()
-            .map(novelCards -> NovelCardsViewDTO.builder()
-                .novelId(novelCards.getNovelId())
-                .title(novelCards.getTitle())
-                .author(novelCards.getAuthor())
-                .grade(novelCards.getGrade())
-                .genre(novelCards.getGenre())
-                .tags(novelCards.getTags().stream()
-                    .map(element -> Tag.builder()
-                        .id(element.getId())
-                        .name(element.getName())
-                        .build()).collect(Collectors.toList()))
-                .thumbnail(novelCards.getThumbnail())
-                .views(novelCards.getViews())
-                .serializationStatus(novelCards.getSerializationStatus())
-                .description(novelCards.getDescription())
-                .scheduleId(novelCards.getScheduleId())
-                .startDate(getUtcToKoreanTime(novelCards.getStartDate()))
-                .starRating(novelCards.getStarRating())
-                .newChecking(novelCards.getNewChecking())
-                .episodeCount(novelCards.getEpisodeCount())
-                .build())
+        return novelCardsRepository.findAllByScheduleId(scheduleId).stream()
+            .map(novelCards -> new NovelCardsViewDTO(novelCards))
             .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public NovelCardsPaginationDTO searchNovelCards(String keyword, Integer pagination) {
         if (pagination == null) {
             pagination = 0;
         }
         Pageable pageable = PageRequest.of(pagination, PAGE_SIZE);
-        Page<NovelCards> novelCardsPage = novelCardsRepository.findAllByTagsNameOrTitleContaining(keyword, keyword, pageable);
-        return NovelCardsPaginationDTO.builder()
-            .novelCardsData(novelCardsPage.stream()
-                .map(novelCards -> NovelCardsData.builder()
-                    .novelId(novelCards.getNovelId())
-                    .title(novelCards.getTitle())
-                    .author(novelCards.getAuthor())
-                    .grade(novelCards.getGrade())
-                    .genre(novelCards.getGenre())
-                    .thumbnail(novelCards.getThumbnail())
-                    .serializationStatus(novelCards.getSerializationStatus())
-                    .description(novelCards.getDescription())
-                    .starRating(novelCards.getStarRating())
-                    .newChecking(checkNewNovel(novelCards.getStartDate()))
-                    .episodeCount(novelCards.getEpisodeCount())
-                    .build())
-                .collect(Collectors.toList()))
-            .totalElements(novelCardsPage.getTotalElements())
-            .totalPages(novelCardsPage.getTotalPages())
-            .build();
+        return new NovelCardsPaginationDTO(
+            novelCardsRepository.findAllByTagsNameOrTitleContaining(keyword, keyword, pageable));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public NovelCardsPaginationDTO getNewNovelsByGenre(String genre, Integer pagination) {
         if (pagination == null) {
             pagination = 0;
         }
-        List<NovelCards> novelCardsList = novelCardsDataAccessLayer.getNewNovelsData(genre,
-            pagination);
-        Long totalElements = novelCardsDataAccessLayer.getNewNovelsDataCount(genre);
-        return NovelCardsPaginationDTO.builder()
-            .novelCardsData(novelCardsList.stream()
-                .map(novelCards -> NovelCardsData.builder()
-                    .novelId(novelCards.getNovelId())
-                    .title(novelCards.getTitle())
-                    .author(novelCards.getAuthor())
-                    .grade(novelCards.getGrade())
-                    .genre(novelCards.getGenre())
-                    .thumbnail(novelCards.getThumbnail())
-                    .serializationStatus(novelCards.getSerializationStatus())
-                    .description(novelCards.getDescription())
-                    .starRating(novelCards.getStarRating())
-                    .newChecking(novelCards.getNewChecking())
-                    .episodeCount(novelCards.getEpisodeCount())
-                    .build())
-                .collect(Collectors.toList()))
-            .totalElements(totalElements)
-            .totalPages((int) Math.ceil((double) totalElements / (double) PAGE_SIZE))
-            .build();
+        Pageable pageable = PageRequest.of(pagination, PAGE_SIZE);
+        return new NovelCardsPaginationDTO(
+            novelCardsRepository.findAllByGenreAndStartDateBetween(genre, getOneMonthAgo(),
+                getNow(), pageable));
     }
 
-    private static String getSerializationDays(NovelCards novelCards) {
+    public static String getSerializationDays(NovelCards novelCards) {
         String serializationDays = "";
-        if (novelCards.getMonday() != null && novelCards.getMonday() != null) {
-            serializationDays += "월 ";
+        if (novelCards.getMonday()) {
+            serializationDays += SerializationDays.월.getShortDay() + " ";
         }
-        if (novelCards.getTuesday() != null && novelCards.getTuesday() != null) {
-            serializationDays += "화 ";
+        if (novelCards.getTuesday()) {
+            serializationDays += SerializationDays.화.getShortDay() + " ";
         }
-        if (novelCards.getWednesday() != null && novelCards.getWednesday() != null) {
-            serializationDays += "수 ";
+        if (novelCards.getWednesday()) {
+            serializationDays += SerializationDays.수.getShortDay() + " ";
         }
-        if (novelCards.getThursday() != null && novelCards.getThursday() != null) {
-            serializationDays += "목 ";
+        if (novelCards.getThursday()) {
+            serializationDays += SerializationDays.목.getShortDay() + " ";
         }
-        if (novelCards.getFriday() != null && novelCards.getFriday() != null) {
-            serializationDays += "금 ";
+        if (novelCards.getFriday()) {
+            serializationDays += SerializationDays.금.getShortDay() + " ";
         }
-        if (novelCards.getSaturday() != null && novelCards.getSaturday() != null) {
-            serializationDays += "토 ";
+        if (novelCards.getSaturday()) {
+            serializationDays += SerializationDays.토.getShortDay() + " ";
         }
-        if (novelCards.getSunday() != null && novelCards.getSunday() != null) {
-            serializationDays += "일 ";
+        if (novelCards.getSunday()) {
+            serializationDays += SerializationDays.일.getShortDay() + " ";
         }
         if (serializationDays.equals("")) {
             return serializationDays;
@@ -340,21 +164,27 @@ public class NovelCardsServiceImpl implements NovelCardsService {
         return serializationDays.substring(0, serializationDays.length() - 1);
     }
 
-    private static String getUtcToKoreanTime(Date utcTime) {
+    public static String getUtcToKoreanTime(Date utcTime) {
         SimpleDateFormat koreaFormat = new SimpleDateFormat("yyyy-MM-dd");
         koreaFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
         return koreaFormat.format(utcTime);
     }
 
     public static boolean checkNewNovel(Date startDate) {
-        // UTC 시간대에서 한국 시간대로 변경
-        ZonedDateTime zonedDateTimeUtc = ZonedDateTime.ofInstant(startDate.toInstant(), ZoneId.of("UTC"));
-        ZonedDateTime zonedDateTimeKst = zonedDateTimeUtc.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        return startDate.compareTo(getOneMonthAgo()) >= 0
+            && startDate.compareTo(getNow()) <= 0;
+    }
 
-        // 한 달 전의 현재 시간
-        ZonedDateTime oneMonthAgo = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).minusMonths(1);
+    public static Date getNow() {
+        return new Date();
+    }
 
-        // startDate가 한 달 전과 현재 사이에 있는지 확인
-        return (zonedDateTimeKst.isAfter(oneMonthAgo) && zonedDateTimeKst.isBefore(ZonedDateTime.now(ZoneId.of("Asia/Seoul"))));
+    public static Date getOneMonthAgo() {
+        Date now = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        now = calendar.getTime();
+        calendar.add(Calendar.MONTH, -1);
+        return calendar.getTime();
     }
 }
