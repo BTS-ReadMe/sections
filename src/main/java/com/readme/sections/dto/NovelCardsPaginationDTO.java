@@ -13,7 +13,7 @@ import org.springframework.data.domain.Page;
 @NoArgsConstructor
 public class NovelCardsPaginationDTO {
 
-    List<NovelCardsData> novelCardsData;
+    private List<NovelCardsData> novelCardsData;
     private long totalElements;
     private int totalPages;
 
@@ -21,7 +21,7 @@ public class NovelCardsPaginationDTO {
     @NoArgsConstructor
     public static class NovelCardsData {
 
-        private Long novelId;
+        private long novelId;
         private String title;
         private String description;
         private String author;

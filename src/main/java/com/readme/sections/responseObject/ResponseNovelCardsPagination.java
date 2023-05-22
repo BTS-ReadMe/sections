@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ResponseNovelCardsPagination {
-    List<NovelCardsData> novelCardsData;
+    private List<NovelCardsData> novelCardsData;
     private long totalElements;
     private int totalPages;
 

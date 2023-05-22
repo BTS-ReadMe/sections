@@ -9,23 +9,23 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ResponseNovelCards {
-    Long novelId;
-    String title;
-    String description;
-    String author;
-    String authorComment;
-    String genre;
-    Integer grade;
-    String thumbnail;
-    String startDate;
-    Long views;
-    String serializationStatus;
-    List<Tag> tags;
-    Long scheduleId;
-    Double starRating;
-    String serializationDays;
-    Boolean newChecking;
-    Long episodeCount;
+    private long novelId;
+    private String title;
+    private String description;
+    private String author;
+    private String authorComment;
+    private String genre;
+    private int grade;
+    private String thumbnail;
+    private String startDate;
+    private long views;
+    private String serializationStatus;
+    private List<Tag> tags;
+    private Long scheduleId;
+    private double starRating;
+    private String serializationDays;
+    private boolean newChecking;
+    private long episodeCount;
 
     public ResponseNovelCards(NovelCardsViewDTO novelCardsViewDTO) {
         this.novelId = novelCardsViewDTO.getNovelId();
@@ -43,7 +43,7 @@ public class ResponseNovelCards {
         this.scheduleId = novelCardsViewDTO.getScheduleId();
         this.starRating = novelCardsViewDTO.getStarRating();
         this.serializationDays = novelCardsViewDTO.getSerializationDays();
-        this.newChecking = novelCardsViewDTO.getNewChecking();
+        this.newChecking = novelCardsViewDTO.isNewChecking();
         this.episodeCount = novelCardsViewDTO.getEpisodeCount();
     }
 }

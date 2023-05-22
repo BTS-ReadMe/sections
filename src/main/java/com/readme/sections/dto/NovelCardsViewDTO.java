@@ -10,23 +10,23 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class NovelCardsViewDTO {
-    Long novelId;
-    String title;
-    String description;
-    String author;
-    String authorComment;
-    String genre;
-    Integer grade;
-    String thumbnail;
-    String startDate;
-    Long views;
-    String serializationStatus;
-    List<Tag> tags;
-    Long scheduleId;
-    Double starRating;
-    String serializationDays;
-    Boolean newChecking;
-    Long episodeCount;
+    private long novelId;
+    private String title;
+    private String description;
+    private String author;
+    private String authorComment;
+    private String genre;
+    private int grade;
+    private String thumbnail;
+    private String startDate;
+    private long views;
+    private String serializationStatus;
+    private List<Tag> tags;
+    private long scheduleId;
+    private double starRating;
+    private String serializationDays;
+    private boolean newChecking;
+    private long episodeCount;
 
     public NovelCardsViewDTO(NovelCards novelCards) {
         this.novelId = novelCards.getNovelId();

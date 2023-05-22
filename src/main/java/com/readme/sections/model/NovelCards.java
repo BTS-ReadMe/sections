@@ -19,39 +19,34 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @CompoundIndex(def = "{'genre': 1, 'serializationStatus': 1}")
 public class NovelCards {
     @Id
-    Long novelId;
+    private Long novelId;
     @Indexed
-    String title;
-    String description;
-    String author;
-    String authorComment;
-    String genre;
-    Integer grade;
-    String thumbnail;
-    Date startDate;
-    Long views;
-    String serializationStatus;
-    List<Tag> tags;
-    Long scheduleId;
-    Double starRating;
-    Boolean monday;
-    Boolean tuesday;
-    Boolean wednesday;
-    Boolean thursday;
-    Boolean friday;
-    Boolean saturday;
-    Boolean sunday;
-    Boolean newChecking;
-    Long episodeCount;
+    private String title;
+    private String description;
+    private String author;
+    private String authorComment;
+    private String genre;
+    private Integer grade;
+    private String thumbnail;
+    private Date startDate;
+    private Long views;
+    private String serializationStatus;
+    private List<Tag> tags;
+    private Long scheduleId;
+    private Double starRating;
+    private Boolean monday;
+    private Boolean tuesday;
+    private Boolean wednesday;
+    private Boolean thursday;
+    private Boolean friday;
+    private Boolean saturday;
+    private Boolean sunday;
+    private Long episodeCount;
 
     @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @ToString
     public static class Tag {
-        Long id;
-        String name;
+        private Long id;
+        private String name;
     }
 
     public double getStarRating() {
