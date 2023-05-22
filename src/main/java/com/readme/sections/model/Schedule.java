@@ -1,5 +1,6 @@
 package com.readme.sections.model;
 
+import com.readme.sections.dto.ScheduleDTO;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,21 +9,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
-@ToString
 @Table(name = "schedule")
 @EntityListeners(AuditingEntityListener.class)
 public class Schedule {
@@ -43,4 +38,11 @@ public class Schedule {
     @LastModifiedDate
     @Column(name = "updated_date")
     private LocalDateTime updatedDate;
+
+    public Schedule(ScheduleDTO scheduleDTO) {
+        this.id = scheduleDTO.getId();
+        this.name = scheduleDTO.getName();
+        this.startDate = scheduleDTO.getStartDate();
+        this.endDate = scheduleDTO.getEndDate();
+    }
 }

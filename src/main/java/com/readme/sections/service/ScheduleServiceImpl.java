@@ -3,14 +3,11 @@ package com.readme.sections.service;
 import com.readme.sections.dto.ScheduleDTO;
 import com.readme.sections.model.Schedule;
 import com.readme.sections.repository.ScheduleRepository;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,11 +34,7 @@ public class ScheduleServiceImpl implements ScheduleService{
 
     @Override
     public void addSchedule(ScheduleDTO scheduleDTO) {
-        scheduleRepository.save(Schedule.builder()
-            .name(scheduleDTO.getName())
-            .startDate(scheduleDTO.getStartDate())
-            .endDate(scheduleDTO.getEndDate())
-            .build());
+        scheduleRepository.save(new Schedule(scheduleDTO));
     }
 
     @Override
@@ -52,12 +45,7 @@ public class ScheduleServiceImpl implements ScheduleService{
 
     @Override
     public void updateSchedule(ScheduleDTO scheduleDTO) {
-        scheduleRepository.save(Schedule.builder()
-            .id(scheduleDTO.getId())
-            .name(scheduleDTO.getName())
-            .startDate(scheduleDTO.getStartDate())
-            .endDate(scheduleDTO.getEndDate())
-            .build());
+        scheduleRepository.save(new Schedule(scheduleDTO));
     }
 
     @Override
