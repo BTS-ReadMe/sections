@@ -1,6 +1,7 @@
 package com.readme.sections.controller;
 
-import com.readme.sections.dto.EpisodeCardsDTO;
+import com.readme.sections.dto.EpisodeCardsEntityDTO;
+import com.readme.sections.dto.EpisodeCardsPaginationDTO;
 import com.readme.sections.requestObject.RequestEpisodeCards;
 import com.readme.sections.service.EpisodeCardsService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,8 +34,7 @@ public class AdminEpisodeCardsController {
     })
     @PostMapping
     public void addEpisodeCard(@RequestBody RequestEpisodeCards requestEpisodeCards) {
-        EpisodeCardsDTO episodeCardsDTO = modelMapper.map(requestEpisodeCards, EpisodeCardsDTO.class);
-        episodeCardsService.addCards(episodeCardsDTO);
+        episodeCardsService.addCards(new EpisodeCardsEntityDTO(requestEpisodeCards));
     }
 
     @Operation(summary = "에피소드 카드 수정", description = "RequestEpisodeCards 필드 값 중 넘어온 값들을 확인하고 id에 해당하는 에피소드 카드 수정", tags = {"Admin 에피소드 카드"})
@@ -46,8 +46,9 @@ public class AdminEpisodeCardsController {
     })
     @PatchMapping("/{id}")
     public void updateEpisodeCard(@PathVariable Long id, @RequestBody RequestEpisodeCards requestEpisodeCards) {
-        EpisodeCardsDTO episodeCardsDTO = modelMapper.map(requestEpisodeCards, EpisodeCardsDTO.class);
-        episodeCardsService.updateCards(episodeCardsService.existUpdateData(id, episodeCardsDTO));
+        EpisodeCardsEntityDTO episodeCardsEntityDTO = new EpisodeCardsEntityDTO(requestEpisodeCards);
+        episodeCardsService.updateCards(episodeCardsService.existUpdateData(id,
+            episodeCardsEntityDTO));
     }
 
     @Operation(summary = "에피소드 카드 삭제", description = "id에 해당하는 에피소드 카드 삭제", tags = {"Admin 에피소드 카드"})

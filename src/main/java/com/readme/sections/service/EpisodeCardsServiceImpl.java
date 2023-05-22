@@ -1,13 +1,12 @@
 package com.readme.sections.service;
 
 import com.readme.sections.dataAccessLayer.EpisodeCardsDataAccessLayer;
-import com.readme.sections.dto.EpisodeCardsDTO;
+import com.readme.sections.dto.EpisodeCardsEntityDTO;
+import com.readme.sections.dto.EpisodeCardsPaginationDTO;
 import com.readme.sections.model.EpisodeCards;
-import com.readme.sections.model.EpisodeCards.Episode;
 import com.readme.sections.repository.EpisodeCardsRepository;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +23,7 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
     private final EpisodeCardsDataAccessLayer episodeCardsDataAccessLayer;
 
     @Override
-    public EpisodeCardsDTO getCards(Long novelId, Integer pagination) {
+    public EpisodeCardsPaginationDTO getCards(Long novelId, Integer pagination) {
         EpisodeCards episodeCards = new EpisodeCards();
         if (pagination == null) {
             episodeCards = episodeCardsDataAccessLayer.findEpisodesByEpisodeCardId(novelId, 0, PAGE_SIZE);
@@ -32,36 +31,23 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
         } else {
             episodeCards = episodeCardsDataAccessLayer.findEpisodesByEpisodeCardId(novelId, pagination * PAGE_SIZE, PAGE_SIZE);
         }
-        return EpisodeCardsDTO.builder()
-            .novelId(episodeCards.getNovelId())
-            .episodes(episodeCards.getEpisodes())
-            .page(pagination)
-            .size(PAGE_SIZE)
-            .totalElements(episodeCards.getEpisodeCount())
-            .totalPages(
-                (int) Math.ceil((double) episodeCards.getEpisodeCount() / (double) PAGE_SIZE))
-            .build();
+        return new EpisodeCardsPaginationDTO(episodeCards, PAGE_SIZE);
     }
 
     @Override
-    public void addCards(EpisodeCardsDTO episodeCardsDTO) {
-        episodeCardsRepository.insert(new EpisodeCards(episodeCardsDTO));
+    public void addCards(EpisodeCardsEntityDTO episodeCardsEntityDTO) {
+        episodeCardsRepository.insert(new EpisodeCards(episodeCardsEntityDTO));
     }
 
     @Override
-    public void updateCards(EpisodeCardsDTO episodeCardsDTO) {
-        episodeCardsRepository.save(new EpisodeCards(episodeCardsDTO));
+    public void updateCards(EpisodeCardsEntityDTO episodeCardsEntityDTO) {
+        episodeCardsRepository.save(new EpisodeCards(episodeCardsEntityDTO));
     }
 
     @Override
-    public EpisodeCardsDTO existUpdateData(Long id, EpisodeCardsDTO episodeCardsDTO) {
+    public EpisodeCardsEntityDTO existUpdateData(Long id, EpisodeCardsEntityDTO episodeCardsEntityDTO) {
         EpisodeCards episodeCards = episodeCardsRepository.findById(id).get();
-        return EpisodeCardsDTO.builder()
-            .novelId(episodeCardsDTO.getNovelId() != null ? episodeCardsDTO.getNovelId()
-                : episodeCards.getNovelId())
-            .episodes(episodeCardsDTO.getEpisodes() != null ? episodeCardsDTO.getEpisodes()
-                : episodeCards.getEpisodes())
-            .build();
+        return new EpisodeCardsEntityDTO(episodeCards, episodeCardsEntityDTO);
     }
 
     @Override

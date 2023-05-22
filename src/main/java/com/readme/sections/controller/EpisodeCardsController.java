@@ -1,6 +1,6 @@
 package com.readme.sections.controller;
 
-import com.readme.sections.dto.EpisodeCardsDTO;
+import com.readme.sections.dto.EpisodeCardsPaginationDTO;
 import com.readme.sections.commonResponseObject.CommonDataResponse;
 import com.readme.sections.responseObject.ResponseEpisodeCards;
 import com.readme.sections.service.EpisodeCardsService;
@@ -34,14 +34,12 @@ public class EpisodeCardsController {
     public ResponseEntity<CommonDataResponse<ResponseEpisodeCards>> getEpisodeCard(
         @PathVariable Long novelId,
         @RequestParam(required = false) Integer pagination) {
-        EpisodeCardsDTO episodeCardsDTO = episodeCardsService.getCards(novelId, pagination);
+        EpisodeCardsPaginationDTO episodeCardsPaginationDTO = episodeCardsService.getCards(novelId, pagination);
         return ResponseEntity.ok(new CommonDataResponse(ResponseEpisodeCards.builder()
-                .novelId(episodeCardsDTO.getNovelId())
-                .episodes(episodeCardsDTO.getEpisodes())
-                .page(episodeCardsDTO.getPage())
-                .size(episodeCardsDTO.getSize())
-                .totalElements(episodeCardsDTO.getTotalElements())
-                .totalPages(episodeCardsDTO.getTotalPages())
+                .novelId(episodeCardsPaginationDTO.getNovelId())
+                .episodes(episodeCardsPaginationDTO.getEpisodes())
+                .totalElements(episodeCardsPaginationDTO.getTotalElements())
+                .totalPages(episodeCardsPaginationDTO.getTotalPages())
                 .build()
             )
         );

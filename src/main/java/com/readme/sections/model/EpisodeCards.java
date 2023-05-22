@@ -1,6 +1,7 @@
 package com.readme.sections.model;
 
-import com.readme.sections.dto.EpisodeCardsDTO;
+import com.readme.sections.dto.EpisodeCardsEntityDTO;
+import com.readme.sections.dto.EpisodeCardsPaginationDTO;
 import com.readme.sections.service.EpisodeCardsServiceImpl;
 import java.util.Date;
 import java.util.List;
@@ -37,8 +38,8 @@ public class EpisodeCards {
         }
     }
 
-    public EpisodeCards(EpisodeCardsDTO episodeCardsDTO) {
-        this.novelId = episodeCardsDTO.getNovelId();
-        this.episodes = episodeCardsDTO.getEpisodes();
+    public EpisodeCards(EpisodeCardsEntityDTO episodeCardsEntityDTO) {
+        this.novelId = episodeCardsEntityDTO.getNovelId();
+        this.episodes = episodeCardsEntityDTO.getEpisodes();
     }
 }
