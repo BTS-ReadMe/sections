@@ -1,25 +1,16 @@
 package com.readme.sections.dto;
 
-import com.readme.sections.dataAccessLayer.NovelCardsDataAccessLayer;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.service.NovelCardsServiceImpl;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import org.springframework.data.domain.Page;
 
 @Getter
-@Setter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
-@ToString
 public class NovelCardsPaginationDTO {
 
     List<NovelCardsData> novelCardsData;
@@ -27,10 +18,7 @@ public class NovelCardsPaginationDTO {
     private int totalPages;
 
     @Getter
-    @Builder
     @NoArgsConstructor
-    @AllArgsConstructor
-    @ToString
     public static class NovelCardsData {
 
         private Long novelId;

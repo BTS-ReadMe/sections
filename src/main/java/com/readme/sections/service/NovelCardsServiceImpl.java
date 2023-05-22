@@ -64,67 +64,9 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     }
 
     @Override
-    public NovelCardsEntityDTO existUpdateData(Long id, NovelCardsEntityDTO novelCardsEntityDTO) {
+    public NovelCardsEntityDTO updateCards(Long id, NovelCardsEntityDTO novelCardsEntityDTO) {
         NovelCards novelCards = novelCardsRepository.findById(id).get();
-        return NovelCardsEntityDTO.builder()
-            .novelId(novelCards.getNovelId())
-            .title(novelCardsEntityDTO.getTitle() != null ? novelCardsEntityDTO.getTitle()
-                : novelCards.getTitle())
-            .description(
-                novelCardsEntityDTO.getDescription() != null ? novelCardsEntityDTO.getDescription()
-                    : novelCards.getDescription())
-            .author(novelCardsEntityDTO.getAuthor() != null ? novelCardsEntityDTO.getAuthor()
-                : novelCards.getAuthor())
-            .authorComment(novelCardsEntityDTO.getAuthorComment() != null ? novelCardsEntityDTO.getAuthorComment()
-                : novelCards.getAuthorComment())
-            .genre(novelCardsEntityDTO.getGenre() != null ? novelCardsEntityDTO.getGenre()
-                : novelCards.getGenre())
-            .grade(novelCardsEntityDTO.getGrade() != null ? novelCardsEntityDTO.getGrade()
-                : novelCards.getGrade())
-            .thumbnail(
-                novelCardsEntityDTO.getThumbnail() != null ? novelCardsEntityDTO.getThumbnail()
-                    : novelCards.getThumbnail())
-            .startDate(
-                novelCardsEntityDTO.getStartDate() != null ? novelCardsEntityDTO.getStartDate()
-                    : novelCards.getStartDate())
-            .views(novelCardsEntityDTO.getViews() != null ? novelCardsEntityDTO.getViews()
-                : novelCards.getViews())
-            .serializationStatus(novelCardsEntityDTO.getSerializationStatus() != null
-                ? novelCardsEntityDTO.getSerializationStatus()
-                : novelCards.getSerializationStatus())
-            .tags(novelCardsEntityDTO.getTags() != null ? novelCardsEntityDTO.getTags()
-                : novelCards.getTags())
-            .scheduleId(
-                novelCardsEntityDTO.getScheduleId() != null ? novelCardsEntityDTO.getScheduleId()
-                    : novelCards.getScheduleId())
-            .starRating(
-                novelCardsEntityDTO.getStarRating() != null ? novelCardsEntityDTO.getStarRating()
-                    : novelCards.getStarRating())
-            .monday(
-                novelCardsEntityDTO.getMonday() != null ? novelCardsEntityDTO.getMonday()
-                    : novelCards.getMonday())
-            .tuesday(
-                novelCardsEntityDTO.getTuesday() != null ? novelCardsEntityDTO.getTuesday()
-                    : novelCards.getTuesday())
-            .wednesday(
-                novelCardsEntityDTO.getWednesday() != null ? novelCardsEntityDTO.getWednesday()
-                    : novelCards.getWednesday())
-            .thursday(
-                novelCardsEntityDTO.getThursday() != null ? novelCardsEntityDTO.getThursday()
-                    : novelCards.getThursday())
-            .friday(
-                novelCardsEntityDTO.getFriday() != null ? novelCardsEntityDTO.getFriday()
-                    : novelCards.getFriday())
-            .saturday(
-                novelCardsEntityDTO.getSaturday() != null ? novelCardsEntityDTO.getSaturday()
-                    : novelCards.getSaturday())
-            .sunday(
-                novelCardsEntityDTO.getSunday() != null ? novelCardsEntityDTO.getSunday()
-                    : novelCards.getSunday())
-            .episodeCount(novelCardsEntityDTO.getEpisodeCount() != null
-                ? novelCardsEntityDTO.getEpisodeCount()
-                : novelCards.getEpisodeCount())
-            .build();
+        return new NovelCardsEntityDTO(novelCards, novelCardsEntityDTO);
     }
 
     @Override
