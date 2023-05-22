@@ -54,7 +54,8 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     @Override
     public NovelCardsPaginationDTO getAllCardsBySerializationDays(String serializationDays,
         Integer pagination) {
-        return new NovelCardsPaginationDTO(novelCardsDataAccessLayer.findByDayTrue(serializationDays, pagination));
+        return new NovelCardsPaginationDTO(
+            novelCardsDataAccessLayer.findByDayTrue(serializationDays, pagination));
     }
 
     @Transactional(readOnly = true)
@@ -65,17 +66,25 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             pagination = 0;
         }
         Pageable pageable = PageRequest.of(pagination, PAGE_SIZE);
-        return new NovelCardsPaginationDTO(novelCardsRepository.findAllByGenreAndSerializationStatus(genre, serializationStatus, pageable));
+        return new NovelCardsPaginationDTO(
+            novelCardsRepository.findAllByGenreAndSerializationStatus(genre, serializationStatus,
+                pageable));
     }
 
     @Transactional
     @Override
     public void addCards(NovelCardsEntityDTO novelCardsEntityDTO) {
-        novelCardsRepository.insert(new NovelCards(novelCardsEntityDTO));
+        try {
+            novelCardsRepository.insert(new NovelCards(novelCardsEntityDTO));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+
     }
 
     @Override
-    public NovelCardsEntityDTO updateNovelCardsDTO(Long id, NovelCardsEntityDTO novelCardsEntityDTO) {
+    public NovelCardsEntityDTO updateNovelCardsDTO(Long id,
+        NovelCardsEntityDTO novelCardsEntityDTO) {
         NovelCards novelCards = novelCardsRepository.findById(id)
             .orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
@@ -110,7 +119,8 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             pagination = 0;
         }
         Pageable pageable = PageRequest.of(pagination, PAGE_SIZE);
-        return new NovelCardsPaginationDTO(novelCardsRepository.findAllByTagsNameOrTitleContaining(keyword, keyword, pageable));
+        return new NovelCardsPaginationDTO(
+            novelCardsRepository.findAllByTagsNameOrTitleContaining(keyword, keyword, pageable));
     }
 
     @Transactional(readOnly = true)
@@ -120,7 +130,9 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             pagination = 0;
         }
         Pageable pageable = PageRequest.of(pagination, PAGE_SIZE);
-        return new NovelCardsPaginationDTO(novelCardsRepository.findAllByGenreAndStartDateBetween(genre, getOneMonthAgo(), getNow(), pageable));
+        return new NovelCardsPaginationDTO(
+            novelCardsRepository.findAllByGenreAndStartDateBetween(genre, getOneMonthAgo(),
+                getNow(), pageable));
     }
 
     public static String getSerializationDays(NovelCards novelCards) {
