@@ -1,7 +1,6 @@
 package com.readme.sections.controller;
 
 import com.readme.sections.dto.EpisodeCardsEntityDTO;
-import com.readme.sections.dto.EpisodeCardsPaginationDTO;
 import com.readme.sections.requestObject.RequestEpisodeCards;
 import com.readme.sections.service.EpisodeCardsService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminEpisodeCardsController {
 
     private final EpisodeCardsService episodeCardsService;
-    private final ModelMapper modelMapper;
 
     @Operation(summary = "에피소드 카드 등록", description = "에피소드 카드 등록", tags = {"Admin 에피소드 카드"})
     @ApiResponses({

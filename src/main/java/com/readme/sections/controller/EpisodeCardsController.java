@@ -34,13 +34,10 @@ public class EpisodeCardsController {
     public ResponseEntity<CommonDataResponse<ResponseEpisodeCards>> getEpisodeCard(
         @PathVariable Long novelId,
         @RequestParam(required = false) Integer pagination) {
-        EpisodeCardsPaginationDTO episodeCardsPaginationDTO = episodeCardsService.getCards(novelId, pagination);
-        return ResponseEntity.ok(new CommonDataResponse(ResponseEpisodeCards.builder()
-                .novelId(episodeCardsPaginationDTO.getNovelId())
-                .episodes(episodeCardsPaginationDTO.getEpisodes())
-                .totalElements(episodeCardsPaginationDTO.getTotalElements())
-                .totalPages(episodeCardsPaginationDTO.getTotalPages())
-                .build()
+        EpisodeCardsPaginationDTO episodeCardsPaginationDTO = episodeCardsService.getCards(novelId,
+            pagination);
+        return ResponseEntity.ok(
+            new CommonDataResponse(new ResponseEpisodeCards(episodeCardsPaginationDTO)
             )
         );
     }
