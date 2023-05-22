@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -33,6 +33,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     private final NovelCardsDataAccessLayer novelCardsDataAccessLayer;
     private final NovelCardsRepository novelCardsRepository;
 
+    @Transactional(readOnly = true)
     @Override
     public NovelCardsViewDTO getCards(Long id) {
         NovelCards novelCards = novelCardsRepository.findById(id)
@@ -42,18 +43,21 @@ public class NovelCardsServiceImpl implements NovelCardsService {
         return new NovelCardsViewDTO(novelCards);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public NovelCardsPaginationDTO getAllCards(Integer pagination) {
         Pageable pageable = PageRequest.of(pagination, PAGE_SIZE);
         return new NovelCardsPaginationDTO(novelCardsRepository.findAll(pageable));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public NovelCardsPaginationDTO getAllCardsBySerializationDays(String serializationDays,
         Integer pagination) {
         return new NovelCardsPaginationDTO(novelCardsDataAccessLayer.findByDayTrue(serializationDays, pagination));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public NovelCardsPaginationDTO getAllCardsByGenre(String genre, String serializationStatus,
         Integer pagination) {
@@ -91,6 +95,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
         novelCardsRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<NovelCardsViewDTO> getNovelCardsForSchedule(Long scheduleId) {
         return novelCardsRepository.findAllByScheduleId(scheduleId).stream()
@@ -98,6 +103,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public NovelCardsPaginationDTO searchNovelCards(String keyword, Integer pagination) {
         if (pagination == null) {
@@ -107,6 +113,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
         return new NovelCardsPaginationDTO(novelCardsRepository.findAllByTagsNameOrTitleContaining(keyword, keyword, pageable));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public NovelCardsPaginationDTO getNewNovelsByGenre(String genre, Integer pagination) {
         if (pagination == null) {
