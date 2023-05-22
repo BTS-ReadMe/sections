@@ -10,8 +10,10 @@ import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -27,19 +29,30 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
     @Override
     public EpisodeCardsPaginationDTO getCards(Long novelId, Integer pagination) {
         EpisodeCards episodeCards = new EpisodeCards();
-        if (pagination == null) {
-            episodeCards = episodeCardsDataAccessLayer.findEpisodesByEpisodeCardId(novelId, 0, PAGE_SIZE);
-            pagination = 0;
-        } else {
-            episodeCards = episodeCardsDataAccessLayer.findEpisodesByEpisodeCardId(novelId, pagination * PAGE_SIZE, PAGE_SIZE);
+        try {
+            if (pagination == null) {
+                episodeCards = episodeCardsDataAccessLayer.findEpisodesByEpisodeCardId(novelId, 0,
+                    PAGE_SIZE);
+                pagination = 0;
+            } else {
+                episodeCards = episodeCardsDataAccessLayer.findEpisodesByEpisodeCardId(novelId,
+                    pagination * PAGE_SIZE, PAGE_SIZE);
+            }
+        } catch (Exception exception) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+
         return new EpisodeCardsPaginationDTO(episodeCards, PAGE_SIZE);
     }
 
     @Transactional
     @Override
     public void addCards(EpisodeCardsEntityDTO episodeCardsEntityDTO) {
-        episodeCardsRepository.insert(new EpisodeCards(episodeCardsEntityDTO));
+        try {
+            episodeCardsRepository.insert(new EpisodeCards(episodeCardsEntityDTO));
+        } catch (Exception exception) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
     }
 
     @Transactional
@@ -49,8 +62,11 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
     }
 
     @Override
-    public EpisodeCardsEntityDTO existUpdateData(Long id, EpisodeCardsEntityDTO episodeCardsEntityDTO) {
-        EpisodeCards episodeCards = episodeCardsRepository.findById(id).get();
+    public EpisodeCardsEntityDTO existUpdateData(Long id,
+        EpisodeCardsEntityDTO episodeCardsEntityDTO) {
+        EpisodeCards episodeCards = episodeCardsRepository.findById(id).orElseThrow(
+            () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+        );
         return new EpisodeCardsEntityDTO(episodeCards, episodeCardsEntityDTO);
     }
 
@@ -66,6 +82,6 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
         calendar.setTime(now);
         now = calendar.getTime();
         calendar.add(Calendar.DAY_OF_MONTH, -7);
-        return registrationDate.after(calendar.getTime()) &&registrationDate.before(now);
+        return registrationDate.after(calendar.getTime()) && registrationDate.before(now);
     }
 }
