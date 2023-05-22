@@ -4,7 +4,6 @@ import com.readme.sections.dataAccessLayer.NovelCardsDataAccessLayer;
 import com.readme.sections.dto.NovelCardsEntityDTO;
 import com.readme.sections.dto.NovelCardsViewDTO;
 import com.readme.sections.dto.NovelCardsPaginationDTO;
-import com.readme.sections.dto.NovelCardsPaginationDTO.NovelCardsData;
 import com.readme.sections.enums.SerializationDays;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.repository.NovelCardsRepository;
@@ -160,7 +159,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
             pagination = 0;
         }
         Pageable pageable = PageRequest.of(pagination, PAGE_SIZE);
-        return new NovelCardsPaginationDTO(novelCardsRepository.findAllByStartDateBetween(getOneMonthAgo(), getNow(), pageable));
+        return new NovelCardsPaginationDTO(novelCardsRepository.findAllByGenreAndStartDateBetween(genre, getOneMonthAgo(), getNow(), pageable));
     }
 
     public static String getSerializationDays(NovelCards novelCards) {
