@@ -82,11 +82,7 @@ public class AdminScheduleController {
     @PostMapping
     public void addSchedule(@RequestBody RequestSchedule requestSchedule) {
         log.info(requestSchedule.getStartDate().toString());
-        scheduleService.addSchedule(ScheduleDTO.builder()
-            .name(requestSchedule.getName())
-            .startDate(requestSchedule.getStartDate())
-            .endDate(requestSchedule.getEndDate())
-            .build());
+        scheduleService.addSchedule(new ScheduleDTO(requestSchedule));
     }
 
     @Operation(summary = "스케줄 수정", description = "RequestSchedule 필드 값 중 넘어온 값들을 확인하고 id에 해당하는 스케줄 수정", tags = {
@@ -100,11 +96,7 @@ public class AdminScheduleController {
     @PatchMapping("/{id}")
     public void updateSchedule(@PathVariable Long id,
         @RequestBody RequestSchedule requestSchedule) {
-        ScheduleDTO scheduleDTO = scheduleService.existUpdateData(id, ScheduleDTO.builder()
-            .name(requestSchedule.getName())
-            .startDate(requestSchedule.getStartDate())
-            .endDate(requestSchedule.getEndDate())
-            .build());
+        ScheduleDTO scheduleDTO = scheduleService.existUpdateData(id, new ScheduleDTO(requestSchedule));
         scheduleService.updateSchedule(scheduleDTO);
     }
 

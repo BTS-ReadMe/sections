@@ -25,31 +25,13 @@ public class ScheduleServiceImpl implements ScheduleService{
     @Override
     public ScheduleDTO getSchedule(Long id) {
         Schedule schedule = scheduleRepository.findById(id).get();
-        return ScheduleDTO.builder()
-            .id(schedule.getId())
-            .name(schedule.getName())
-            .startDate(schedule.getStartDate())
-            .endDate(schedule.getEndDate())
-            .build();
+        return new ScheduleDTO(schedule);
     }
 
     @Override
     public List<ScheduleDTO> getSchedules() {
-        log.info(scheduleRepository.getCurrentSchedules().stream()
-            .map(schedule -> ScheduleDTO.builder()
-                .id(schedule.getId())
-                .name(schedule.getName())
-                .startDate(schedule.getStartDate())
-                .endDate(schedule.getEndDate())
-                .build())
-            .collect(Collectors.toList()).toString());
-        return scheduleRepository.getCurrentSchedules().stream()
-            .map(schedule -> ScheduleDTO.builder()
-                .id(schedule.getId())
-                .name(schedule.getName())
-                .startDate(schedule.getStartDate())
-                .endDate(schedule.getEndDate())
-                .build())
+        return scheduleRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(LocalDateTime.now(), LocalDateTime.now()).stream()
+            .map(schedule -> new ScheduleDTO(schedule))
             .collect(Collectors.toList());
     }
 
@@ -65,15 +47,7 @@ public class ScheduleServiceImpl implements ScheduleService{
     @Override
     public ScheduleDTO existUpdateData(Long id, ScheduleDTO scheduleDTO) {
         Schedule schedule = scheduleRepository.findById(id).get();
-        return ScheduleDTO.builder()
-            .id(schedule.getId())
-            .name(scheduleDTO.getName() != null ? scheduleDTO.getName()
-                : schedule.getName())
-            .startDate(scheduleDTO.getStartDate() != null ? scheduleDTO.getStartDate()
-                : schedule.getStartDate())
-            .endDate(scheduleDTO.getEndDate() != null ? scheduleDTO.getEndDate()
-                : schedule.getEndDate())
-            .build();
+        return new ScheduleDTO(schedule, scheduleDTO);
     }
 
     @Override

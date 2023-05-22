@@ -1,34 +1,39 @@
 package com.readme.sections.dto;
 
+import com.readme.sections.model.Schedule;
+import com.readme.sections.requestObject.RequestSchedule;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 @Getter
-@Setter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
-@ToString
 public class ScheduleDTO {
-    Long id;
+    private Long id;
     String name;
     LocalDateTime startDate;
     LocalDateTime endDate;
 
-    public String getStringTypeStartDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        System.out.println(this.startDate);
-        return this.startDate.format(formatter);
+    public ScheduleDTO(RequestSchedule requestSchedule) {
+        this.name = requestSchedule.getName();
+        this.startDate = requestSchedule.getStartDate();
+        this.endDate = requestSchedule.getEndDate();
     }
-    public String getStringTypeEndDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        System.out.println(this.endDate);
-        return this.endDate.format(formatter);
+
+    public ScheduleDTO(Schedule schedule) {
+        this.id = schedule.getId();
+        this.name = schedule.getName();
+        this.startDate = schedule.getStartDate();
+        this.endDate = schedule.getEndDate();
+    }
+
+    public ScheduleDTO(Schedule schedule, ScheduleDTO scheduleDTO) {
+        this.id = schedule.getId();
+        this.name = scheduleDTO.getName() != null ? scheduleDTO.getName() :
+            schedule.getName();
+        this.startDate = scheduleDTO.getStartDate() != null ? scheduleDTO.getStartDate() :
+            schedule.getStartDate();
+        this.endDate = scheduleDTO.getEndDate() != null ? scheduleDTO.getEndDate() :
+            schedule.getEndDate();
     }
 }
