@@ -7,9 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
-    @Query(value = "select id, name, start_date, end_date \n"
-        + "from schedule \n"
-        + "where start_date <= now() and now() <= end_date"
-    ,nativeQuery = true)
+    @Query("SELECT s FROM Schedule s WHERE s.startDate <= now() AND now() <= s.endDate")
     List<ISchedule> getCurrentSchedules();
 }

@@ -1,7 +1,6 @@
 package com.readme.sections.controller;
 
 import com.readme.sections.dto.NovelCardsEntityDTO;
-import com.readme.sections.dto.NovelCardsViewDTO;
 import com.readme.sections.service.NovelCardsService;
 import com.readme.sections.requestObject.RequestNovelCards;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,7 +8,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class AdminNovelCardsController {
     private final NovelCardsService novelCardsService;
-    private final ModelMapper modelMapper;
 
     @Operation(summary = "소설 카드 등록", description = "소설 카드 등록", tags = {"Admin 소설 카드"})
     @ApiResponses({
@@ -35,8 +32,7 @@ public class AdminNovelCardsController {
     })
     @PostMapping
     public void addNovelCard(@RequestBody RequestNovelCards requestNovelCards) {
-        NovelCardsEntityDTO novelCardsEntityDTO = modelMapper.map(requestNovelCards, NovelCardsEntityDTO.class);
-        novelCardsService.addCards(novelCardsEntityDTO);
+        novelCardsService.addCards(new NovelCardsEntityDTO(requestNovelCards));
     }
 
     @Operation(summary = "소설 카드 수정", description = "RequestNovelCards 필드 값 중 넘어온 값들을 확인하고 id에 해당하는 소설 카드 수정", tags = {"Admin 소설 카드"})
@@ -48,8 +44,7 @@ public class AdminNovelCardsController {
     })
     @PatchMapping("/{id}")
     public void updateNovelCard(@PathVariable Long id, @RequestBody RequestNovelCards requestNovelCards) {
-        NovelCardsEntityDTO novelCardsEntityDTO = modelMapper.map(requestNovelCards, NovelCardsEntityDTO.class);
-        novelCardsService.updateCards(novelCardsService.existUpdateData(id, novelCardsEntityDTO));
+        novelCardsService.updateNovelCardsDTO(novelCardsService.updateNovelCardsDTO(id, new NovelCardsEntityDTO(requestNovelCards)));
     }
 
     @Operation(summary = "소설 카드 삭제", description = "id에 해당하는 소설 카드 삭제", tags = {"Admin 소설 카드"})

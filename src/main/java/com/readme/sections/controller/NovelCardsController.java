@@ -1,7 +1,6 @@
 package com.readme.sections.controller;
 
 import com.readme.sections.dto.NovelCardsViewDTO;
-import com.readme.sections.dto.NovelCardsViewDTO.Tag;
 import com.readme.sections.dto.NovelCardsPaginationDTO;
 import com.readme.sections.commonResponseObject.CommonDataResponse;
 import com.readme.sections.responseObject.ResponseNovelCards;
@@ -13,7 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +29,6 @@ public class NovelCardsController {
     @Value("${spring.data.web.pageable.default-page-size}")
     private int PAGE_SIZE;
     private final NovelCardsService novelCardsService;
-    private final ModelMapper modelMapper;
 
     @Operation(summary = "소설 카드 조회", description = "id에 해당하는 에피소드 카드 조회", tags = {"소설 카드"})
     @ApiResponses({
@@ -43,14 +40,13 @@ public class NovelCardsController {
     @GetMapping("/{id}")
     public ResponseEntity<CommonDataResponse<ResponseNovelCards>> getNovelCard(
         @PathVariable Long id) {
-        NovelCardsViewDTO novelCardsViewDTO = novelCardsService.getCards(id);
         return ResponseEntity.ok(new CommonDataResponse(
-                modelMapper.map(novelCardsViewDTO, ResponseNovelCards.class)
+                new ResponseNovelCards(novelCardsService.getCards(id))
             )
         );
     }
 
-    @Operation(summary = "소설 카드 전체 조회", description = "소설 카드 전체 조회", tags = {"소설 카드"})
+    @Operation(summary = "소설 카드 카테고리 조회", description = "장르 및 요일, 연재 상태에 따른 소설 카드 조회", tags = {"소설 카드"})
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
         @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
@@ -66,28 +62,39 @@ public class NovelCardsController {
         if (category.equals("요일")) {
             novelCardsPaginationDTO = novelCardsService.getAllCardsBySerializationDays(subCategory,
                 pagination);
-        } else {
+        } else if(category.equals("전체")) {
+            novelCardsPaginationDTO = novelCardsService.getAllCards(pagination);
+        }
+        else {
             if (subCategory.equals("신작")) {
-                novelCardsPaginationDTO = novelCardsService.getNewNovelsByGenre(category, pagination);
+                novelCardsPaginationDTO = novelCardsService.getNewNovelsByGenre(category,
+                    pagination);
             } else {
                 novelCardsPaginationDTO = novelCardsService.getAllCardsByGenre(category,
                     subCategory, pagination);
             }
 
         }
-        return ResponseEntity.ok(new CommonDataResponse(ResponseNovelCardsPagination.builder()
-            .novelCardsData(novelCardsPaginationDTO.getNovelCardsData())
-            .totalElements(novelCardsPaginationDTO.getTotalElements())
-            .totalPages(novelCardsPaginationDTO.getTotalPages())
-            .build()
+        return ResponseEntity.ok(new CommonDataResponse(new ResponseNovelCardsPagination(novelCardsPaginationDTO)
         ));
     }
 
+    @Operation(summary = "소설 카드 검색", description = "title or tag로 검색: title은 글자가 포함되어도 검색되고, tag는 일치해야 검색 됨", tags = {
+        "소설 카드"})
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
+        @ApiResponse(responseCode = "404", description = "NOT FOUND"),
+        @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
+    })
     @GetMapping("/search")
-    public ResponseEntity<CommonDataResponse> searchTags(
-        @RequestParam String tags
+    public ResponseEntity<CommonDataResponse<ResponseNovelCardsPagination>> searchKeyword(
+        @RequestParam String keyword,
+        @RequestParam(required = false) Integer pagination
     ) {
-        return ResponseEntity.ok(new CommonDataResponse(novelCardsService.searchTags(tags)));
+        return ResponseEntity.ok(
+            new CommonDataResponse(
+                new ResponseNovelCardsPagination(novelCardsService.searchNovelCards(keyword, pagination))));
     }
 
     @Operation(summary = "스케줄에 해당하는 소설 카드 목록 조회", description = "scheduleId에 해당하는 소설 카드 목록 조회", tags = {
@@ -105,28 +112,7 @@ public class NovelCardsController {
             scheduleId);
         return ResponseEntity.ok(new CommonDataResponse(
                 novelCardsViewDTOList.stream()
-                    .map(novelCardsDTO -> ResponseNovelCards.builder()
-                        .novelId(novelCardsDTO.getNovelId())
-                        .title(novelCardsDTO.getTitle())
-                        .author(novelCardsDTO.getAuthor())
-                        .grade(novelCardsDTO.getGrade())
-                        .genre(novelCardsDTO.getGenre())
-                        .tags(novelCardsDTO.getTags().stream()
-                            .map(element -> Tag.builder()
-                                .id(element.getId())
-                                .name(element.getName())
-                                .build()).collect(Collectors.toList()))
-                        .thumbnail(novelCardsDTO.getThumbnail())
-                        .views(novelCardsDTO.getViews())
-                        .serializationStatus(novelCardsDTO.getSerializationStatus())
-                        .description(novelCardsDTO.getDescription())
-                        .scheduleId(novelCardsDTO.getScheduleId())
-                        .startDate(novelCardsDTO.getStartDate())
-                        .starRating(novelCardsDTO.getStarRating())
-                        .serializationDays(novelCardsDTO.getSerializationDays())
-                        .newChecking(novelCardsDTO.getNewChecking())
-                        .episodeCount(novelCardsDTO.getEpisodeCount())
-                        .build())
+                    .map(novelCardsViewDTO -> new ResponseNovelCards(novelCardsViewDTO))
                     .collect(Collectors.toList())
             )
         );
