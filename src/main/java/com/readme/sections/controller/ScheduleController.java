@@ -34,10 +34,7 @@ public class ScheduleController {
     public ResponseEntity<CommonDataResponse<List<ResponseSchedule>>> getSchedules() {
         return ResponseEntity.ok(new CommonDataResponse(
                 scheduleService.getSchedules().stream()
-                    .map(schedule -> ResponseSchedule.builder()
-                        .id(schedule.getId())
-                        .name(schedule.getName())
-                        .build())
+                    .map(schedule -> new ResponseSchedule(schedule))
                     .collect(Collectors.toList())
             )
         );

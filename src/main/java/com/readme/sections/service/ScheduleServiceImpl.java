@@ -53,7 +53,7 @@ public class ScheduleServiceImpl implements ScheduleService{
         scheduleRepository.deleteById(id);
     }
 
-    public String getUtcToKoreanTime(LocalDateTime utcTime) {
+    public static String getUtcToKoreanTime(LocalDateTime utcTime) {
         ZonedDateTime koreanTime = utcTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         return formatter.format(koreanTime);

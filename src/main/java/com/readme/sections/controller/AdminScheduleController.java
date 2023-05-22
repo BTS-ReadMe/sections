@@ -41,14 +41,7 @@ public class AdminScheduleController {
     public ResponseEntity<CommonDataResponse<ResponseSchedule>> getSchedule(@PathVariable Long id) {
         ScheduleDTO scheduleDTO = scheduleService.getSchedule(id);
         return ResponseEntity.ok(new CommonDataResponse(
-                ResponseSchedule.builder()
-                    .id(scheduleDTO.getId())
-                    .name(scheduleDTO.getName())
-                    .startDate(scheduleService.getUtcToKoreanTime(scheduleDTO.getStartDate()))
-                    .endDate(scheduleService.getUtcToKoreanTime(scheduleDTO.getEndDate()))
-                    .build()
-            )
-        );
+            new ResponseSchedule(scheduleDTO)));
     }
 
     @Operation(summary = "스케줄 전체 조회", description = "현재 진행 중인 스케줄 조회", tags = {"Admin 스케줄"})
@@ -61,12 +54,7 @@ public class AdminScheduleController {
     @GetMapping
     public ResponseEntity<CommonDataResponse<List<ResponseSchedule>>> getSchedules() {
         return ResponseEntity.ok(new CommonDataResponse(scheduleService.getSchedules().stream()
-                .map(schedule -> ResponseSchedule.builder()
-                    .id(schedule.getId())
-                    .name(schedule.getName())
-                    .startDate(scheduleService.getUtcToKoreanTime(schedule.getStartDate()))
-                    .endDate(scheduleService.getUtcToKoreanTime(schedule.getEndDate()))
-                    .build())
+                .map(schedule -> new ResponseSchedule(schedule))
                 .collect(Collectors.toList())
             )
         );
@@ -96,7 +84,8 @@ public class AdminScheduleController {
     @PatchMapping("/{id}")
     public void updateSchedule(@PathVariable Long id,
         @RequestBody RequestSchedule requestSchedule) {
-        ScheduleDTO scheduleDTO = scheduleService.existUpdateData(id, new ScheduleDTO(requestSchedule));
+        ScheduleDTO scheduleDTO = scheduleService.existUpdateData(id,
+            new ScheduleDTO(requestSchedule));
         scheduleService.updateSchedule(scheduleDTO);
     }
 
