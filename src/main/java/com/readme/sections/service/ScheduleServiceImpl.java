@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -21,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class ScheduleServiceImpl implements ScheduleService{
     private final ScheduleRepository scheduleRepository;
 
+    @Transactional(readOnly = true)
     @Override
     public ScheduleDTO getSchedule(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
@@ -37,11 +39,13 @@ public class ScheduleServiceImpl implements ScheduleService{
             .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public void addSchedule(ScheduleDTO scheduleDTO) {
         scheduleRepository.save(new Schedule(scheduleDTO));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public ScheduleDTO existUpdateData(Long id, ScheduleDTO scheduleDTO) {
         Schedule schedule = scheduleRepository.findById(id)
@@ -51,11 +55,13 @@ public class ScheduleServiceImpl implements ScheduleService{
         return new ScheduleDTO(schedule, scheduleDTO);
     }
 
+    @Transactional
     @Override
     public void updateSchedule(ScheduleDTO scheduleDTO) {
         scheduleRepository.save(new Schedule(scheduleDTO));
     }
 
+    @Transactional
     @Override
     public void deleteSchedule(Long id) {
         scheduleRepository.deleteById(id);
