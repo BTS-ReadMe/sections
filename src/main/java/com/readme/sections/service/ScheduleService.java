@@ -11,5 +11,4 @@ public interface ScheduleService {
     public ScheduleDTO existUpdateData(Long id, ScheduleDTO scheduleDTO);
     public void updateSchedule(ScheduleDTO scheduleDTO);
     public void deleteSchedule(Long id);
-    public String getUtcToKoreanTime(LocalDateTime utcTime);
 }

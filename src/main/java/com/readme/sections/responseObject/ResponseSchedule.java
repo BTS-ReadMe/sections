@@ -1,20 +1,22 @@
 package com.readme.sections.responseObject;
 
-import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.readme.sections.dto.ScheduleDTO;
+import com.readme.sections.service.ScheduleServiceImpl;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Getter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
-@ToString
 public class ResponseSchedule {
-    Long id;
-    String name;
-    String startDate;
-    String endDate;
+    private long id;
+    private String name;
+    private String startDate;
+    private String endDate;
+
+    public ResponseSchedule(ScheduleDTO scheduleDTO) {
+        this.id = scheduleDTO.getId();
+        this.name = scheduleDTO.getName();
+        this.startDate = ScheduleServiceImpl.getUtcToKoreanTime(scheduleDTO.getStartDate());
+        this.endDate = ScheduleServiceImpl.getUtcToKoreanTime(scheduleDTO.getEndDate());
+    }
 }

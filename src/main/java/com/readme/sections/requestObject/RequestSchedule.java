@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class RequestSchedule {
-    String name;
-    LocalDateTime startDate;
-    LocalDateTime endDate;
+    private String name;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 }
