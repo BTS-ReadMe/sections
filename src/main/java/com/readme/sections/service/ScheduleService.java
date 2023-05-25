@@ -7,7 +7,7 @@ import java.util.List;
 public interface ScheduleService {
     public ScheduleDTO getSchedule(Long id);
     public List<ScheduleDTO> getSchedules();
-    public List<NovelCardsListAndScheduleDTO> getNovelCardsListBySchedule();
+    public List<NovelCardsListAndScheduleDTO> getNovelCardsListAndSchedule();
     public void addSchedule(ScheduleDTO scheduleDTO);
     public ScheduleDTO existUpdateData(Long id, ScheduleDTO scheduleDTO);
     public void updateSchedule(ScheduleDTO scheduleDTO);

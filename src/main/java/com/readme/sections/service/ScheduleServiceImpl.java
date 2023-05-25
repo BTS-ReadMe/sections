@@ -35,6 +35,7 @@ public class ScheduleServiceImpl implements ScheduleService{
         return new ScheduleDTO(schedule);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<ScheduleDTO> getSchedules() {
         return scheduleRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(LocalDateTime.now(), LocalDateTime.now()).stream()
@@ -42,8 +43,9 @@ public class ScheduleServiceImpl implements ScheduleService{
             .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public List<NovelCardsListAndScheduleDTO> getNovelCardsListBySchedule() {
+    public List<NovelCardsListAndScheduleDTO> getNovelCardsListAndSchedule() {
         return scheduleRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(LocalDateTime.now(), LocalDateTime.now()).stream()
             .map(schedule -> new NovelCardsListAndScheduleDTO(schedule, novelCardsRepository.findAllByScheduleId(schedule.getId())))
             .collect(Collectors.toList());

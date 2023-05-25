@@ -48,7 +48,7 @@ public class AdminScheduleController {
 
     @GetMapping("/novels")
     public ResponseEntity<CommonDataResponse<List<ResponseNovelCardsLIstAndSchedule>>> getNovelCardsListAndSchedule() {
-        List<NovelCardsListAndScheduleDTO> novelCardsListAndScheduleDTOList = scheduleService.getNovelCardsListBySchedule();
+        List<NovelCardsListAndScheduleDTO> novelCardsListAndScheduleDTOList = scheduleService.getNovelCardsListAndSchedule();
         return ResponseEntity.ok(new CommonDataResponse(
             novelCardsListAndScheduleDTOList.stream()
                 .map(novelCardsListAndScheduleDTO -> new ResponseNovelCardsLIstAndSchedule(novelCardsListAndScheduleDTO))
