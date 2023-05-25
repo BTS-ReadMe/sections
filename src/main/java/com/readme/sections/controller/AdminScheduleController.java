@@ -1,8 +1,10 @@
 package com.readme.sections.controller;
 
+import com.readme.sections.dto.NovelCardsListAndScheduleDTO;
 import com.readme.sections.dto.ScheduleDTO;
 import com.readme.sections.requestObject.RequestSchedule;
 import com.readme.sections.commonResponseObject.CommonDataResponse;
+import com.readme.sections.responseObject.ResponseNovelCardsLIstAndSchedule;
 import com.readme.sections.responseObject.ResponseSchedule;
 import com.readme.sections.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,6 +44,16 @@ public class AdminScheduleController {
         ScheduleDTO scheduleDTO = scheduleService.getSchedule(id);
         return ResponseEntity.ok(new CommonDataResponse(
             new ResponseSchedule(scheduleDTO)));
+    }
+
+    @GetMapping("/novels")
+    public ResponseEntity<CommonDataResponse<List<ResponseNovelCardsLIstAndSchedule>>> getNovelCardsListAndSchedule() {
+        List<NovelCardsListAndScheduleDTO> novelCardsListAndScheduleDTOList = scheduleService.getNovelCardsListBySchedule();
+        return ResponseEntity.ok(new CommonDataResponse(
+            novelCardsListAndScheduleDTOList.stream()
+                .map(novelCardsListAndScheduleDTO -> new ResponseNovelCardsLIstAndSchedule(novelCardsListAndScheduleDTO))
+                .collect(Collectors.toList())
+        ));
     }
 
     @Operation(summary = "스케줄 전체 조회", description = "현재 진행 중인 스케줄 조회", tags = {"Admin 스케줄"})

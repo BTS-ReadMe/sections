@@ -1,7 +1,9 @@
 package com.readme.sections.service;
 
+import com.readme.sections.dto.NovelCardsListAndScheduleDTO;
 import com.readme.sections.dto.ScheduleDTO;
 import com.readme.sections.model.Schedule;
+import com.readme.sections.repository.NovelCardsRepository;
 import com.readme.sections.repository.ScheduleRepository;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -21,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j
 public class ScheduleServiceImpl implements ScheduleService{
     private final ScheduleRepository scheduleRepository;
+    private final NovelCardsRepository novelCardsRepository;
 
     @Transactional(readOnly = true)
     @Override
@@ -36,6 +39,13 @@ public class ScheduleServiceImpl implements ScheduleService{
     public List<ScheduleDTO> getSchedules() {
         return scheduleRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(LocalDateTime.now(), LocalDateTime.now()).stream()
             .map(schedule -> new ScheduleDTO(schedule))
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<NovelCardsListAndScheduleDTO> getNovelCardsListBySchedule() {
+        return scheduleRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(LocalDateTime.now(), LocalDateTime.now()).stream()
+            .map(schedule -> new NovelCardsListAndScheduleDTO(schedule, novelCardsRepository.findAllByScheduleId(schedule.getId())))
             .collect(Collectors.toList());
     }
 
