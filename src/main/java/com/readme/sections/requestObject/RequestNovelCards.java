@@ -7,28 +7,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 public class RequestNovelCards {
-    Long novelId;
-    String title;
-    String description;
-    String author;
-    String authorComment;
-    String genre;
-    Integer grade;
-    String thumbnail;
-    Date startDate;
-    Long views;
-    String serializationStatus;
-    List<Tag> tags;
-    Long scheduleId;
-    Double starRating;
-    Boolean monday;
-    Boolean tuesday;
-    Boolean wednesday;
-    Boolean thursday;
-    Boolean friday;
-    Boolean saturday;
-    Boolean sunday;
-    Long episodeCount;
+    private Long novelId;
+    private String title;
+    private String description;
+    private String author;
+    private String authorComment;
+    private String genre;
+    private Integer grade;
+    private String thumbnail;
+    private Date startDate;
+    private Long views;
+    private String serializationStatus;
+    private List<Tag> tags;
+    private Long scheduleId;
+    private Double starRating;
+    private Boolean monday;
+    private Boolean tuesday;
+    private Boolean wednesday;
+    private Boolean thursday;
+    private Boolean friday;
+    private Boolean saturday;
+    private Boolean sunday;
+    private Long episodeCount;
 }
