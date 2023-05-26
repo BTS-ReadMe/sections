@@ -3,6 +3,7 @@ package com.readme.sections.dto;
 import com.readme.sections.enums.SerializationDays;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.model.NovelCards.Tag;
+import com.readme.sections.requestObject.RequestKafkaNovelCards;
 import com.readme.sections.requestObject.RequestNovelCards;
 import java.util.Date;
 import java.util.List;
