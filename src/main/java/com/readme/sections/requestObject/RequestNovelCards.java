@@ -22,12 +22,6 @@ public class RequestNovelCards {
     private List<Tag> tags;
     private Long scheduleId;
     private Double starRating;
-    private Boolean monday;
-    private Boolean tuesday;
-    private Boolean wednesday;
-    private Boolean thursday;
-    private Boolean friday;
-    private Boolean saturday;
-    private Boolean sunday;
+    private List<String> serializationDay;
     private Long episodeCount;
 }

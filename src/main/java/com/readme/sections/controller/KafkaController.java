@@ -1,6 +1,6 @@
 package com.readme.sections.controller;
 
-import com.readme.sections.requestObject.RequestKafkaMessage;
+import com.readme.sections.requestObject.RequestNovelCards;
 import com.readme.sections.service.KafkaProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +19,7 @@ public class KafkaController {
     }
 
     @PostMapping
-    public String sendMessageJson(@RequestBody RequestKafkaMessage message) {
+    public String sendMessageJson(@RequestBody RequestNovelCards message) {
         this.producer.sendMessage(message);
         return "success";
     }
