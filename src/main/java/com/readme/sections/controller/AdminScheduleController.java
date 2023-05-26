@@ -1,10 +1,12 @@
 package com.readme.sections.controller;
 
 import com.readme.sections.dto.NovelCardsListAndScheduleDTO;
+import com.readme.sections.dto.NovelCardsListAndScheduleDTO.NovelCardsBySchedule;
 import com.readme.sections.dto.ScheduleDTO;
 import com.readme.sections.requestObject.RequestSchedule;
 import com.readme.sections.commonResponseObject.CommonDataResponse;
 import com.readme.sections.responseObject.ResponseNovelCardsLIstAndSchedule;
+import com.readme.sections.responseObject.ResponseNovelCardsListBySchedule;
 import com.readme.sections.responseObject.ResponseSchedule;
 import com.readme.sections.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,6 +55,14 @@ public class AdminScheduleController {
             novelCardsListAndScheduleDTOList.stream()
                 .map(novelCardsListAndScheduleDTO -> new ResponseNovelCardsLIstAndSchedule(novelCardsListAndScheduleDTO))
                 .collect(Collectors.toList())
+        ));
+    }
+
+    @GetMapping("/novels/{scheduleId}")
+    public ResponseEntity<CommonDataResponse<ResponseNovelCardsListBySchedule>> getNovelCardsListBySchedule(@PathVariable Long scheduleId) {
+        List<NovelCardsBySchedule> novelCardsBySchedules = scheduleService.getNovelCardsListBySchedule(scheduleId);
+        return ResponseEntity.ok(new CommonDataResponse(
+            new ResponseNovelCardsListBySchedule(novelCardsBySchedules)
         ));
     }
 

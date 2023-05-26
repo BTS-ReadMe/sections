@@ -1,6 +1,7 @@
 package com.readme.sections.service;
 
 import com.readme.sections.dto.NovelCardsListAndScheduleDTO;
+import com.readme.sections.dto.NovelCardsListAndScheduleDTO.NovelCardsBySchedule;
 import com.readme.sections.dto.ScheduleDTO;
 import com.readme.sections.model.Schedule;
 import com.readme.sections.repository.NovelCardsRepository;
@@ -48,6 +49,14 @@ public class ScheduleServiceImpl implements ScheduleService{
     public List<NovelCardsListAndScheduleDTO> getNovelCardsListAndSchedule() {
         return scheduleRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(LocalDateTime.now(), LocalDateTime.now()).stream()
             .map(schedule -> new NovelCardsListAndScheduleDTO(schedule, novelCardsRepository.findAllByScheduleId(schedule.getId())))
+            .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<NovelCardsBySchedule> getNovelCardsListBySchedule(Long scheduleId) {
+        return novelCardsRepository.findAllByScheduleId(scheduleId).stream()
+            .map(novelCards -> new NovelCardsBySchedule(novelCards))
             .collect(Collectors.toList());
     }
 

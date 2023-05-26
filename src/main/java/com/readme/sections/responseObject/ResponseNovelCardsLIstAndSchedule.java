@@ -1,7 +1,7 @@
 package com.readme.sections.responseObject;
 
 import com.readme.sections.dto.NovelCardsListAndScheduleDTO;
-import com.readme.sections.dto.NovelCardsListAndScheduleDTO.NovelCardsAndSchedule;
+import com.readme.sections.dto.NovelCardsListAndScheduleDTO.NovelCardsBySchedule;
 import com.readme.sections.service.ScheduleServiceImpl;
 import java.util.List;
 import lombok.Getter;
@@ -14,7 +14,7 @@ public class ResponseNovelCardsLIstAndSchedule {
     private String scheduleName;
     private String startDate;
     private String endDate;
-    private List<NovelCardsAndSchedule> novelCardsList;
+    private List<NovelCardsBySchedule> novelCardsList;
 
     public ResponseNovelCardsLIstAndSchedule(
         NovelCardsListAndScheduleDTO novelCardsListAndScheduleDTO) {
