@@ -1,6 +1,6 @@
 package com.readme.sections.config;
 
-import com.readme.sections.requestObject.RequestKafkaMessage;
+import com.readme.sections.requestObject.RequestNovelCards;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -28,7 +28,7 @@ public class KafkaConfig {
     private String servers;
 
     @Bean
-    public ProducerFactory<String, RequestKafkaMessage> msgProducerFactory() {
+    public ProducerFactory<String, RequestNovelCards> msgProducerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -37,22 +37,22 @@ public class KafkaConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, RequestKafkaMessage> msgKafkaTemplate(){
-        return new KafkaTemplate<String, RequestKafkaMessage>(msgProducerFactory());
+    public KafkaTemplate<String, RequestNovelCards> msgKafkaTemplate(){
+        return new KafkaTemplate<String, RequestNovelCards>(msgProducerFactory());
     }
 
     @Bean
-    public ConsumerFactory<String, RequestKafkaMessage> consumerFactory() {
+    public ConsumerFactory<String, RequestNovelCards> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "foo");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "sections");
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(
-            RequestKafkaMessage.class));
+            RequestNovelCards.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, RequestKafkaMessage> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, RequestKafkaMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, RequestNovelCards> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, RequestNovelCards> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }

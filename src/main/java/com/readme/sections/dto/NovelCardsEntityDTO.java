@@ -1,5 +1,6 @@
 package com.readme.sections.dto;
 
+import com.readme.sections.enums.SerializationDays;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.model.NovelCards.Tag;
 import com.readme.sections.requestObject.RequestNovelCards;
@@ -46,19 +47,19 @@ public class NovelCardsEntityDTO {
         this.grade = requestNovelCards.getGrade();
         this.thumbnail = requestNovelCards.getThumbnail();
         this.startDate = requestNovelCards.getStartDate();
-        this.views = requestNovelCards.getViews();
+        this.views = requestNovelCards.getViews() != null ? requestNovelCards.getViews() : 0L;
         this.serializationStatus = requestNovelCards.getSerializationStatus();
         this.tags = requestNovelCards.getTags();
-        this.scheduleId = requestNovelCards.getScheduleId();
-        this.starRating = requestNovelCards.getStarRating();
-        this.monday = requestNovelCards.getMonday();
-        this.tuesday = requestNovelCards.getTuesday();
-        this.wednesday = requestNovelCards.getWednesday();
-        this.thursday = requestNovelCards.getThursday();
-        this.friday = requestNovelCards.getFriday();
-        this.saturday = requestNovelCards.getSaturday();
-        this.sunday= requestNovelCards.getSunday();
-        this.episodeCount = requestNovelCards.getEpisodeCount();
+        this.scheduleId = requestNovelCards.getScheduleId() != null ? requestNovelCards.getScheduleId() : null;
+        this.starRating = requestNovelCards.getStarRating() != null ? requestNovelCards.getStarRating() : 0.0;
+        this.monday = requestNovelCards.getSerializationDay().contains(SerializationDays.월.getShortDay());
+        this.tuesday = requestNovelCards.getSerializationDay().contains(SerializationDays.화.getShortDay());
+        this.wednesday = requestNovelCards.getSerializationDay().contains(SerializationDays.수.getShortDay());
+        this.thursday = requestNovelCards.getSerializationDay().contains(SerializationDays.목.getShortDay());
+        this.friday = requestNovelCards.getSerializationDay().contains(SerializationDays.금.getShortDay());
+        this.saturday = requestNovelCards.getSerializationDay().contains(SerializationDays.토.getShortDay());
+        this.sunday= requestNovelCards.getSerializationDay().contains(SerializationDays.일.getShortDay());
+        this.episodeCount = requestNovelCards.getEpisodeCount() != null ? requestNovelCards.getEpisodeCount() : 0L;
     }
 
     public NovelCardsEntityDTO(NovelCards novelCards, NovelCardsEntityDTO novelCardsEntityDTO) {

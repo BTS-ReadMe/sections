@@ -1,10 +1,12 @@
 package com.readme.sections.controller;
 
 import com.readme.sections.dto.NovelCardsListAndScheduleDTO;
+import com.readme.sections.dto.NovelCardsListAndScheduleDTO.NovelCardsBySchedule;
 import com.readme.sections.dto.ScheduleDTO;
 import com.readme.sections.requestObject.RequestSchedule;
 import com.readme.sections.commonResponseObject.CommonDataResponse;
 import com.readme.sections.responseObject.ResponseNovelCardsLIstAndSchedule;
+import com.readme.sections.responseObject.ResponseNovelCardsListBySchedule;
 import com.readme.sections.responseObject.ResponseSchedule;
 import com.readme.sections.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,6 +48,13 @@ public class AdminScheduleController {
             new ResponseSchedule(scheduleDTO)));
     }
 
+    @Operation(summary = "스케줄 목록과 그에 따른 NovelCards 목록 조회", description = "스케줄 목록과 그에 따른 NovelCards 목록 조회", tags = {"Admin 스케줄"})
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
+        @ApiResponse(responseCode = "404", description = "NOT FOUND"),
+        @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
+    })
     @GetMapping("/novels")
     public ResponseEntity<CommonDataResponse<List<ResponseNovelCardsLIstAndSchedule>>> getNovelCardsListAndSchedule() {
         List<NovelCardsListAndScheduleDTO> novelCardsListAndScheduleDTOList = scheduleService.getNovelCardsListAndSchedule();
@@ -53,6 +62,21 @@ public class AdminScheduleController {
             novelCardsListAndScheduleDTOList.stream()
                 .map(novelCardsListAndScheduleDTO -> new ResponseNovelCardsLIstAndSchedule(novelCardsListAndScheduleDTO))
                 .collect(Collectors.toList())
+        ));
+    }
+
+    @Operation(summary = "스케줄 ID에 해당하는 NovelCards 목록 조회", description = "스케줄 ID에 해당하는 NovelCards 목록 조회", tags = {"Admin 스케줄"})
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
+        @ApiResponse(responseCode = "404", description = "NOT FOUND"),
+        @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
+    })
+    @GetMapping("/novels/{scheduleId}")
+    public ResponseEntity<CommonDataResponse<ResponseNovelCardsListBySchedule>> getNovelCardsListBySchedule(@PathVariable Long scheduleId) {
+        List<NovelCardsBySchedule> novelCardsBySchedules = scheduleService.getNovelCardsListBySchedule(scheduleId);
+        return ResponseEntity.ok(new CommonDataResponse(
+            new ResponseNovelCardsListBySchedule(novelCardsBySchedules)
         ));
     }
 

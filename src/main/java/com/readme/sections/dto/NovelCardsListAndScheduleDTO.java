@@ -15,15 +15,15 @@ public class NovelCardsListAndScheduleDTO {
     private String scheduleName;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private List<NovelCardsAndSchedule> novelCardsList;
+    private List<NovelCardsBySchedule> novelCardsList;
 
     @Getter
     @NoArgsConstructor
-    public static class NovelCardsAndSchedule {
+    public static class NovelCardsBySchedule {
         long novelId;
         String novelTitle;
 
-        public NovelCardsAndSchedule(NovelCards novelCards) {
+        public NovelCardsBySchedule(NovelCards novelCards) {
             this.novelId = novelCards.getNovelId();
             this.novelTitle = novelCards.getTitle();
         }
@@ -35,7 +35,7 @@ public class NovelCardsListAndScheduleDTO {
         this.startDate = schedule.getStartDate();
         this.endDate = schedule.getEndDate();
         this.novelCardsList = novelCardsList.stream()
-            .map(novelCards -> new NovelCardsAndSchedule(novelCards))
+            .map(novelCards -> new NovelCardsBySchedule(novelCards))
             .collect(Collectors.toList());
     }
 }

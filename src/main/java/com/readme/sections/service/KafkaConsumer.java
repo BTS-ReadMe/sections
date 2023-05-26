@@ -1,19 +1,22 @@
 package com.readme.sections.service;
 
-import com.readme.sections.requestObject.RequestKafkaMessage;
+import com.readme.sections.dto.NovelCardsEntityDTO;
+import com.readme.sections.requestObject.RequestNovelCards;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class KafkaConsumer {
 
     private final KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
+    private final NovelCardsService novelCardsService;
 
-    @Scheduled(fixedRate = 60000)
+//    @Scheduled(fixedRate = 60000)
     public void consumeMessagesPeriodically() {
         // Kafka Listener를 시작
         kafkaListenerEndpointRegistry.getListenerContainer("yourListenerId").start();
@@ -29,15 +32,14 @@ public class KafkaConsumer {
         kafkaListenerEndpointRegistry.getListenerContainer("yourListenerId").stop();
     }
 
-    @KafkaListener(id = "yourListenerId", topics = "test_topic")
-    public void listen(RequestKafkaMessage vo) {
-        System.out.println("name = " + vo.getName());
-        System.out.println("consume message = " + vo.getMsg());
-    }
+//    @KafkaListener(id = "yourListenerId", topics = "test_topic")
+//    public void listen(RequestKafkaMessage vo) {
+//        System.out.println("name = " + vo.getName());
+//        System.out.println("consume message = " + vo.getMsg());
+//    }
 
-//    @KafkaListener(topics = "test_topic", groupId = "foo")
-    public void consume(RequestKafkaMessage vo){
-        System.out.println("name = " + vo.getName());
-        System.out.println("consume message = " + vo.getMsg());
+    @KafkaListener(topics = "addNovels", groupId = "sections")
+    public void consume(RequestNovelCards requestNovelCards){
+        novelCardsService.addCards(new NovelCardsEntityDTO(requestNovelCards));
     }
 }
