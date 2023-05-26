@@ -3,12 +3,10 @@ package com.readme.sections.dto;
 import com.readme.sections.enums.SerializationDays;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.model.NovelCards.Tag;
-import com.readme.sections.requestObject.RequestKafkaNovelCards;
 import com.readme.sections.requestObject.RequestNovelCards;
 import java.util.Date;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -50,7 +48,9 @@ public class NovelCardsEntityDTO {
         this.startDate = requestNovelCards.getStartDate();
         this.views = requestNovelCards.getViews() != null ? requestNovelCards.getViews() : 0L;
         this.serializationStatus = requestNovelCards.getSerializationStatus();
-        this.tags = requestNovelCards.getTags();
+        this.tags = requestNovelCards.getTags().stream()
+            .map(tag -> new Tag(tag))
+            .collect(Collectors.toList());
         this.scheduleId = requestNovelCards.getScheduleId() != null ? requestNovelCards.getScheduleId() : null;
         this.starRating = requestNovelCards.getStarRating() != null ? requestNovelCards.getStarRating() : 0.0;
         this.monday = requestNovelCards.getSerializationDay().contains(SerializationDays.월.getShortDay());
@@ -86,7 +86,9 @@ public class NovelCardsEntityDTO {
         this.serializationStatus = novelCardsEntityDTO.getSerializationStatus() != null
             ? novelCardsEntityDTO.getSerializationStatus()
             : novelCards.getSerializationStatus();
-        this.tags = novelCardsEntityDTO.getTags() != null ? novelCardsEntityDTO.getTags()
+        this.tags = novelCardsEntityDTO.getTags() != null ? novelCardsEntityDTO.getTags().stream()
+            .map(tag -> new Tag(tag.getName()))
+            .collect(Collectors.toList())
             : novelCards.getTags();
         this.scheduleId = novelCardsEntityDTO.getScheduleId() != null ? novelCardsEntityDTO.getScheduleId()
             : novelCards.getScheduleId();

@@ -1,6 +1,5 @@
 package com.readme.sections.requestObject;
 
-import com.readme.sections.model.NovelCards.Tag;
 import java.util.Date;
 import java.util.List;
 import lombok.Getter;
@@ -18,7 +17,7 @@ public class RequestKafkaNovelCards {
     private Date startDate;
     private Long views;
     private String serializationStatus;
-    private List<Tag> tags;
+    private List<String> tags;
     private Long scheduleId;
     private Double starRating;
     private List<String> serializationDay;

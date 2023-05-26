@@ -22,7 +22,7 @@ public class NovelCardsViewDTO {
     private long views;
     private String serializationStatus;
     private List<Tag> tags;
-    private long scheduleId;
+    private Long scheduleId;
     private double starRating;
     private String serializationDays;
     private boolean newChecking;
