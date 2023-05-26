@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class KafkaProducer {
-    private static final String TOPIC = "addNovels";
+    private static final String TOPIC = "updateNovels";
     private final KafkaTemplate<String, RequestKafkaNovelCards> kafkaTemplate;
 
     @Autowired

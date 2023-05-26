@@ -83,7 +83,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     }
 
     @Override
-    public NovelCardsEntityDTO updateNovelCardsDTO(Long id,
+    public NovelCardsEntityDTO updateCards(Long id,
         NovelCardsEntityDTO novelCardsEntityDTO) {
         NovelCards novelCards = novelCardsRepository.findById(id)
             .orElseThrow(
@@ -94,7 +94,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
 
     @Transactional
     @Override
-    public void updateNovelCardsDTO(NovelCardsEntityDTO novelCardsEntityDTO) {
+    public void updateCards(NovelCardsEntityDTO novelCardsEntityDTO) {
         novelCardsRepository.save(new NovelCards(novelCardsEntityDTO));
     }
 

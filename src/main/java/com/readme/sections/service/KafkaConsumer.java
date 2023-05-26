@@ -39,7 +39,12 @@ public class KafkaConsumer {
 //    }
 
     @KafkaListener(topics = "addNovels", groupId = "sections")
-    public void consume(RequestNovelCards requestNovelCards){
+    public void addNovelCards(RequestNovelCards requestNovelCards){
         novelCardsService.addCards(new NovelCardsEntityDTO(requestNovelCards));
+    }
+
+    @KafkaListener(topics = "updateNovels", groupId = "sections")
+    public void updateNovelCards(RequestNovelCards requestNovelCards){
+        novelCardsService.updateCards(new NovelCardsEntityDTO(requestNovelCards));
     }
 }
