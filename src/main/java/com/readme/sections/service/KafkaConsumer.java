@@ -51,6 +51,6 @@ public class KafkaConsumer {
 
     @KafkaListener(topics = "deleteNovels", groupId = "sections")
     public void deleteNovelCards(RequestNovelId requestNovelId){
-        novelCardsService.deleteCards(requestNovelId.getId());
+        novelCardsService.deleteCards(requestNovelId.getNovelId());
     }
 }

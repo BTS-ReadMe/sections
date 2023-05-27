@@ -4,5 +4,5 @@ import lombok.Getter;
 
 @Getter
 public class RequestNovelId {
-    private long id;
+    private long novelId;
 }
