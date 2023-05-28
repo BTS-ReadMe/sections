@@ -52,7 +52,7 @@ public class NovelCardsPaginationDTO {
 
     public NovelCardsPaginationDTO(Page<NovelCards> novelCardsPage) {
         this.novelCardsData = novelCardsPage.stream()
-            .map(novelCards -> new NovelCardsData(novelCards.getNovelId(),
+            .map(novelCards -> new NovelCardsData(Long.parseLong(novelCards.getNovelId()),
                 novelCards.getTitle(), novelCards.getDescription(), novelCards.getAuthor(),
                 novelCards.getGenre(), novelCards.getGrade(), novelCards.getThumbnail(),
                 novelCards.getSerializationStatus(), novelCards.getStarRating(),

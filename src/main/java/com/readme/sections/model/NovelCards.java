@@ -19,7 +19,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @CompoundIndex(def = "{'genre': 1, 'serializationStatus': 1}")
 public class NovelCards {
     @Id
-    private Long novelId;
+    private String novelId;
     @Indexed
     private String title;
     private String description;
@@ -58,7 +58,7 @@ public class NovelCards {
     }
 
     public NovelCards(NovelCardsEntityDTO novelCardsEntityDTO) {
-        this.novelId = novelCardsEntityDTO.getNovelId();
+        this.novelId = String.valueOf(novelCardsEntityDTO.getNovelId());
         this.title = novelCardsEntityDTO.getTitle();
         this.description = novelCardsEntityDTO.getDescription();
         this.author = novelCardsEntityDTO.getAuthor();
