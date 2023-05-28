@@ -32,11 +32,21 @@ public class NovelCardsDataAccessLayer {
     public Page<NovelCards> findByDayTrue(String day, Integer pagination) {
         Pageable pageable = PageRequest.of(pagination, PAGE_SIZE);
 
+        int skip = pagination * PAGE_SIZE;
+
         Query query = new Query();
-        query.addCriteria(Criteria.where(SerializationDays.fromKorean(day).getEnglishDay()).is(true)).with(pageable);
+        query.addCriteria(Criteria.where(SerializationDays.fromKorean(day).getEnglishDay()).is(true))
+            .skip(skip)
+            .limit(PAGE_SIZE);
 
         List<NovelCards> novelCardsList = mongoTemplate.find(query, NovelCards.class);
 
-        return new PageImpl<>(novelCardsList, pageable, mongoTemplate.count(query, NovelCards.class));
+
+        Query countQuery = new Query();
+        countQuery.addCriteria(Criteria.where(SerializationDays.fromKorean(day).getEnglishDay()).is(true));
+
+        long total = mongoTemplate.count(countQuery, NovelCards.class);
+
+        return new PageImpl<>(novelCardsList, pageable, total);
     }
 }
