@@ -16,6 +16,7 @@ public class NovelCardsPaginationDTO {
     private List<NovelCardsData> novelCardsData;
     private long totalElements;
     private int totalPages;
+    private int page;
 
     @Getter
     @NoArgsConstructor
@@ -60,6 +61,7 @@ public class NovelCardsPaginationDTO {
             .collect(Collectors.toList());
         this.totalElements = novelCardsPage.getTotalElements();
         this.totalPages = novelCardsPage.getTotalPages();
+        this.page = novelCardsPage.getNumber();
     }
 
 }
