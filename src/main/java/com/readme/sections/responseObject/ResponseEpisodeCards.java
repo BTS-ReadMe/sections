@@ -14,11 +14,13 @@ public class ResponseEpisodeCards {
     private List<ViewEpisode> episodes;
     private long totalElements;
     private int totalPages;
+    private int page;
 
     public ResponseEpisodeCards(EpisodeCardsPaginationDTO episodeCardsPaginationDTO) {
         this.novelId = episodeCardsPaginationDTO.getNovelId();
         this.episodes = episodeCardsPaginationDTO.getEpisodes();
         this.totalElements = episodeCardsPaginationDTO.getTotalElements();
         this.totalPages = episodeCardsPaginationDTO.getTotalPages();
+        this.page = episodeCardsPaginationDTO.getPage();
     }
 }

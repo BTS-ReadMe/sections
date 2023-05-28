@@ -16,6 +16,7 @@ public class EpisodeCardsPaginationDTO {
     private List<ViewEpisode> episodes;
     private long totalElements;
     private int totalPages;
+    private int page;
 
     @Getter
     @NoArgsConstructor
@@ -39,11 +40,12 @@ public class EpisodeCardsPaginationDTO {
         }
     }
 
-    public EpisodeCardsPaginationDTO(EpisodeCards episodeCards, int pageSize) {
-        this.novelId = episodeCards.getNovelId();
+    public EpisodeCardsPaginationDTO(EpisodeCards episodeCards, int pageSize, int pagination) {
+        this.novelId = Long.parseLong(episodeCards.getNovelId());
         this.episodes = episodeCards.getEpisodes().stream().map(episode -> new ViewEpisode(episode))
             .collect(Collectors.toList());
         this.totalElements = episodeCards.getEpisodeCount();
         this.totalPages = (int) Math.ceil((double) episodeCards.getEpisodeCount() / pageSize);
+        this.page = pagination;
     }
 }

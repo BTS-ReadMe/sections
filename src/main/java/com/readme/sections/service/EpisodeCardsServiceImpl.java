@@ -38,7 +38,7 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
                 pagination * PAGE_SIZE, PAGE_SIZE);
         }
         try {
-            return new EpisodeCardsPaginationDTO(episodeCards, PAGE_SIZE);
+            return new EpisodeCardsPaginationDTO(episodeCards, PAGE_SIZE, pagination);
         } catch (Exception exception) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
