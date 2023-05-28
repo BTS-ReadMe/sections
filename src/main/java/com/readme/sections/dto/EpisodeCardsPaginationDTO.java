@@ -41,7 +41,7 @@ public class EpisodeCardsPaginationDTO {
     }
 
     public EpisodeCardsPaginationDTO(EpisodeCards episodeCards, int pageSize, int pagination) {
-        this.novelId = episodeCards.getNovelId();
+        this.novelId = Long.parseLong(episodeCards.getNovelId());
         this.episodes = episodeCards.getEpisodes().stream().map(episode -> new ViewEpisode(episode))
             .collect(Collectors.toList());
         this.totalElements = episodeCards.getEpisodeCount();

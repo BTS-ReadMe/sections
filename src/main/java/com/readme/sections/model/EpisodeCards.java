@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 public class EpisodeCards {
     @Id
-    private Long novelId;
+    private String novelId;
     private List<Episode> episodes;
     private Long episodeCount;
     @Getter
@@ -30,7 +30,7 @@ public class EpisodeCards {
     }
 
     public EpisodeCards(EpisodeCardsEntityDTO episodeCardsEntityDTO) {
-        this.novelId = episodeCardsEntityDTO.getNovelId();
+        this.novelId = String.valueOf(episodeCardsEntityDTO.getNovelId());
         this.episodes = episodeCardsEntityDTO.getEpisodes();
     }
 }

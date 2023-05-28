@@ -19,7 +19,7 @@ public class EpisodeCardsEntityDTO {
     }
 
     public EpisodeCardsEntityDTO(EpisodeCards episodeCards, EpisodeCardsEntityDTO episodeCardsEntityDTO) {
-        this.novelId = episodeCards.getNovelId();
+        this.novelId = Long.valueOf(episodeCards.getNovelId());
          this.episodes = episodeCardsEntityDTO.getEpisodes() != null ? episodeCardsEntityDTO.getEpisodes() : episodeCards.getEpisodes();
     }
 }
