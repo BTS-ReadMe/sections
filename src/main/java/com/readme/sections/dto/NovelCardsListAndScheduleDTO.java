@@ -24,7 +24,7 @@ public class NovelCardsListAndScheduleDTO {
         String novelTitle;
 
         public NovelCardsBySchedule(NovelCards novelCards) {
-            this.novelId = novelCards.getNovelId();
+            this.novelId = Long.parseLong(novelCards.getNovelId());
             this.novelTitle = novelCards.getTitle();
         }
     }

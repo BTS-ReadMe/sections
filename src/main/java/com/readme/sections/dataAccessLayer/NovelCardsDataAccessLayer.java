@@ -41,7 +41,6 @@ public class NovelCardsDataAccessLayer {
 
         List<NovelCards> novelCardsList = mongoTemplate.find(query, NovelCards.class);
 
-
         Query countQuery = new Query();
         countQuery.addCriteria(Criteria.where(SerializationDays.fromKorean(day).getEnglishDay()).is(true));
 

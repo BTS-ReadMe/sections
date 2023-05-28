@@ -64,7 +64,7 @@ public class NovelCardsEntityDTO {
     }
 
     public NovelCardsEntityDTO(NovelCards novelCards, NovelCardsEntityDTO novelCardsEntityDTO) {
-        this.novelId = novelCards.getNovelId();
+        this.novelId = Long.valueOf(novelCards.getNovelId());
         this.title = novelCardsEntityDTO.getTitle() != null ? novelCardsEntityDTO.getTitle()
             : novelCards.getTitle();
         this.description = novelCardsEntityDTO.getDescription() != null ? novelCardsEntityDTO.getDescription()

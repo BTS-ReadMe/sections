@@ -29,7 +29,7 @@ public class NovelCardsViewDTO {
     private long episodeCount;
 
     public NovelCardsViewDTO(NovelCards novelCards) {
-        this.novelId = novelCards.getNovelId();
+        this.novelId = Long.parseLong(novelCards.getNovelId());
         this.title = novelCards.getTitle();
         this.description = novelCards.getDescription();
         this.author = novelCards.getAuthor();

@@ -17,11 +17,11 @@ public class KafkaProducer {
 
     public void sendNovelId(RequestKafkaNovelId requestKafkaNovelId) {
         System.out.println(String.format("Produce message(RequestKafkaMessage) : %s", requestKafkaNovelId));
-        this.novelIdKafkaTemplate.send(TOPIC, requestKafkaNovelId);
+        this.novelIdKafkaTemplate.send("deleteNovels", requestKafkaNovelId);
     }
 
     public void sendMessage(RequestKafkaNovelCards message) {
         System.out.println(String.format("Produce message(RequestKafkaMessage) : %s", message));
-        this.kafkaTemplate.send(TOPIC, message);
+        this.kafkaTemplate.send("updateNovels", message);
     }
 }

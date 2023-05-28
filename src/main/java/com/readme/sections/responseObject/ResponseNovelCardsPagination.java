@@ -12,10 +12,12 @@ public class ResponseNovelCardsPagination {
     private List<NovelCardsData> novelCardsData;
     private long totalElements;
     private int totalPages;
+    private int page;
 
     public ResponseNovelCardsPagination(NovelCardsPaginationDTO novelCardsPaginationDTO) {
         this.novelCardsData = novelCardsPaginationDTO.getNovelCardsData();
         this.totalElements = novelCardsPaginationDTO.getTotalElements();
         this.totalPages = novelCardsPaginationDTO.getTotalPages();
+        this.page = novelCardsPaginationDTO.getPage();
     }
 }
