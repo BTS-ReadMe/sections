@@ -1,6 +1,7 @@
 package com.readme.sections.config;
 
 import com.readme.sections.requestObject.RequestNovelCards;
+import com.readme.sections.requestObject.RequestNovelId;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -23,8 +24,20 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
+    public ConsumerFactory<String, RequestNovelId> novelIdConsumerFactory(){
+        return new DefaultKafkaConsumerFactory<>(novelCardsConsumerConfigs());
+    }
+
+    @Bean
     public ConsumerFactory<String, RequestNovelCards> novelCardsConsumerFactory() {
         return new DefaultKafkaConsumerFactory<>(novelCardsConsumerConfigs());
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, RequestNovelId> novelIdListener() {
+        ConcurrentKafkaListenerContainerFactory<String, RequestNovelId> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(novelIdConsumerFactory());
+        return factory;
     }
 
     @Bean

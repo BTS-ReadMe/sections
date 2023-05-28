@@ -44,9 +44,13 @@ public class NovelCards {
     private Long episodeCount;
 
     @Getter
-    public static class Tag {
-        private Long id;
+    @NoArgsConstructor
+    public static class Tag{
         private String name;
+
+        public Tag(String name){
+            this.name = name;
+        }
     }
 
     public double getStarRating() {

@@ -1,6 +1,8 @@
 package com.readme.sections.config;
 
 import com.readme.sections.requestObject.RequestKafkaNovelCards;
+import com.readme.sections.requestObject.RequestKafkaNovelId;
+import com.readme.sections.requestObject.RequestNovelId;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -23,8 +25,18 @@ public class KafkaProducerConfig {
     }
 
     @Bean
+    public ProducerFactory<String, RequestKafkaNovelId> novelIdProducerFactory() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    @Bean
     public ProducerFactory<String, RequestKafkaNovelCards> novelCardsProducerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    @Bean
+    public KafkaTemplate<String, RequestKafkaNovelId> novelIdKafkaTemplate() {
+        return new KafkaTemplate<>(novelIdProducerFactory());
     }
 
     @Bean

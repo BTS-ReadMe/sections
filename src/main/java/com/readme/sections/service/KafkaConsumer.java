@@ -2,6 +2,7 @@ package com.readme.sections.service;
 
 import com.readme.sections.dto.NovelCardsEntityDTO;
 import com.readme.sections.requestObject.RequestNovelCards;
+import com.readme.sections.requestObject.RequestNovelId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -39,7 +40,17 @@ public class KafkaConsumer {
 //    }
 
     @KafkaListener(topics = "addNovels", groupId = "sections")
-    public void consume(RequestNovelCards requestNovelCards){
+    public void addNovelCards(RequestNovelCards requestNovelCards){
         novelCardsService.addCards(new NovelCardsEntityDTO(requestNovelCards));
+    }
+
+    @KafkaListener(topics = "updateNovels", groupId = "sections")
+    public void updateNovelCards(RequestNovelCards requestNovelCards){
+        novelCardsService.updateCards(new NovelCardsEntityDTO(requestNovelCards));
+    }
+
+    @KafkaListener(topics = "deleteNovels", groupId = "sections")
+    public void deleteNovelCards(RequestNovelId requestNovelId){
+        novelCardsService.deleteCards(requestNovelId.getNovelId());
     }
 }

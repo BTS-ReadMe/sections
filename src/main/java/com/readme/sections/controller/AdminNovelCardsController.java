@@ -44,7 +44,7 @@ public class AdminNovelCardsController {
     })
     @PatchMapping("/{id}")
     public void updateNovelCard(@PathVariable Long id, @RequestBody RequestNovelCards requestNovelCards) {
-        novelCardsService.updateNovelCardsDTO(novelCardsService.updateNovelCardsDTO(id, new NovelCardsEntityDTO(requestNovelCards)));
+        novelCardsService.updateCards(novelCardsService.updateCards(id, new NovelCardsEntityDTO(requestNovelCards)));
     }
 
     @Operation(summary = "소설 카드 삭제", description = "id에 해당하는 소설 카드 삭제", tags = {"Admin 소설 카드"})
