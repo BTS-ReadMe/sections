@@ -1,8 +1,6 @@
 package com.readme.sections.model;
 
 import com.readme.sections.dto.EpisodeCardsEntityDTO;
-import com.readme.sections.dto.EpisodeCardsPaginationDTO;
-import com.readme.sections.service.EpisodeCardsServiceImpl;
 import java.util.Date;
 import java.util.List;
 import lombok.Getter;
@@ -22,7 +20,7 @@ public class EpisodeCards {
     @NoArgsConstructor
     public static class Episode {
         private Long id;
-        private String name;
+        private String title;
         private Boolean free;
         private Date registrationDate;
         private Float starRating;

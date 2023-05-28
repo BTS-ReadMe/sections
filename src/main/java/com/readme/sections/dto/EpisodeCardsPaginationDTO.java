@@ -31,7 +31,7 @@ public class EpisodeCardsPaginationDTO {
 
         public ViewEpisode(EpisodeCards.Episode episode) {
             this.id = episode.getId();
-            this.name = episode.getName();
+            this.name = episode.getTitle();
             this.free = episode.getFree();
             this.registrationDate = NovelCardsServiceImpl.getUtcToKoreanTime(
                 episode.getRegistrationDate());
