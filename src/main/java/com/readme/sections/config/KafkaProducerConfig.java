@@ -1,6 +1,7 @@
 package com.readme.sections.config;
 
 import com.readme.sections.requestObject.RequestEpisode;
+import com.readme.sections.requestObject.RequestKafkaEpisode;
 import com.readme.sections.requestObject.RequestKafkaNovelCards;
 import com.readme.sections.requestObject.RequestKafkaNovelId;
 import com.readme.sections.requestObject.RequestNovelId;
@@ -36,7 +37,7 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public ProducerFactory<String, RequestEpisode> episodeProducerFactory() {
+    public ProducerFactory<String, RequestKafkaEpisode> episodeProducerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
@@ -51,7 +52,7 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, RequestEpisode> episodeKafkaTemplate() {
+    public KafkaTemplate<String, RequestKafkaEpisode> episodeKafkaTemplate() {
         return new KafkaTemplate<>(episodeProducerFactory());
     }
 }

@@ -1,5 +1,6 @@
 package com.readme.sections.config;
 
+import com.readme.sections.requestObject.RequestEpisode;
 import com.readme.sections.requestObject.RequestNovelCards;
 import com.readme.sections.requestObject.RequestNovelId;
 import java.util.Map;
@@ -34,6 +35,11 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
+    public ConsumerFactory<String, RequestEpisode> episodeConsumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(novelCardsConsumerConfigs());
+    }
+
+    @Bean
     public ConcurrentKafkaListenerContainerFactory<String, RequestNovelId> novelIdListener() {
         ConcurrentKafkaListenerContainerFactory<String, RequestNovelId> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(novelIdConsumerFactory());
@@ -44,6 +50,13 @@ public class KafkaConsumerConfig {
     public ConcurrentKafkaListenerContainerFactory<String, RequestNovelCards> novelCardsListener() {
         ConcurrentKafkaListenerContainerFactory<String, RequestNovelCards> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(novelCardsConsumerFactory());
+        return factory;
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, RequestEpisode> episodeListener() {
+        ConcurrentKafkaListenerContainerFactory<String, RequestEpisode> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(episodeConsumerFactory());
         return factory;
     }
 

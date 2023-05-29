@@ -1,6 +1,7 @@
 package com.readme.sections.controller;
 
 import com.readme.sections.requestObject.RequestEpisode;
+import com.readme.sections.requestObject.RequestKafkaEpisode;
 import com.readme.sections.requestObject.RequestKafkaNovelCards;
 import com.readme.sections.requestObject.RequestKafkaNovelId;
 import com.readme.sections.requestObject.RequestNovelCards;
@@ -34,7 +35,7 @@ public class KafkaController {
     }
 
     @PostMapping("episode")
-    public void episode(@RequestBody RequestEpisode episode) {
+    public void episode(@RequestBody RequestKafkaEpisode episode) {
         this.producer.sendEpisode(episode);
     }
 }
