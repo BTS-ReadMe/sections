@@ -1,6 +1,8 @@
 package com.readme.sections.service;
 
+import com.readme.sections.requestObject.RequestDeleteEpisode;
 import com.readme.sections.requestObject.RequestEpisode;
+import com.readme.sections.requestObject.RequestKafkaDeleteEpisode;
 import com.readme.sections.requestObject.RequestKafkaEpisode;
 import com.readme.sections.requestObject.RequestKafkaNovelCards;
 import com.readme.sections.requestObject.RequestKafkaNovelId;
@@ -17,6 +19,7 @@ public class KafkaProducer {
     private final KafkaTemplate<String, RequestKafkaNovelCards> kafkaTemplate;
     private final KafkaTemplate<String, RequestKafkaNovelId> novelIdKafkaTemplate;
     private final KafkaTemplate<String, RequestKafkaEpisode> episodeKafkaTemplate;
+    private final KafkaTemplate<String, RequestKafkaDeleteEpisode> deleteEpisodeKafkaTemplate;
 
     public void sendNovelId(RequestKafkaNovelId requestKafkaNovelId) {
         System.out.println(String.format("Produce message(RequestKafkaMessage) : %s", requestKafkaNovelId));
@@ -34,5 +37,9 @@ public class KafkaProducer {
 
     public void updateEpisode(RequestKafkaEpisode requestEpisode) {
         this.episodeKafkaTemplate.send("updateEpisodes", requestEpisode);
+    }
+
+    public void deleteEpisode(RequestKafkaDeleteEpisode requestDeleteEpisode) {
+        this.deleteEpisodeKafkaTemplate.send("deleteEpisodes", requestDeleteEpisode);
     }
 }

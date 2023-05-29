@@ -3,6 +3,7 @@ package com.readme.sections.service;
 import com.readme.sections.dto.EpisodeDTO;
 import com.readme.sections.dto.NovelCardsEntityDTO;
 import com.readme.sections.requestObject.RequestEpisode;
+import com.readme.sections.requestObject.RequestDeleteEpisode;
 import com.readme.sections.requestObject.RequestNovelCards;
 import com.readme.sections.requestObject.RequestNovelId;
 import lombok.RequiredArgsConstructor;
@@ -65,5 +66,10 @@ public class KafkaConsumer {
     @KafkaListener(topics = "updateEpisodes", groupId = "sections")
     public void updateEpisode(RequestEpisode requestEpisode) {
         episodeCardsService.updateEpisode(new EpisodeDTO(requestEpisode));
+    }
+
+    @KafkaListener(topics = "deleteEpisodes", groupId = "sections")
+    public void deleteEpisode(RequestDeleteEpisode requestDeleteEpisode) {
+        episodeCardsService.deleteEpisode(requestDeleteEpisode);
     }
 }

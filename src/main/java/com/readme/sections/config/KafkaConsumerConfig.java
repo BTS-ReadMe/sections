@@ -1,5 +1,6 @@
 package com.readme.sections.config;
 
+import com.readme.sections.requestObject.RequestDeleteEpisode;
 import com.readme.sections.requestObject.RequestEpisode;
 import com.readme.sections.requestObject.RequestNovelCards;
 import com.readme.sections.requestObject.RequestNovelId;
@@ -20,23 +21,28 @@ public class KafkaConsumerConfig {
     private String servers;
 
     @Bean
-    public Map<String, Object> novelCardsConsumerConfigs() {
+    public Map<String, Object> ConsumerConfig() {
         return CommonJsonDeserializer.getStringObjectMap(servers);
     }
 
     @Bean
     public ConsumerFactory<String, RequestNovelId> novelIdConsumerFactory(){
-        return new DefaultKafkaConsumerFactory<>(novelCardsConsumerConfigs());
+        return new DefaultKafkaConsumerFactory<>(ConsumerConfig());
     }
 
     @Bean
     public ConsumerFactory<String, RequestNovelCards> novelCardsConsumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(novelCardsConsumerConfigs());
+        return new DefaultKafkaConsumerFactory<>(ConsumerConfig());
     }
 
     @Bean
     public ConsumerFactory<String, RequestEpisode> episodeConsumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(novelCardsConsumerConfigs());
+        return new DefaultKafkaConsumerFactory<>(ConsumerConfig());
+    }
+
+    @Bean
+    public ConsumerFactory<String, RequestDeleteEpisode> episodeDeleteConsumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(ConsumerConfig());
     }
 
     @Bean
@@ -57,6 +63,13 @@ public class KafkaConsumerConfig {
     public ConcurrentKafkaListenerContainerFactory<String, RequestEpisode> episodeListener() {
         ConcurrentKafkaListenerContainerFactory<String, RequestEpisode> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(episodeConsumerFactory());
+        return factory;
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, RequestDeleteEpisode> deleteEpisodeListener() {
+        ConcurrentKafkaListenerContainerFactory<String, RequestDeleteEpisode> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(episodeDeleteConsumerFactory());
         return factory;
     }
 

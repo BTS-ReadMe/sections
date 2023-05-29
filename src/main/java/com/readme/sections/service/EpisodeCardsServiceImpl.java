@@ -7,6 +7,7 @@ import com.readme.sections.dto.EpisodeDTO;
 import com.readme.sections.model.EpisodeCards;
 import com.readme.sections.model.EpisodeCards.Episode;
 import com.readme.sections.repository.EpisodeCardsRepository;
+import com.readme.sections.requestObject.RequestDeleteEpisode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -80,6 +81,12 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
             () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
         );
         return new EpisodeCardsEntityDTO(episodeCards, episodeCardsEntityDTO);
+    }
+
+    @Transactional
+    @Override
+    public void deleteEpisode(RequestDeleteEpisode requestDeleteEpisode) {
+        episodeCardsDataAccessLayer.deleteEpisode(requestDeleteEpisode);
     }
 
     @Transactional

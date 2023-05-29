@@ -4,9 +4,11 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.matc
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
+import com.mongodb.BasicDBObject;
 import com.readme.sections.dto.EpisodeDTO;
 import com.readme.sections.model.EpisodeCards;
 import com.readme.sections.model.EpisodeCards.Episode;
+import com.readme.sections.requestObject.RequestDeleteEpisode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -61,6 +63,16 @@ public class EpisodeCardsDataAccessLayer {
 
         Update update = new Update();
         update.set("episodes.$", new Episode(episodeDTO));
+
+        mongoTemplate.updateFirst(query, update, EpisodeCards.class);
+    }
+
+    public void deleteEpisode(RequestDeleteEpisode requestDeleteEpisode) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is(String.valueOf(requestDeleteEpisode.getNovelId())));
+
+        Update update = new Update();
+        update.pull("episodes", new BasicDBObject("_id", requestDeleteEpisode.getEpisodeId()));
 
         mongoTemplate.updateFirst(query, update, EpisodeCards.class);
     }

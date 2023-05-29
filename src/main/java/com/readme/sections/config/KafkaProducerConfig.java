@@ -1,6 +1,7 @@
 package com.readme.sections.config;
 
 import com.readme.sections.requestObject.RequestEpisode;
+import com.readme.sections.requestObject.RequestKafkaDeleteEpisode;
 import com.readme.sections.requestObject.RequestKafkaEpisode;
 import com.readme.sections.requestObject.RequestKafkaNovelCards;
 import com.readme.sections.requestObject.RequestKafkaNovelId;
@@ -41,6 +42,10 @@ public class KafkaProducerConfig {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
+    @Bean ProducerFactory<String, RequestKafkaDeleteEpisode> deleteEpisodeProducerFactory() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
     @Bean
     public KafkaTemplate<String, RequestKafkaNovelId> novelIdKafkaTemplate() {
         return new KafkaTemplate<>(novelIdProducerFactory());
@@ -54,5 +59,10 @@ public class KafkaProducerConfig {
     @Bean
     public KafkaTemplate<String, RequestKafkaEpisode> episodeKafkaTemplate() {
         return new KafkaTemplate<>(episodeProducerFactory());
+    }
+
+    @Bean
+    public KafkaTemplate<String, RequestKafkaDeleteEpisode> deleteEpisodeKafkaTemplate() {
+        return new KafkaTemplate<>(deleteEpisodeProducerFactory());
     }
 }
