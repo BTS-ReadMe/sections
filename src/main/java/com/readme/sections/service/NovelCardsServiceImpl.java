@@ -5,7 +5,9 @@ import com.readme.sections.dto.NovelCardsEntityDTO;
 import com.readme.sections.dto.NovelCardsViewDTO;
 import com.readme.sections.dto.NovelCardsPaginationDTO;
 import com.readme.sections.enums.SerializationDays;
+import com.readme.sections.model.EpisodeCards;
 import com.readme.sections.model.NovelCards;
+import com.readme.sections.repository.EpisodeCardsRepository;
 import com.readme.sections.repository.NovelCardsRepository;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -32,6 +34,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     private int PAGE_SIZE;
     private final NovelCardsDataAccessLayer novelCardsDataAccessLayer;
     private final NovelCardsRepository novelCardsRepository;
+    private final EpisodeCardsRepository episodeCardsRepository;
 
     @Transactional(readOnly = true)
     @Override
@@ -76,6 +79,8 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     public void addCards(NovelCardsEntityDTO novelCardsEntityDTO) {
         try {
             novelCardsRepository.insert(new NovelCards(novelCardsEntityDTO));
+            episodeCardsRepository.insert(new EpisodeCards(
+                String.valueOf(novelCardsEntityDTO.getNovelId())));
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
