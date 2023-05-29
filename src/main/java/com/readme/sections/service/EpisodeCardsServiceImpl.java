@@ -63,6 +63,12 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
 
     @Transactional
     @Override
+    public void updateEpisode(EpisodeDTO episodeDTO) {
+        episodeCardsDataAccessLayer.updateEpisode(episodeDTO);
+    }
+
+    @Transactional
+    @Override
     public void updateCards(EpisodeCardsEntityDTO episodeCardsEntityDTO) {
         episodeCardsRepository.save(new EpisodeCards(episodeCardsEntityDTO));
     }
