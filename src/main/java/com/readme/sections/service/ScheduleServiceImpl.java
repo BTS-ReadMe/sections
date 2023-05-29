@@ -3,9 +3,12 @@ package com.readme.sections.service;
 import com.readme.sections.dto.NovelCardsListAndScheduleDTO;
 import com.readme.sections.dto.NovelCardsListAndScheduleDTO.NovelCardsBySchedule;
 import com.readme.sections.dto.ScheduleDTO;
+import com.readme.sections.dto.UpdateScheduleIdListDTO;
+import com.readme.sections.model.NovelCards;
 import com.readme.sections.model.Schedule;
 import com.readme.sections.repository.NovelCardsRepository;
 import com.readme.sections.repository.ScheduleRepository;
+import com.readme.sections.requestObject.RequestNovelId;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -64,6 +67,28 @@ public class ScheduleServiceImpl implements ScheduleService{
     @Override
     public void addSchedule(ScheduleDTO scheduleDTO) {
         scheduleRepository.save(new Schedule(scheduleDTO));
+    }
+
+    @Transactional
+    @Override
+    public void updateScheduleIdInNovelList(Long scheduleId, UpdateScheduleIdListDTO updateScheduleIdListDTOList) {
+        for (RequestNovelId requestNovelId : updateScheduleIdListDTOList.getRequestNovelIdList()) {
+            NovelCards novelCards = novelCardsRepository.findById(
+                String.valueOf(requestNovelId.getNovelId())).get();
+            novelCards.setScheduleId(scheduleId);
+            novelCardsRepository.save(novelCards);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void deleteScheduleIdInNovelList(UpdateScheduleIdListDTO updateScheduleIdListDTOList) {
+        for (RequestNovelId requestNovelId : updateScheduleIdListDTOList.getRequestNovelIdList()) {
+            NovelCards novelCards = novelCardsRepository.findById(
+                String.valueOf(requestNovelId.getNovelId())).get();
+            novelCards.setScheduleId(null);
+            novelCardsRepository.save(novelCards);
+        }
     }
 
     @Transactional(readOnly = true)
