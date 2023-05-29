@@ -3,10 +3,14 @@ package com.readme.sections.service;
 import com.readme.sections.dataAccessLayer.EpisodeCardsDataAccessLayer;
 import com.readme.sections.dto.EpisodeCardsEntityDTO;
 import com.readme.sections.dto.EpisodeCardsPaginationDTO;
+import com.readme.sections.dto.EpisodeDTO;
 import com.readme.sections.model.EpisodeCards;
+import com.readme.sections.model.EpisodeCards.Episode;
 import com.readme.sections.repository.EpisodeCardsRepository;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +33,7 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
     @Override
     public EpisodeCardsPaginationDTO getCards(Long novelId, Integer pagination) {
         EpisodeCards episodeCards = new EpisodeCards();
+        log.info(episodeCardsRepository.findAll().toString());
         if (pagination == null) {
             episodeCards = episodeCardsDataAccessLayer.findEpisodesByEpisodeCardId(novelId, 0,
                 PAGE_SIZE);
@@ -37,11 +42,13 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
             episodeCards = episodeCardsDataAccessLayer.findEpisodesByEpisodeCardId(novelId,
                 pagination * PAGE_SIZE, PAGE_SIZE);
         }
-        try {
-            return new EpisodeCardsPaginationDTO(episodeCards, PAGE_SIZE, pagination);
-        } catch (Exception exception) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+        return new EpisodeCardsPaginationDTO(episodeCards, PAGE_SIZE, pagination);
+    }
+
+    @Transactional
+    @Override
+    public void addEpisode(EpisodeDTO episodeDTO) {
+        episodeCardsDataAccessLayer.addEpisode(episodeDTO);
     }
 
     @Transactional

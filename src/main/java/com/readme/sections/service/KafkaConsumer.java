@@ -1,6 +1,8 @@
 package com.readme.sections.service;
 
+import com.readme.sections.dto.EpisodeDTO;
 import com.readme.sections.dto.NovelCardsEntityDTO;
+import com.readme.sections.requestObject.RequestEpisode;
 import com.readme.sections.requestObject.RequestNovelCards;
 import com.readme.sections.requestObject.RequestNovelId;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ public class KafkaConsumer {
 
     private final KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
     private final NovelCardsService novelCardsService;
+    private final EpisodeCardsService episodeCardsService;
 
 //    @Scheduled(fixedRate = 60000)
     public void consumeMessagesPeriodically() {
@@ -52,5 +55,10 @@ public class KafkaConsumer {
     @KafkaListener(topics = "deleteNovels", groupId = "sections")
     public void deleteNovelCards(RequestNovelId requestNovelId){
         novelCardsService.deleteCards(requestNovelId.getNovelId());
+    }
+
+    @KafkaListener(topics = "addEpisodes", groupId = "sections")
+    public void addNovelCards(RequestEpisode requestEpisode){
+        episodeCardsService.addEpisode(new EpisodeDTO(requestEpisode));
     }
 }

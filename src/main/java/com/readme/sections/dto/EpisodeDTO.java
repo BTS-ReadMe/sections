@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EpisodeDTO {
     private long episodeId;
-    private long novelId;
+    private String novelId;
     private String title;
     private boolean free;
     private Date registration;
@@ -17,7 +17,7 @@ public class EpisodeDTO {
 
     public EpisodeDTO(RequestEpisode requestEpisode) {
         this.episodeId = requestEpisode.getEpisodeId();
-        this.novelId = requestEpisode.getNovelId();
+        this.novelId = String.valueOf(requestEpisode.getNovelId());
         this.title = requestEpisode.getTitle();
         this.free = requestEpisode.isFree();
         this.registration = requestEpisode.getRegistration();
