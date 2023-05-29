@@ -80,6 +80,17 @@ public class ScheduleServiceImpl implements ScheduleService{
         }
     }
 
+    @Transactional
+    @Override
+    public void deleteScheduleIdInNovelList(UpdateScheduleIdListDTO updateScheduleIdListDTOList) {
+        for (RequestNovelId requestNovelId : updateScheduleIdListDTOList.getRequestNovelIdList()) {
+            NovelCards novelCards = novelCardsRepository.findById(
+                String.valueOf(requestNovelId.getNovelId())).get();
+            novelCards.setScheduleId(null);
+            novelCardsRepository.save(novelCards);
+        }
+    }
+
     @Transactional(readOnly = true)
     @Override
     public ScheduleDTO existUpdateData(Long id, ScheduleDTO scheduleDTO) {

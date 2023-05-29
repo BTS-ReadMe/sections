@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -105,9 +106,14 @@ public class AdminScheduleController {
         @ApiResponse(responseCode = "404", description = "NOT FOUND"),
         @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
     })
-    @PostMapping("/novels/{scheduleId}")
+    @PutMapping("/novels/{scheduleId}")
     public void updateScheduleIdInNovelList(@PathVariable Long scheduleId, @RequestBody RequestUpdateScheduleIdList requestUpdateScheduleIdList) {
         scheduleService.updateScheduleIdInNovelList(scheduleId, new UpdateScheduleIdListDTO(requestUpdateScheduleIdList));
+    }
+
+    @DeleteMapping("/novels")
+    public void deleteScheduleIdInNovelList(@RequestBody RequestUpdateScheduleIdList requestUpdateScheduleIdList) {
+        scheduleService.deleteScheduleIdInNovelList(new UpdateScheduleIdListDTO(requestUpdateScheduleIdList));
     }
 
     @Operation(summary = "스케줄 생성", description = "스케줄 생성", tags = {"Admin 스케줄"})

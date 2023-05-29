@@ -13,6 +13,7 @@ public interface ScheduleService {
     public List<NovelCardsBySchedule> getNovelCardsListBySchedule(Long scheduleId);
     public void addSchedule(ScheduleDTO scheduleDTO);
     public void updateScheduleIdInNovelList(Long scheduleId, UpdateScheduleIdListDTO updateScheduleIdListDTOList);
+    public void deleteScheduleIdInNovelList(UpdateScheduleIdListDTO updateScheduleIdListDTOList);
     public ScheduleDTO existUpdateData(Long id, ScheduleDTO scheduleDTO);
     public void updateSchedule(ScheduleDTO scheduleDTO);
     public void deleteSchedule(Long id);
