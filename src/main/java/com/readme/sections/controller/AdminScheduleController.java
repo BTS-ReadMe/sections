@@ -111,6 +111,13 @@ public class AdminScheduleController {
         scheduleService.updateScheduleIdInNovelList(scheduleId, new UpdateScheduleIdListDTO(requestUpdateScheduleIdList));
     }
 
+    @Operation(summary = "스케줄에 소설 목록 삭제", description = "스케줄에 소설 목록을 삭제", tags = {"Admin 스케줄"})
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
+        @ApiResponse(responseCode = "404", description = "NOT FOUND"),
+        @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
+    })
     @DeleteMapping("/novels")
     public void deleteScheduleIdInNovelList(@RequestBody RequestUpdateScheduleIdList requestUpdateScheduleIdList) {
         scheduleService.deleteScheduleIdInNovelList(new UpdateScheduleIdListDTO(requestUpdateScheduleIdList));
