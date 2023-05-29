@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface NovelCardsRepository extends MongoRepository<NovelCards, Long> {
+public interface NovelCardsRepository extends MongoRepository<NovelCards, String> {
     Page<NovelCards> findAllByTagsNameOrTitleContaining(String keyword, String keyword2, Pageable pageable);
     Page<NovelCards> findAllByGenreAndSerializationStatus(String genre, String serializationStatus, Pageable pageable);
     Page<NovelCards> findAllByGenreAndStartDateBetween(String genre, Date oneMonthAgo, Date now, Pageable pageable);

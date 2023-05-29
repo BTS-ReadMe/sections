@@ -73,7 +73,8 @@ public class ScheduleServiceImpl implements ScheduleService{
     @Override
     public void updateScheduleIdInNovelList(Long scheduleId, UpdateScheduleIdListDTO updateScheduleIdListDTOList) {
         for (RequestNovelId requestNovelId : updateScheduleIdListDTOList.getRequestNovelIdList()) {
-            NovelCards novelCards = novelCardsRepository.findById(requestNovelId.getNovelId()).get();
+            NovelCards novelCards = novelCardsRepository.findById(
+                String.valueOf(requestNovelId.getNovelId())).get();
             novelCards.setScheduleId(scheduleId);
             novelCardsRepository.save(novelCards);
         }

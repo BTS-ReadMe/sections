@@ -36,7 +36,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     @Transactional(readOnly = true)
     @Override
     public NovelCardsViewDTO getCards(Long id) {
-        NovelCards novelCards = novelCardsRepository.findById(id)
+        NovelCards novelCards = novelCardsRepository.findById(String.valueOf(id))
             .orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
             );
@@ -85,7 +85,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     @Override
     public NovelCardsEntityDTO updateCards(Long id,
         NovelCardsEntityDTO novelCardsEntityDTO) {
-        NovelCards novelCards = novelCardsRepository.findById(id)
+        NovelCards novelCards = novelCardsRepository.findById(String.valueOf(id))
             .orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
             );
@@ -101,7 +101,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     @Transactional
     @Override
     public void deleteCards(Long id) {
-        novelCardsRepository.deleteById(id);
+        novelCardsRepository.deleteById(String.valueOf(id));
     }
 
     @Transactional(readOnly = true)
