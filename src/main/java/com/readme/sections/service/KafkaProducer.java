@@ -28,7 +28,7 @@ public class KafkaProducer {
 
     public void sendMessage(RequestKafkaNovelCards message) {
         System.out.println(String.format("Produce message(RequestKafkaMessage) : %s", message));
-        this.kafkaTemplate.send("updateNovels", message);
+        this.kafkaTemplate.send("addNovels", message);
     }
 
     public void sendEpisode(RequestKafkaEpisode requestEpisode) {

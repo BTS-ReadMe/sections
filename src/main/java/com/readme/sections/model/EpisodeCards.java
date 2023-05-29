@@ -45,4 +45,8 @@ public class EpisodeCards {
         this.novelId = String.valueOf(episodeCardsEntityDTO.getNovelId());
         this.episodes = episodeCardsEntityDTO.getEpisodes();
     }
+
+    public EpisodeCards(String novelId) {
+        this.novelId = novelId;
+    }
 }
