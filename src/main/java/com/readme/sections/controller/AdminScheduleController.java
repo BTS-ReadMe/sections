@@ -3,8 +3,10 @@ package com.readme.sections.controller;
 import com.readme.sections.dto.NovelCardsListAndScheduleDTO;
 import com.readme.sections.dto.NovelCardsListAndScheduleDTO.NovelCardsBySchedule;
 import com.readme.sections.dto.ScheduleDTO;
+import com.readme.sections.dto.UpdateScheduleIdListDTO;
 import com.readme.sections.requestObject.RequestSchedule;
 import com.readme.sections.commonResponseObject.CommonDataResponse;
+import com.readme.sections.requestObject.RequestUpdateScheduleIdList;
 import com.readme.sections.responseObject.ResponseNovelCardsLIstAndSchedule;
 import com.readme.sections.responseObject.ResponseNovelCardsListBySchedule;
 import com.readme.sections.responseObject.ResponseSchedule;
@@ -94,6 +96,18 @@ public class AdminScheduleController {
                 .collect(Collectors.toList())
             )
         );
+    }
+
+    @Operation(summary = "스케줄에 소설 목록 등록", description = "스케줄에 소설 목록을 등록", tags = {"Admin 스케줄"})
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
+        @ApiResponse(responseCode = "404", description = "NOT FOUND"),
+        @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
+    })
+    @PostMapping("/novels/{scheduleId}")
+    public void updateScheduleIdInNovelList(@PathVariable Long scheduleId, @RequestBody RequestUpdateScheduleIdList requestUpdateScheduleIdList) {
+        scheduleService.updateScheduleIdInNovelList(scheduleId, new UpdateScheduleIdListDTO(requestUpdateScheduleIdList));
     }
 
     @Operation(summary = "스케줄 생성", description = "스케줄 생성", tags = {"Admin 스케줄"})
