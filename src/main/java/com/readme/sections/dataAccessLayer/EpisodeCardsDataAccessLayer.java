@@ -56,10 +56,11 @@ public class EpisodeCardsDataAccessLayer {
 
     public void updateEpisode(EpisodeDTO episodeDTO) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("_id").is(episodeDTO.getNovelId()).and("episodes._id").is(episodeDTO.getEpisodeId()));
+        query.addCriteria(Criteria.where("_id").is(episodeDTO.getNovelId())
+            .andOperator(Criteria.where("episodes._id").is(episodeDTO.getEpisodeId())));
 
         Update update = new Update();
-        update.set("episodes.$.fieldToChange", new Episode(episodeDTO));
+        update.set("episodes.$", new Episode(episodeDTO));
 
         mongoTemplate.updateFirst(query, update, EpisodeCards.class);
     }

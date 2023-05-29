@@ -58,7 +58,12 @@ public class KafkaConsumer {
     }
 
     @KafkaListener(topics = "addEpisodes", groupId = "sections")
-    public void addNovelCards(RequestEpisode requestEpisode){
+    public void addEpisode(RequestEpisode requestEpisode){
         episodeCardsService.addEpisode(new EpisodeDTO(requestEpisode));
+    }
+
+    @KafkaListener(topics = "updateEpisodes", groupId = "sections")
+    public void updateEpisode(RequestEpisode requestEpisode) {
+        episodeCardsService.updateEpisode(new EpisodeDTO(requestEpisode));
     }
 }

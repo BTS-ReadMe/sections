@@ -31,4 +31,8 @@ public class KafkaProducer {
     public void sendEpisode(RequestKafkaEpisode requestEpisode) {
         this.episodeKafkaTemplate.send("addEpisodes", requestEpisode);
     }
+
+    public void updateEpisode(RequestKafkaEpisode requestEpisode) {
+        this.episodeKafkaTemplate.send("updateEpisodes", requestEpisode);
+    }
 }

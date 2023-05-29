@@ -38,4 +38,9 @@ public class KafkaController {
     public void episode(@RequestBody RequestKafkaEpisode episode) {
         this.producer.sendEpisode(episode);
     }
+
+    @PostMapping("update-episode")
+    public void updateEpisode(@RequestBody RequestKafkaEpisode episode) {
+        this.producer.updateEpisode(episode);
+    }
 }
