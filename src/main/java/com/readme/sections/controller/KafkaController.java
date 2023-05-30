@@ -23,30 +23,30 @@ public class KafkaController {
         this.producer = producer;
     }
 
-    @PostMapping
-    public String sendMessageJson(@RequestBody RequestKafkaNovelCards message) {
-        this.producer.sendMessage(message);
-        return "success";
-    }
-
-    @PostMapping("/test")
-    public String novelId(@RequestBody RequestKafkaNovelId message) {
-        this.producer.sendNovelId(message);
-        return "success";
-    }
-
-    @PostMapping("episode")
-    public void episode(@RequestBody RequestKafkaEpisode episode) {
-        this.producer.sendEpisode(episode);
-    }
-
-    @PostMapping("update-episode")
-    public void updateEpisode(@RequestBody RequestKafkaEpisode episode) {
-        this.producer.updateEpisode(episode);
-    }
-
-    @DeleteMapping("episode")
-    public void deleteEpisode(@RequestBody RequestKafkaDeleteEpisode requestDeleteEpisode) {
-        this.producer.deleteEpisode(requestDeleteEpisode);
-    }
+//    @PostMapping
+//    public String sendMessageJson(@RequestBody RequestKafkaNovelCards message) {
+//        this.producer.sendMessage(message);
+//        return "success";
+//    }
+//
+//    @PostMapping("/test")
+//    public String novelId(@RequestBody RequestKafkaNovelId message) {
+//        this.producer.sendNovelId(message);
+//        return "success";
+//    }
+//
+//    @PostMapping("episode")
+//    public void episode(@RequestBody RequestKafkaEpisode episode) {
+//        this.producer.sendEpisode(episode);
+//    }
+//
+//    @PostMapping("update-episode")
+//    public void updateEpisode(@RequestBody RequestKafkaEpisode episode) {
+//        this.producer.updateEpisode(episode);
+//    }
+//
+//    @DeleteMapping("episode")
+//    public void deleteEpisode(@RequestBody RequestKafkaDeleteEpisode requestDeleteEpisode) {
+//        this.producer.deleteEpisode(requestDeleteEpisode);
+//    }
 }

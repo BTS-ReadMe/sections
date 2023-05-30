@@ -2,6 +2,7 @@ package com.readme.sections.config;
 
 import com.readme.sections.requestObject.RequestDeleteEpisode;
 import com.readme.sections.requestObject.RequestEpisode;
+import com.readme.sections.requestObject.RequestKafkaTest;
 import com.readme.sections.requestObject.RequestNovelCards;
 import com.readme.sections.requestObject.RequestNovelId;
 import java.util.Map;
@@ -25,51 +26,63 @@ public class KafkaConsumerConfig {
         return CommonJsonDeserializer.getStringObjectMap(servers);
     }
 
+//    @Bean
+//    public ConsumerFactory<String, RequestNovelId> novelIdConsumerFactory(){
+//        return new DefaultKafkaConsumerFactory<>(ConsumerConfig());
+//    }
+//
+//    @Bean
+//    public ConsumerFactory<String, RequestNovelCards> novelCardsConsumerFactory() {
+//        return new DefaultKafkaConsumerFactory<>(ConsumerConfig());
+//    }
+//
+//    @Bean
+//    public ConsumerFactory<String, RequestEpisode> episodeConsumerFactory() {
+//        return new DefaultKafkaConsumerFactory<>(ConsumerConfig());
+//    }
+//
+//    @Bean
+//    public ConsumerFactory<String, RequestDeleteEpisode> episodeDeleteConsumerFactory() {
+//        return new DefaultKafkaConsumerFactory<>(ConsumerConfig());
+//    }
+
     @Bean
-    public ConsumerFactory<String, RequestNovelId> novelIdConsumerFactory(){
+    public ConsumerFactory<String, RequestKafkaTest> kafkaTestConsumerFactory() {
         return new DefaultKafkaConsumerFactory<>(ConsumerConfig());
     }
 
-    @Bean
-    public ConsumerFactory<String, RequestNovelCards> novelCardsConsumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(ConsumerConfig());
-    }
+//    @Bean
+//    public ConcurrentKafkaListenerContainerFactory<String, RequestNovelId> novelIdListener() {
+//        ConcurrentKafkaListenerContainerFactory<String, RequestNovelId> factory = new ConcurrentKafkaListenerContainerFactory<>();
+//        factory.setConsumerFactory(novelIdConsumerFactory());
+//        return factory;
+//    }
+//
+//    @Bean
+//    public ConcurrentKafkaListenerContainerFactory<String, RequestNovelCards> novelCardsListener() {
+//        ConcurrentKafkaListenerContainerFactory<String, RequestNovelCards> factory = new ConcurrentKafkaListenerContainerFactory<>();
+//        factory.setConsumerFactory(novelCardsConsumerFactory());
+//        return factory;
+//    }
+//
+//    @Bean
+//    public ConcurrentKafkaListenerContainerFactory<String, RequestEpisode> episodeListener() {
+//        ConcurrentKafkaListenerContainerFactory<String, RequestEpisode> factory = new ConcurrentKafkaListenerContainerFactory<>();
+//        factory.setConsumerFactory(episodeConsumerFactory());
+//        return factory;
+//    }
+//
+//    @Bean
+//    public ConcurrentKafkaListenerContainerFactory<String, RequestDeleteEpisode> deleteEpisodeListener() {
+//        ConcurrentKafkaListenerContainerFactory<String, RequestDeleteEpisode> factory = new ConcurrentKafkaListenerContainerFactory<>();
+//        factory.setConsumerFactory(episodeDeleteConsumerFactory());
+//        return factory;
+//    }
 
     @Bean
-    public ConsumerFactory<String, RequestEpisode> episodeConsumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(ConsumerConfig());
-    }
-
-    @Bean
-    public ConsumerFactory<String, RequestDeleteEpisode> episodeDeleteConsumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(ConsumerConfig());
-    }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, RequestNovelId> novelIdListener() {
-        ConcurrentKafkaListenerContainerFactory<String, RequestNovelId> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(novelIdConsumerFactory());
-        return factory;
-    }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, RequestNovelCards> novelCardsListener() {
-        ConcurrentKafkaListenerContainerFactory<String, RequestNovelCards> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(novelCardsConsumerFactory());
-        return factory;
-    }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, RequestEpisode> episodeListener() {
-        ConcurrentKafkaListenerContainerFactory<String, RequestEpisode> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(episodeConsumerFactory());
-        return factory;
-    }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, RequestDeleteEpisode> deleteEpisodeListener() {
-        ConcurrentKafkaListenerContainerFactory<String, RequestDeleteEpisode> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(episodeDeleteConsumerFactory());
+    public ConcurrentKafkaListenerContainerFactory<String, RequestKafkaTest> kafkaTestsListener() {
+        ConcurrentKafkaListenerContainerFactory<String, RequestKafkaTest> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(kafkaTestConsumerFactory());
         return factory;
     }
 
