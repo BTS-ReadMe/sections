@@ -33,9 +33,10 @@ public class EpisodeCardsController {
     @GetMapping("/{novelId}")
     public ResponseEntity<CommonDataResponse<ResponseEpisodeCards>> getEpisodeCard(
         @PathVariable Long novelId,
-        @RequestParam(required = false) Integer pagination) {
+        @RequestParam(required = false) Integer pagination,
+        @RequestParam(required = false) String sort) {
         EpisodeCardsPaginationDTO episodeCardsPaginationDTO = episodeCardsService.getCards(novelId,
-            pagination);
+            pagination, sort);
         return ResponseEntity.ok(
             new CommonDataResponse(new ResponseEpisodeCards(episodeCardsPaginationDTO)
             )

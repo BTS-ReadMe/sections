@@ -4,6 +4,7 @@ import com.readme.sections.dataAccessLayer.EpisodeCardsDataAccessLayer;
 import com.readme.sections.dto.EpisodeCardsEntityDTO;
 import com.readme.sections.dto.EpisodeCardsPaginationDTO;
 import com.readme.sections.dto.EpisodeDTO;
+import com.readme.sections.enums.EpisodeSort;
 import com.readme.sections.model.EpisodeCards;
 import com.readme.sections.model.EpisodeCards.Episode;
 import com.readme.sections.repository.EpisodeCardsRepository;
@@ -32,17 +33,16 @@ public class EpisodeCardsServiceImpl implements EpisodeCardsService {
 
     @Transactional(readOnly = true)
     @Override
-    public EpisodeCardsPaginationDTO getCards(Long novelId, Integer pagination) {
+    public EpisodeCardsPaginationDTO getCards(Long novelId, Integer pagination, String sortKey) {
         EpisodeCards episodeCards = new EpisodeCards();
-        log.info(episodeCardsRepository.findAll().toString());
         if (pagination == null) {
-            episodeCards = episodeCardsDataAccessLayer.findEpisodesByEpisodeCardId(novelId, 0,
-                PAGE_SIZE);
             pagination = 0;
-        } else {
-            episodeCards = episodeCardsDataAccessLayer.findEpisodesByEpisodeCardId(novelId,
-                pagination * PAGE_SIZE, PAGE_SIZE);
         }
+        if (sortKey == null) {
+            sortKey = EpisodeSort.DESC.getSortKey();
+        }
+        episodeCards = episodeCardsDataAccessLayer.findEpisodesByEpisodeCardId(novelId,
+            pagination * PAGE_SIZE, PAGE_SIZE, sortKey);
         return new EpisodeCardsPaginationDTO(episodeCards, PAGE_SIZE, pagination);
     }
 

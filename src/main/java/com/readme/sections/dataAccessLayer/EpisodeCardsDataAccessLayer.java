@@ -6,18 +6,24 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 import com.mongodb.BasicDBObject;
 import com.readme.sections.dto.EpisodeDTO;
+import com.readme.sections.enums.EpisodeSort;
 import com.readme.sections.model.EpisodeCards;
 import com.readme.sections.model.EpisodeCards.Episode;
 import com.readme.sections.requestObject.RequestDeleteEpisode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.ArrayOperators.Size;
 import org.springframework.data.mongodb.core.aggregation.ArrayOperators.Slice;
+import org.springframework.data.mongodb.core.aggregation.GroupOperation;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
+import org.springframework.data.mongodb.core.aggregation.SortOperation;
+import org.springframework.data.mongodb.core.aggregation.UnwindOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -29,15 +35,19 @@ import org.springframework.stereotype.Repository;
 public class EpisodeCardsDataAccessLayer {
     private final MongoTemplate mongoTemplate;
     public EpisodeCards findEpisodesByEpisodeCardId(Long novelId, Integer skipValue,
-        Integer limitValue) {
-
+        Integer limitValue, String sortKey) {
         MatchOperation match = match(where("_id").is(String.valueOf(novelId)));
+        UnwindOperation unwind = Aggregation.unwind("episodes");
+        SortOperation sort = Aggregation.sort(EpisodeSort.getSortValueFromKey(sortKey), "episodes.registrationDate");
+        GroupOperation group = Aggregation.group("_id")
+            .push("episodes").as("episodes")
+            .first("episodeCount").as("episodeCount");
+
         ProjectionOperation project = Aggregation.project()
-            .and(Slice.sliceArrayOf("$episodes").offset(skipValue).itemCount(limitValue))
-            .as("episodes")
+            .andExpression("slice(episodes, " + skipValue + ", " + limitValue + ")").as("episodes")
             .and(Size.lengthOfArray("$episodes")).as("episodeCount");
 
-        Aggregation aggregation = newAggregation(match, project);
+        Aggregation aggregation = newAggregation(match, unwind, sort, group, project);
 
         AggregationResults<EpisodeCards> results = mongoTemplate.aggregate(aggregation,
             "episode_cards", EpisodeCards.class);
