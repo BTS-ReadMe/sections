@@ -9,6 +9,7 @@ import com.readme.sections.model.EpisodeCards;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.repository.EpisodeCardsRepository;
 import com.readme.sections.repository.NovelCardsRepository;
+import com.readme.sections.requestObject.RequestKafkaStarRating;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -101,6 +102,14 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     @Override
     public void updateCards(NovelCardsEntityDTO novelCardsEntityDTO) {
         novelCardsRepository.save(new NovelCards(novelCardsEntityDTO));
+    }
+
+    @Transactional
+    @Override
+    public void updateStarRating(RequestKafkaStarRating requestKafkaStarRating) {
+        NovelCards novelCards = novelCardsRepository.findById(String.valueOf(requestKafkaStarRating.getStarRating())).get();
+        novelCards.setStarRating(requestKafkaStarRating.getStarRating());
+        novelCardsRepository.save(novelCards);
     }
 
     @Transactional

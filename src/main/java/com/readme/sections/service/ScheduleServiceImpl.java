@@ -115,7 +115,6 @@ public class ScheduleServiceImpl implements ScheduleService{
         } catch (Exception exception) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-
     }
 
     public static String getUtcToKoreanTime(LocalDateTime utcTime) {

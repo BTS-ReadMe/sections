@@ -3,6 +3,7 @@ package com.readme.sections.service;
 import com.readme.sections.dto.NovelCardsEntityDTO;
 import com.readme.sections.dto.NovelCardsViewDTO;
 import com.readme.sections.dto.NovelCardsPaginationDTO;
+import com.readme.sections.requestObject.RequestKafkaStarRating;
 import java.util.List;
 
 public interface NovelCardsService {
@@ -12,6 +13,7 @@ public interface NovelCardsService {
     public NovelCardsPaginationDTO getNewNovelsByGenre(String genre, Integer pagination);
     public void addCards(NovelCardsEntityDTO novelCardsEntityDTO);
     public void updateCards(NovelCardsEntityDTO novelCardsEntityDTO);
+    public void updateStarRating(RequestKafkaStarRating requestKafkaStarRating);
     public NovelCardsEntityDTO updateCards(Long id, NovelCardsEntityDTO novelCardsEntityDTO);
     public void deleteCards(Long id);
     public List<NovelCardsViewDTO> getNovelCardsForSchedule(Long scheduleId);
