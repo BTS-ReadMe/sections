@@ -12,6 +12,7 @@ public interface NovelCardsService {
     public NovelCardsPaginationDTO getAllCardsByGenre(String genre, String serializationStatus, Integer pagination);
     public NovelCardsPaginationDTO getNewNovelsByGenre(String genre, Integer pagination);
     public void addCards(NovelCardsEntityDTO novelCardsEntityDTO);
+    public void addEpisodeCount(Long novelId);
     public void updateCards(NovelCardsEntityDTO novelCardsEntityDTO);
     public void updateStarRating(RequestKafkaStarRating requestKafkaStarRating);
     public NovelCardsEntityDTO updateCards(Long id, NovelCardsEntityDTO novelCardsEntityDTO);
