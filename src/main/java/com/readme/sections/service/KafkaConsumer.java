@@ -4,8 +4,6 @@ import com.readme.sections.dto.EpisodeDTO;
 import com.readme.sections.dto.NovelCardsEntityDTO;
 import com.readme.sections.requestObject.RequestEpisode;
 import com.readme.sections.requestObject.RequestDeleteEpisode;
-import com.readme.sections.requestObject.RequestEpisode;
-import com.readme.sections.requestObject.RequestDeleteEpisode;
 import com.readme.sections.requestObject.RequestKafkaStarRating;
 import com.readme.sections.requestObject.RequestNovelCards;
 import com.readme.sections.requestObject.RequestNovelId;
@@ -42,7 +40,7 @@ public class KafkaConsumer {
     @KafkaListener(topics = "addEpisodes", groupId = "sections")
     public void addEpisode(RequestEpisode requestEpisode){
         episodeCardsService.addEpisode(new EpisodeDTO(requestEpisode));
-        novelCardsService.addEpisodeCount(requestEpisode.getNovelId());
+        novelCardsService.updateEpisodeCount(requestEpisode.getNovelId(), 1);
     }
 
     @KafkaListener(topics = "updateEpisodes", groupId = "sections")
@@ -53,6 +51,7 @@ public class KafkaConsumer {
     @KafkaListener(topics = "deleteEpisodes", groupId = "sections")
     public void deleteEpisode(RequestDeleteEpisode requestDeleteEpisode) {
         episodeCardsService.deleteEpisode(requestDeleteEpisode);
+        novelCardsService.updateEpisodeCount(requestDeleteEpisode.getNovelId(), -1);
     }
 
     @KafkaListener(topics = "updateStarRating", groupId = "sections")

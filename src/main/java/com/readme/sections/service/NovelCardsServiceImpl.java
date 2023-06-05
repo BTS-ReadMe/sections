@@ -89,9 +89,9 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     }
 
     @Override
-    public void addEpisodeCount(Long novelId) {
+    public void updateEpisodeCount(Long novelId, int updateCount) {
         NovelCards novelCards = novelCardsRepository.findById(String.valueOf(novelId)).get();
-        novelCards.setEpisodeCount(novelCards.getEpisodeCount() + 1);
+        novelCards.setEpisodeCount(novelCards.getEpisodeCount() + updateCount);
         novelCardsRepository.save(novelCards);
     }
 
