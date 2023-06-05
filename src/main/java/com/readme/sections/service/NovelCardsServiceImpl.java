@@ -9,6 +9,7 @@ import com.readme.sections.model.EpisodeCards;
 import com.readme.sections.model.NovelCards;
 import com.readme.sections.repository.EpisodeCardsRepository;
 import com.readme.sections.repository.NovelCardsRepository;
+import com.readme.sections.requestObject.RequestKafkaStarRating;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -88,6 +89,13 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     }
 
     @Override
+    public void updateEpisodeCount(Long novelId, int updateCount) {
+        NovelCards novelCards = novelCardsRepository.findById(String.valueOf(novelId)).get();
+        novelCards.setEpisodeCount(novelCards.getEpisodeCount() + updateCount);
+        novelCardsRepository.save(novelCards);
+    }
+
+    @Override
     public NovelCardsEntityDTO updateCards(Long id,
         NovelCardsEntityDTO novelCardsEntityDTO) {
         NovelCards novelCards = novelCardsRepository.findById(String.valueOf(id))
@@ -101,6 +109,14 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     @Override
     public void updateCards(NovelCardsEntityDTO novelCardsEntityDTO) {
         novelCardsRepository.save(new NovelCards(novelCardsEntityDTO));
+    }
+
+    @Transactional
+    @Override
+    public void updateStarRating(RequestKafkaStarRating requestKafkaStarRating) {
+        NovelCards novelCards = novelCardsRepository.findById(String.valueOf(requestKafkaStarRating.getStarRating())).get();
+        novelCards.setStarRating(requestKafkaStarRating.getStarRating());
+        novelCardsRepository.save(novelCards);
     }
 
     @Transactional

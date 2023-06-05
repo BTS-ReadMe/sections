@@ -2,6 +2,9 @@ package com.readme.sections.config;
 
 import com.readme.sections.requestObject.RequestDeleteEpisode;
 import com.readme.sections.requestObject.RequestEpisode;
+import com.readme.sections.requestObject.RequestDeleteEpisode;
+import com.readme.sections.requestObject.RequestEpisode;
+import com.readme.sections.requestObject.RequestKafkaStarRating;
 import com.readme.sections.requestObject.RequestNovelCards;
 import com.readme.sections.requestObject.RequestNovelId;
 import java.util.Map;
@@ -46,6 +49,11 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
+    public ConsumerFactory<String, RequestKafkaStarRating> starRatingConsumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(ConsumerConfig());
+    }
+
+    @Bean
     public ConcurrentKafkaListenerContainerFactory<String, RequestNovelId> novelIdListener() {
         ConcurrentKafkaListenerContainerFactory<String, RequestNovelId> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(novelIdConsumerFactory());
@@ -70,6 +78,13 @@ public class KafkaConsumerConfig {
     public ConcurrentKafkaListenerContainerFactory<String, RequestDeleteEpisode> deleteEpisodeListener() {
         ConcurrentKafkaListenerContainerFactory<String, RequestDeleteEpisode> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(episodeDeleteConsumerFactory());
+        return factory;
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, RequestKafkaStarRating> startRatingListener() {
+        ConcurrentKafkaListenerContainerFactory<String, RequestKafkaStarRating> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(starRatingConsumerFactory());
         return factory;
     }
 
