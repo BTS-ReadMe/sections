@@ -5,6 +5,7 @@ import com.readme.sections.dto.NovelCardsPaginationDTO;
 import com.readme.sections.commonResponseObject.CommonDataResponse;
 import com.readme.sections.responseObject.ResponseNovelCards;
 import com.readme.sections.responseObject.ResponseNovelCardsPagination;
+import com.readme.sections.service.KafkaProducer;
 import com.readme.sections.service.NovelCardsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,6 +30,7 @@ public class NovelCardsController {
     @Value("${spring.data.web.pageable.default-page-size}")
     private int PAGE_SIZE;
     private final NovelCardsService novelCardsService;
+    private final KafkaProducer kafkaProducer;
 
     @Operation(summary = "소설 카드 조회", description = "id에 해당하는 에피소드 카드 조회", tags = {"소설 카드"})
     @ApiResponses({
@@ -92,6 +94,7 @@ public class NovelCardsController {
         @RequestParam String keyword,
         @RequestParam(required = false) Integer pagination
     ) {
+        kafkaProducer.searchCount(keyword);
         return ResponseEntity.ok(
             new CommonDataResponse(
                 new ResponseNovelCardsPagination(novelCardsService.searchNovelCards(keyword, pagination))));

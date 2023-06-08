@@ -20,6 +20,7 @@ public class KafkaProducer {
     private final KafkaTemplate<String, RequestKafkaNovelId> novelIdKafkaTemplate;
     private final KafkaTemplate<String, RequestKafkaEpisode> episodeKafkaTemplate;
     private final KafkaTemplate<String, RequestKafkaDeleteEpisode> deleteEpisodeKafkaTemplate;
+    private final KafkaTemplate<String, String> searchCountKafkaTemplate;
 
     public void sendNovelId(RequestKafkaNovelId requestKafkaNovelId) {
         System.out.println(String.format("Produce message(RequestKafkaMessage) : %s", requestKafkaNovelId));
@@ -41,5 +42,9 @@ public class KafkaProducer {
 
     public void deleteEpisode(RequestKafkaDeleteEpisode requestDeleteEpisode) {
         this.deleteEpisodeKafkaTemplate.send("deleteEpisodes", requestDeleteEpisode);
+    }
+
+    public void searchCount(String keyword) {
+        this.searchCountKafkaTemplate.send("inputSearch", keyword);
     }
 }

@@ -46,6 +46,10 @@ public class KafkaProducerConfig {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
+    @Bean ProducerFactory<String, String> searchCountProducerFactory() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
     @Bean
     public KafkaTemplate<String, RequestKafkaNovelId> novelIdKafkaTemplate() {
         return new KafkaTemplate<>(novelIdProducerFactory());
@@ -64,5 +68,10 @@ public class KafkaProducerConfig {
     @Bean
     public KafkaTemplate<String, RequestKafkaDeleteEpisode> deleteEpisodeKafkaTemplate() {
         return new KafkaTemplate<>(deleteEpisodeProducerFactory());
+    }
+
+    @Bean
+    public KafkaTemplate<String, String> searchCountKafkaTemplate() {
+        return new KafkaTemplate<>(searchCountProducerFactory());
     }
 }
