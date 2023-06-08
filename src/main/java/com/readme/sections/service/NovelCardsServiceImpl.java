@@ -114,7 +114,7 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     @Transactional
     @Override
     public void updateStarRating(RequestKafkaStarRating requestKafkaStarRating) {
-        NovelCards novelCards = novelCardsRepository.findById(String.valueOf(requestKafkaStarRating.getStarRating())).get();
+        NovelCards novelCards = novelCardsRepository.findById(String.valueOf(requestKafkaStarRating.getNovelId())).get();
         novelCards.setStarRating(requestKafkaStarRating.getStarRating());
         novelCardsRepository.save(novelCards);
     }
