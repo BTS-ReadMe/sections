@@ -1,14 +1,12 @@
 package com.readme.sections.model;
 
+//import com.readme.sections.cqrs.NovelCardCreatedEvent;
 import com.readme.sections.dto.NovelCardsEntityDTO;
 import java.util.Date;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -83,4 +81,28 @@ public class NovelCards {
         this.sunday= novelCardsEntityDTO.getSunday();
         this.episodeCount = novelCardsEntityDTO.getEpisodeCount();
     }
+
+//    public NovelCards(NovelCardCreatedEvent evt) {
+//        this.novelId = evt.getNovelId();
+//        this.title = evt.getTitle();
+//        this.description = evt.getDescription();
+//        this.author = evt.getAuthor();
+//        this.authorComment = evt.getAuthorComment();
+//        this.genre = evt.getGenre();
+//        this.grade = evt.getGrade();
+//        this.thumbnail = evt.getThumbnail();
+//        this.startDate = evt.getStartDate();
+//        this.views = evt.getViews();
+//        this.serializationStatus = evt.getSerializationStatus();
+//        this.scheduleId = evt.getScheduleId();
+//        this.starRating = evt.getStarRating();
+//        this.monday = evt.getMonday();
+//        this.tuesday = evt.getTuesday();
+//        this.wednesday = evt.getWednesday();
+//        this.thursday = evt.getThursday();
+//        this.friday = evt.getFriday();
+//        this.saturday = evt.getSaturday();
+//        this.sunday= evt.getSunday();
+//        this.episodeCount = evt.getEpisodeCount();
+//    }
 }

@@ -26,6 +26,8 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+/axonserver-events
+/axonserver-data
 
 ### NetBeans ###
 /nbproject/private/
