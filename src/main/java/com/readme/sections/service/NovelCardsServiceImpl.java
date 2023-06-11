@@ -108,7 +108,13 @@ public class NovelCardsServiceImpl implements NovelCardsService {
     @Transactional
     @Override
     public void updateCards(NovelCardsEntityDTO novelCardsEntityDTO) {
-        novelCardsRepository.save(new NovelCards(novelCardsEntityDTO));
+        NovelCards novelCards = novelCardsRepository.findById(
+            String.valueOf(novelCardsEntityDTO.getNovelId())).get();
+        NovelCards updateNovelCards = new NovelCards(novelCardsEntityDTO);
+        updateNovelCards.setStarRating(novelCards.getStarRating());
+        updateNovelCards.setViews(novelCards.getViews());
+        updateNovelCards.setEpisodeCount(novelCards.getEpisodeCount());
+        novelCardsRepository.save(updateNovelCards);
     }
 
     @Transactional
